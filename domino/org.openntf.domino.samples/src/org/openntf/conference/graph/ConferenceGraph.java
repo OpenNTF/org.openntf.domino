@@ -29,6 +29,7 @@ import org.openntf.domino.graph2.impl.DGraph;
 
 import com.google.common.collect.Lists;
 
+@SuppressWarnings("nls")
 public class ConferenceGraph {
 	public static final String ATTENDEE_PATH = "conference/attendees.nsf";
 	public static final String GROUP_PATH = "conference/groups.nsf";

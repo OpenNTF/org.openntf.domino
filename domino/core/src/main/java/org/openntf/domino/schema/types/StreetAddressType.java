@@ -43,7 +43,7 @@ public class StreetAddressType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "Street Address";
+		return "Street Address"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

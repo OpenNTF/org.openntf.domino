@@ -41,10 +41,10 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 import org.xml.sax.InputSource;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Item.
  */
+@SuppressWarnings("nls")
 public class Item extends BaseResurrectable<org.openntf.domino.Item, lotus.domino.Item, Document> implements org.openntf.domino.Item {
 	private static final Logger log_ = Logger.getLogger(Item.class.getName());
 
@@ -88,7 +88,7 @@ public class Item extends BaseResurrectable<org.openntf.domino.Item, lotus.domin
 		try {
 			name = delegate.getName();
 		} catch (NotesException ne) {
-			name = "";
+			name = ""; //$NON-NLS-1$
 			if (log_.isLoggable(Level.WARNING)) {
 				log_.log(Level.WARNING, "Exception trying to get item from Document " + getAncestorDatabase().getFilePath() + " "
 						+ getAncestorDocument().getNoteID());
@@ -439,11 +439,11 @@ public class Item extends BaseResurrectable<org.openntf.domino.Item, lotus.domin
 		if (itemType == Type.MIME_PART) {
 			MIMEEntity entity = getMIMEEntity();
 			if (entity != null) {
-				MIMEHeader contentType = entity.getNthHeader("Content-Type");
+				MIMEHeader contentType = entity.getNthHeader("Content-Type"); //$NON-NLS-1$
 				if (contentType != null) {
 					String headerval = contentType.getHeaderVal();
-					if ("application/x-java-serialized-object".equals(headerval)
-							|| "application/x-java-externalized-object".equals(headerval)) {
+					if ("application/x-java-serialized-object".equals(headerval) //$NON-NLS-1$
+							|| "application/x-java-externalized-object".equals(headerval)) { //$NON-NLS-1$
 						itemType = Type.MIME_BEAN;
 					}
 				}

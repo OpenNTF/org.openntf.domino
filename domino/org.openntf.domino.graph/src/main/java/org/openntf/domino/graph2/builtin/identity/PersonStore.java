@@ -21,13 +21,13 @@ public class PersonStore extends DElementStore {
 
 	public PersonStore() {
 		this.addType(Person.class);
-		this.setStoreKey("names.nsf");
+		this.setStoreKey("names.nsf"); //$NON-NLS-1$
 	}
 
 	@Override
 	public Object findElementDelegate(final Object delegateKey/*, final Class<? extends Element> type*/) {
 		if (this.getProxyStoreDelegate() == null) {
-			throw new IllegalStateException("Cannot find elements in a User store without a proxy store set");
+			throw new IllegalStateException("Cannot find elements in a User store without a proxy store set"); //$NON-NLS-1$
 		}
 		return super.findElementDelegate(delegateKey/*, type*/);
 	}

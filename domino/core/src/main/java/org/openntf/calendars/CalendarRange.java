@@ -305,7 +305,7 @@ public class CalendarRange implements CalendarRangeInterface {
 
 	@Override
 	public String getHoursMinutes() {
-		return (this.isValid()) ? Dates.getHoursMinutesBetween(this.first(), this.last()) : "";
+		return (this.isValid()) ? Dates.getHoursMinutesBetween(this.first(), this.last()) : ""; //$NON-NLS-1$
 	}
 
 	@Override

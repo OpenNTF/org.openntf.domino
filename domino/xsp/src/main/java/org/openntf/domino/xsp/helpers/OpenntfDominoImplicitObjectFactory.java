@@ -44,14 +44,14 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	public boolean implicitsDone_ = false;
 
 	private final String[][] implicitObjectList//
-			= { { "openDatabase", Database.class.getName() }, //
-					{ "openSession", Session.class.getName() }, //
-					{ "openSessionAsSigner", Session.class.getName() }, //
-					{ "openSessionAsSignerWithFullAccess", Session.class.getName() }, //
-					{ "openLogBean", XspOpenLogErrorHolder.class.getName() }, //
-					{ "serverScope", Map.class.getName() }, // a scope server wide
-					{ "identityScope", Map.class.getName() }, // a scope per user (server wide)
-					{ "userScope", Map.class.getName() }, // a scope per user (application wide)
+			= { { "openDatabase", Database.class.getName() }, // //$NON-NLS-1$
+					{ "openSession", Session.class.getName() }, // //$NON-NLS-1$
+					{ "openSessionAsSigner", Session.class.getName() }, // //$NON-NLS-1$
+					{ "openSessionAsSignerWithFullAccess", Session.class.getName() }, // //$NON-NLS-1$
+					{ "openLogBean", XspOpenLogErrorHolder.class.getName() }, // //$NON-NLS-1$
+					{ "serverScope", Map.class.getName() }, // a scope server wide //$NON-NLS-1$
+					{ "identityScope", Map.class.getName() }, // a scope per user (server wide) //$NON-NLS-1$
+					{ "userScope", Map.class.getName() }, // a scope per user (application wide) //$NON-NLS-1$
 
 			};
 
@@ -72,11 +72,11 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			Database db = session.getCurrentDatabase();
 			Map<String, Object> ecMap = TypedUtil.getRequestMap(ctx.getExternalContext());
 
-			ecMap.put("openSession", session);
-			ecMap.put("openDatabase", db);
+			ecMap.put("openSession", session); //$NON-NLS-1$
+			ecMap.put("openDatabase", db); //$NON-NLS-1$
 
 			// Attach NSA
-			if (ODAPlatform.isAppFlagSet("nsa")) {
+			if (ODAPlatform.isAppFlagSet("nsa")) { //$NON-NLS-1$
 				Application app = ctx.getApplication();
 				if (app instanceof ApplicationEx) {
 					NSA.INSTANCE.registerApplication((ApplicationEx) app);
@@ -92,23 +92,23 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 
 			switch (objectName.charAt(0)) {
 			case 's':
-				if ("serverScope".equals(objectName))
+				if ("serverScope".equals(objectName)) //$NON-NLS-1$
 					return getServerMap(ctx);
 			case 'o':
-				if ("openSessionAsSignerWithFullAccess".equals(objectName))
+				if ("openSessionAsSignerWithFullAccess".equals(objectName)) //$NON-NLS-1$
 					return Factory.getSession(SessionType.SIGNER_FULL_ACCESS);
-				if ("openSessionAsSigner".equals(objectName))
+				if ("openSessionAsSigner".equals(objectName)) //$NON-NLS-1$
 					return Factory.getSession(SessionType.SIGNER);
-				if ("openLogBean".equals(objectName))
+				if ("openLogBean".equals(objectName)) //$NON-NLS-1$
 					return getOpenLogBean();
 				break;
 
 			case 'i':
-				if ("identityScope".equals(objectName))
+				if ("identityScope".equals(objectName)) //$NON-NLS-1$
 					return getUserScopeFrom(getServerMap(ctx));
 				break;
 			case 'u':
-				if ("userScope".equals(objectName))
+				if ("userScope".equals(objectName)) //$NON-NLS-1$
 					return getUserScopeFrom(getApplicationMap(ctx));
 				break;
 			}

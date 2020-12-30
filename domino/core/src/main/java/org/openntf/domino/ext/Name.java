@@ -69,11 +69,11 @@ public interface Name extends Cloneable {
 
 		@Override
 		public String toString() {
-			return NamePartKey.class.getName() + ": " + this.name();
+			return NamePartKey.class.getName() + ": " + this.name(); //$NON-NLS-1$
 		}
 
 		public String getInfo() {
-			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name();
+			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	};
 

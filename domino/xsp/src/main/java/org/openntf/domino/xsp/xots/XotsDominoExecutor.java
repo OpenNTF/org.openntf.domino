@@ -57,6 +57,7 @@ import com.ibm.domino.xsp.module.nsf.ModuleClassLoader;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
+@SuppressWarnings("nls")
 public class XotsDominoExecutor extends DominoExecutor {
 	private static final Logger log_ = Logger.getLogger(XotsDominoExecutor.class.getName());
 

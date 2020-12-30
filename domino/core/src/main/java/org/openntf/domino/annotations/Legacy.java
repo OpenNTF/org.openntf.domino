@@ -25,6 +25,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE })
+@SuppressWarnings("nls")
 public @interface Legacy {
 
 	/**

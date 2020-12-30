@@ -71,6 +71,7 @@ import com.ibm.commons.util.StringUtil;
 /**
  * The Enum DominoUtils.
  */
+@SuppressWarnings("nls")
 public enum DominoUtils {
 	;
 

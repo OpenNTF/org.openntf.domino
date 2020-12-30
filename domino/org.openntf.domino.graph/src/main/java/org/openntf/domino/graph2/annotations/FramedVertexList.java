@@ -36,7 +36,7 @@ import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterable<T> implements List<T> {
 	public static class FramedListIterator<T> implements ListIterator<T> {
 		protected final Class<T> kind_;

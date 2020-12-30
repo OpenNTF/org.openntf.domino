@@ -48,7 +48,7 @@ public class ModifiableStringNodeList extends AbstractList<String> {
 	 */
 	@Override
 	public String get(final int index) {
-		return xml_.selectNodes(parentNodePath_ + "/" + nodeName_).get(index).getText();
+		return xml_.selectNodes(parentNodePath_ + "/" + nodeName_).get(index).getText(); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -56,7 +56,7 @@ public class ModifiableStringNodeList extends AbstractList<String> {
 	 */
 	@Override
 	public int size() {
-		return xml_.selectNodes(parentNodePath_ + "/" + nodeName_).size();
+		return xml_.selectNodes(parentNodePath_ + "/" + nodeName_).size(); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -67,7 +67,7 @@ public class ModifiableStringNodeList extends AbstractList<String> {
 		XMLNode parent = xml_.selectSingleNode(parentNodePath_);
 
 		if (parent == null) {
-			String[] parts = parentNodePath_.split("/");
+			String[] parts = parentNodePath_.split("/"); //$NON-NLS-1$
 			parent = xml_;
 			for (String part : parts) {
 				if (!part.isEmpty()) {
@@ -100,7 +100,7 @@ public class ModifiableStringNodeList extends AbstractList<String> {
 	@Override
 	public String set(final int index, final String element) {
 		String current = get(index);
-		xml_.selectNodes(parentNodePath_ + "/" + nodeName_).get(index).setText(element);
+		xml_.selectNodes(parentNodePath_ + "/" + nodeName_).get(index).setText(element); //$NON-NLS-1$
 		return current;
 	}
 
@@ -110,7 +110,7 @@ public class ModifiableStringNodeList extends AbstractList<String> {
 	@Override
 	public String remove(final int index) {
 		String current = get(index);
-		xml_.selectNodes(parentNodePath_ + "/" + nodeName_).remove(index);
+		xml_.selectNodes(parentNodePath_ + "/" + nodeName_).remove(index); //$NON-NLS-1$
 		return current;
 	}
 

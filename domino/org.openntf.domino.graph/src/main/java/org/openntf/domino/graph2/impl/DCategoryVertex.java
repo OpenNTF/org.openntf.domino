@@ -22,6 +22,7 @@ import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.graph2.DGraph;
 
+@SuppressWarnings("nls")
 public class DCategoryVertex extends DVertex {
 	private static final long serialVersionUID = 1L;
 	//		private ViewNavigator nav_;
@@ -49,7 +50,7 @@ public class DCategoryVertex extends DVertex {
 
 	public ViewNavigator getSubNavigator() {
 		View view = getView();
-		ViewEntry entry = view.getEntryAtPosition(getProperty("position", String.class));
+		ViewEntry entry = view.getEntryAtPosition(getProperty("position", String.class)); //$NON-NLS-1$
 		ViewNavigator result = view.createViewNavFromDescendants(entry, 100);
 		if (getParent().getConfiguration().isSuppressSingleValueCategories()) {
 			while (checkSkipCategory(result)) {

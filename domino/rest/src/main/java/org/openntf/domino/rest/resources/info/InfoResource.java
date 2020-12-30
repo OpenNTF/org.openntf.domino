@@ -49,6 +49,7 @@ public class InfoResource extends AbstractResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@SuppressWarnings("nls")
 	public Response performRequest(@Context final UriInfo uriInfo, @PathParam(Routes.NAMESPACE) final String namespace)
 			throws JsonException, IOException {
 		String jsonEntity = null;

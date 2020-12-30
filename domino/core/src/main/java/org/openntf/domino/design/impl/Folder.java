@@ -45,7 +45,7 @@ public class Folder extends AbstractFolder implements org.openntf.domino.design.
 		super(database);
 
 		try {
-			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_folder.xml");
+			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_folder.xml"); //$NON-NLS-1$
 			loadDxl(is);
 			is.close();
 		} catch (IOException e) {

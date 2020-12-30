@@ -36,6 +36,7 @@ import org.openntf.formula.ValueHolder.DataType;
 import org.openntf.formula.annotation.ParamCount;
 
 /*----------------------------------------------------------------------------*/
+@SuppressWarnings("nls")
 public enum FocFunctions {
 
 	;

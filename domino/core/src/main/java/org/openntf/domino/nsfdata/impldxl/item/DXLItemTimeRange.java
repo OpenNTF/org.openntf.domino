@@ -34,13 +34,13 @@ public class DXLItemTimeRange extends AbstractDXLItem {
 	protected DXLItemTimeRange(final XMLNode node, final int dupItemId) {
 		super(node, dupItemId);
 
-		XMLNodeList dateTimeNodes = node.selectNodes("./datetimelist/datetime");
+		XMLNodeList dateTimeNodes = node.selectNodes("./datetimelist/datetime"); //$NON-NLS-1$
 		dateTimeValues_ = new NSFDateTime[dateTimeNodes.size()];
 		for(int i = 0; i < dateTimeNodes.size(); i++) {
 			dateTimeValues_[i] = DXLItemFactory.createDateTime(dateTimeNodes.get(i));
 		}
 
-		XMLNodeList dateRangeNodes = node.selectNodes("./datetimelist/datetimepair");
+		XMLNodeList dateRangeNodes = node.selectNodes("./datetimelist/datetimepair"); //$NON-NLS-1$
 		dateRangeValues_ = new NSFDateRange[dateRangeNodes.size()];
 		for(int i = 0; i < dateRangeNodes.size(); i++) {
 			XMLNode startNode = dateRangeNodes.get(i).getFirstChildElement();

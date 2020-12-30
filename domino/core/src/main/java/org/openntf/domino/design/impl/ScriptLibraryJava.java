@@ -56,15 +56,15 @@ public final class ScriptLibraryJava extends AbstractDesignFileResource implemen
 		super(database);
 
 		try {
-			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_javascriptlibrary.xml");
+			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_javascriptlibrary.xml"); //$NON-NLS-1$
 			loadDxl(is);
 			is.close();
 
 			// Set some defaults
 			Session session = getAncestorSession();
-			String dataDirectory = session.getEnvironmentString("Directory", true);
+			String dataDirectory = session.getEnvironmentString("Directory", true); //$NON-NLS-1$
 			XMLDocument dxl = getDxl();
-			dxl.selectSingleNode("/scriptlibrary/code/javaproject").setAttribute("codepath", dataDirectory);
+			dxl.selectSingleNode("/scriptlibrary/code/javaproject").setAttribute("codepath", dataDirectory); //$NON-NLS-1$ //$NON-NLS-2$
 
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
@@ -79,19 +79,19 @@ public final class ScriptLibraryJava extends AbstractDesignFileResource implemen
 		if (classData == null) {
 			classData = new TreeMap<String, byte[]>();
 			try {
-				byte[] jarData = getFileDataRaw("%%object%%.jar");
+				byte[] jarData = getFileDataRaw("%%object%%.jar"); //$NON-NLS-1$
 
 				InputStream objInputStream = new ByteArrayInputStream(jarData);
 				JarInputStream jis = new JarInputStream(objInputStream);
 				JarEntry entry = jis.getNextJarEntry();
 				while (entry != null) {
 					String name = entry.getName();
-					if (name.endsWith(".class")) { //TODO our classloader should support resources also!
+					if (name.endsWith(".class")) { //TODO our classloader should support resources also! //$NON-NLS-1$
 						ByteArrayOutputStream bos = new ByteArrayOutputStream();
 						while (jis.available() > 0) {
 							bos.write(jis.read());
 						}
-						classData.put(DominoUtils.filePathToJavaBinaryName(name, "/"), bos.toByteArray());
+						classData.put(DominoUtils.filePathToJavaBinaryName(name, "/"), bos.toByteArray()); //$NON-NLS-1$
 					}
 
 					entry = jis.getNextJarEntry();
@@ -111,8 +111,8 @@ public final class ScriptLibraryJava extends AbstractDesignFileResource implemen
 	@Override
 	public Map<String, String> getClassSource() {
 		Map<String, String> classSource = new TreeMap<String, String>();
-		for (XMLNode node : getDxl().selectNodes("/scriptlibrary/code/javaproject/java")) {
-			classSource.put(node.getAttribute("name"), node.getText());
+		for (XMLNode node : getDxl().selectNodes("/scriptlibrary/code/javaproject/java")) { //$NON-NLS-1$
+			classSource.put(node.getAttribute("name"), node.getText()); //$NON-NLS-1$
 		}
 
 		return classSource;

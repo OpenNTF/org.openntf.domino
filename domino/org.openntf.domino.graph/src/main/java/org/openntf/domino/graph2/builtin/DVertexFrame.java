@@ -38,7 +38,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeField("form")
 @TypeValue("vertexFrame")
 @JavaHandlerClass(DVertexFrame.DVertexFrameImpl.class)
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 public interface DVertexFrame extends Editable {
 	@TypedProperty(value = "@CreatedDate", derived = true)
 	public Date getCreated();

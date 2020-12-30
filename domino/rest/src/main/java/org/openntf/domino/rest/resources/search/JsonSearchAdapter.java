@@ -397,6 +397,7 @@ public class JsonSearchAdapter implements JsonObject {
 		return result.iterator();
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public Object getJsonProperty(final String paramKey) {
 		Object result = null;

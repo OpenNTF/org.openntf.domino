@@ -26,6 +26,7 @@ import org.openntf.domino.helpers.DocumentSyncHelper;
 /**
  * @author nfreeman Samples from OpenNTF Webinar 2013
  */
+@SuppressWarnings("nls")
 public class WebinarSamples {
 
 	public WebinarSamples() {

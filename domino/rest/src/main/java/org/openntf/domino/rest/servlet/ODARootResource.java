@@ -78,7 +78,7 @@ public class ODARootResource {
 		if ( uri.isAbsolute() && makeRelative ) {
 			String rel = uri.getRawPath();
 			if ( uri.getQuery() != null ) {
-				rel += "?" + uri.getRawQuery();
+				rel += "?" + uri.getRawQuery(); //$NON-NLS-1$
 			}
 			uri = URI.create(rel);
 		}

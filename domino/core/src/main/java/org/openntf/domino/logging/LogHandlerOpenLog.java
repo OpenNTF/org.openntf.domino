@@ -49,6 +49,7 @@ import org.openntf.domino.utils.Factory.SessionType;
  * </pre>
  *
  */
+@SuppressWarnings("nls")
 public class LogHandlerOpenLog extends Handler implements LogHandlerUpdateIF {
 
 	private static class LHOLConfig implements LogHandlerConfigIF {

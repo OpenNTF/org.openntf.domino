@@ -75,7 +75,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
 import com.tinkerpop.frames.util.Validate;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings({ "rawtypes", "nls" })
 public class DConfiguration extends FramedGraphConfiguration implements org.openntf.domino.graph2.DConfiguration {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DConfiguration.class.getName());

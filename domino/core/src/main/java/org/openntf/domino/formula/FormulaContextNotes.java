@@ -53,6 +53,7 @@ public class FormulaContextNotes extends FormulaContext {
 	 *            the parameters are mapped to the field p1, p2 and so on
 	 * @return the value
 	 */
+	@SuppressWarnings("nls")
 	public ValueHolder evaluateNative(final String formula, final ValueHolder... params) {
 
 		Database db = getDatabase();
@@ -69,7 +70,7 @@ public class FormulaContextNotes extends FormulaContext {
 			// fill the document
 			for (int i = 0; i < params.length; i++) {
 				try {
-					tmpDoc.replaceItemValue("p" + (i + 1), params[i].toList());
+					tmpDoc.replaceItemValue("p" + (i + 1), params[i].toList()); //$NON-NLS-1$
 				} catch (EvaluateException e) {
 					return params[i];
 				}

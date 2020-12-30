@@ -50,7 +50,7 @@ public final class FileResource extends AbstractDesignFileResource implements or
 		super(database);
 
 		try {
-			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_fileresource.xml");
+			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_fileresource.xml"); //$NON-NLS-1$
 			loadDxl(is);
 			is.close();
 		} catch (IOException e) {

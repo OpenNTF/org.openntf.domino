@@ -46,11 +46,10 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
 
 import lotus.domino.NotesException;
 
-// TODO: Auto-generated Javadoc
-
 /**
  * The Class ViewEntry.
  */
+@SuppressWarnings("nls")
 public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry, View>
 		implements org.openntf.domino.ViewEntry {
 	@SuppressWarnings("unused")
@@ -65,7 +64,7 @@ public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotu
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
 				public Object run() throws Exception {
-					getParentViewMethod = lotus.domino.local.ViewEntry.class.getDeclaredMethod("getParentView", (Class<?>[]) null);
+					getParentViewMethod = lotus.domino.local.ViewEntry.class.getDeclaredMethod("getParentView", (Class<?>[]) null); //$NON-NLS-1$
 					getParentViewMethod.setAccessible(true);
 					return null;
 				}
@@ -686,13 +685,13 @@ public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotu
 	public String toJson(boolean compact) {
 		StringWriter sw = new StringWriter();
 		JsonWriter jw = new JsonWriter(sw, compact);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"); //$NON-NLS-1$
 		try {
 			jw.startObject();
-			jw.outStringProperty("@unid", getUniversalID());
-			jw.outStringProperty("@noteid", getNoteID());
-			jw.outStringProperty("@replicaid", getAncestorDatabase().getReplicaID());
-			jw.outStringProperty("@metaversalid", getMetaversalID());
+			jw.outStringProperty("@unid", getUniversalID()); //$NON-NLS-1$
+			jw.outStringProperty("@noteid", getNoteID()); //$NON-NLS-1$
+			jw.outStringProperty("@replicaid", getAncestorDatabase().getReplicaID()); //$NON-NLS-1$
+			jw.outStringProperty("@metaversalid", getMetaversalID()); //$NON-NLS-1$
 
 			boolean resetPreferDates = false;
 			if (!isPreferJavaDates()) {

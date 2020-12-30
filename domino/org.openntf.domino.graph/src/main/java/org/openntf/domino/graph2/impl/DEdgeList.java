@@ -133,7 +133,7 @@ public class DEdgeList implements org.openntf.domino.graph2.DEdgeList, Iterable<
 						t.printStackTrace();
 					}
 				} else {
-					System.out.println("TEMP DEBUG EdgeList didn't have a DEdge. It had a " + edge.getClass().getName());
+					System.out.println("TEMP DEBUG EdgeList didn't have a DEdge. It had a " + edge.getClass().getName()); //$NON-NLS-1$
 				}
 			}
 		} else {

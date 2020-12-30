@@ -23,7 +23,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(Likes.LABEL)
 public interface Likes extends DEdgeFrame {
-	public static final String LABEL = "likes";
+	public static final String LABEL = "likes"; //$NON-NLS-1$
 
 	@OutVertex
 	Liker getLiker();

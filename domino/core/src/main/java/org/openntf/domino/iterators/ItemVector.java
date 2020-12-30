@@ -37,6 +37,7 @@ import org.openntf.domino.utils.DominoUtils;
  * @author nfreeman
  * 
  */
+@SuppressWarnings("nls")
 public class ItemVector extends Vector<Item> {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ItemVector.class.getName());

@@ -85,7 +85,7 @@ public class FormulaMethodBinding extends MethodBindingEx {
 			ctx.setViewRoot(FacesUtil.getViewRoot(getComponent()));
 		}
 
-		final DominoDocument dominoDoc = (DominoDocument) ExtLibUtil.resolveVariable(ctx, "currentDocument");
+		final DominoDocument dominoDoc = (DominoDocument) ExtLibUtil.resolveVariable(ctx, "currentDocument"); //$NON-NLS-1$
 		Map<String, Object> dataMap = null;
 		if (dominoDoc instanceof Map) {
 			dataMap = (Map<String, Object>) dominoDoc;

@@ -30,7 +30,7 @@ import org.openntf.domino.schema.exceptions.ItemException;
 public class EmailType extends StringType {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(EmailType.class.getName());
-	public static final Pattern EMAIL_REGEX = Pattern.compile("\\\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,4}\\\\b",
+	public static final Pattern EMAIL_REGEX = Pattern.compile("\\\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,4}\\\\b", //$NON-NLS-1$
 			Pattern.CASE_INSENSITIVE);
 
 	EmailType() {
@@ -43,7 +43,7 @@ public class EmailType extends StringType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "Email Address";
+		return "Email Address"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

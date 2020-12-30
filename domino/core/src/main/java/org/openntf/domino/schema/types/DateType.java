@@ -40,7 +40,7 @@ public class DateType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "Date";
+		return "Date"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

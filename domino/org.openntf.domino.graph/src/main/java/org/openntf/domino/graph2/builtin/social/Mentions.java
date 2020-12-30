@@ -24,7 +24,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(Mentions.LABEL)
 public interface Mentions extends DEdgeFrame {
-	public static final String LABEL = "mentions";
+	public static final String LABEL = "mentions"; //$NON-NLS-1$
 
 	@OutVertex
 	public Socializer getWhoMentioned();

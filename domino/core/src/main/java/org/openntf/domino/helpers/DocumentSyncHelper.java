@@ -202,14 +202,14 @@ public class DocumentSyncHelper {
 		} else if (controlDoc.hasItem(Controls.TARGET_LOOKUP_VIEW.toString())) {
 			setTargetLookupView(controlDoc.getItemValueString(Controls.TARGET_LOOKUP_VIEW.toString()));
 		} else {
-			setTargetLookupView("TARGET_LOOKUP_VIEW");
+			setTargetLookupView("TARGET_LOOKUP_VIEW"); //$NON-NLS-1$
 		}
 		if (controlMap.containsKey(Controls.SOURCE_KEY_FORMULA)) {
 			setSourceKeyFormula(controlDoc.getItemValueString(controlMap.get(Controls.SOURCE_KEY_FORMULA)));
 		} else if (controlDoc.hasItem(Controls.SOURCE_KEY_FORMULA.toString())) {
 			setSourceKeyFormula(controlDoc.getItemValueString(Controls.SOURCE_KEY_FORMULA.toString()));
 		} else {
-			setSourceKeyFormula("SOURCE_KEY_FORMULA"); // this would be the name of the field on the source document used for the lookup
+			setSourceKeyFormula("SOURCE_KEY_FORMULA"); // this would be the name of the field on the source document used for the lookup //$NON-NLS-1$
 		}
 		if (controlMap.containsKey(Controls.STRATEGY)) {
 			setStrategy(Strategy.valueOf(controlDoc.getItemValueString(controlMap.get(Controls.STRATEGY))));
@@ -310,7 +310,7 @@ public class DocumentSyncHelper {
 	public void processSince(final Database sourceDb, final Date sinceDate, final String formName) {
 		DateTime dt = sourceDb.getAncestorSession().createDateTime(sinceDate);
 		DocumentCollection sourceCollection = sourceDb.getModifiedDocuments(dt, ModifiedDocClass.DATA);
-		sourceCollection.FTSearch("[Form] = \"" + formName + "\"");
+		sourceCollection.FTSearch("[Form] = \"" + formName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		process(sourceCollection);
 	}
 

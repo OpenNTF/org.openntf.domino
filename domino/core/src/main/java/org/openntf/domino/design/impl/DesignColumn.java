@@ -37,62 +37,62 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 
 	@Override
 	public boolean isResizable() {
-		return node_.getAttribute("resizable").equals("true");
+		return node_.getAttribute("resizable").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	public void setResizable(final boolean resizable) {
-		node_.setAttribute("resizable", String.valueOf(resizable));
+		node_.setAttribute("resizable", String.valueOf(resizable)); //$NON-NLS-1$
 	}
 
 	@Override
 	public boolean isSeparateMultipleValues() {
-		return node_.getAttribute("separatemultiplevalues").equals("true");
+		return node_.getAttribute("separatemultiplevalues").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	public void setSeparateMultipleValues(final boolean separateMultipleValues) {
-		node_.setAttribute("separatemultipleValues", String.valueOf(separateMultipleValues));
+		node_.setAttribute("separatemultipleValues", String.valueOf(separateMultipleValues)); //$NON-NLS-1$
 	}
 
 	@Override
 	public boolean isSortNoAccent() {
-		return node_.getAttribute("sortnoaccent").equals("true");
+		return node_.getAttribute("sortnoaccent").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	public void setSortNoAccent(final boolean sortNoAccent) {
-		node_.setAttribute("sortnoaccent", String.valueOf(sortNoAccent));
+		node_.setAttribute("sortnoaccent", String.valueOf(sortNoAccent)); //$NON-NLS-1$
 	}
 
 	@Override
 	public boolean isSortNoCase() {
-		return node_.getAttribute("sortnocase").equals("true");
+		return node_.getAttribute("sortnocase").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	public void setSortNoCase(final boolean sortNoCase) {
-		node_.setAttribute("sortnocase", String.valueOf(sortNoCase));
+		node_.setAttribute("sortnocase", String.valueOf(sortNoCase)); //$NON-NLS-1$
 	}
 
 	@Override
 	public boolean isShowAsLinks() {
-		return node_.getAttribute("showaslinks").equals("true");
+		return node_.getAttribute("showaslinks").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	public void setShowAsLinks(final boolean showAsLinks) {
-		node_.setAttribute("showaslinks", showAsLinks ? "true" : "false");
+		node_.setAttribute("showaslinks", showAsLinks ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	@Override
 	public String getItemName() {
-		return node_.getAttribute("itemname");
+		return node_.getAttribute("itemname"); //$NON-NLS-1$
 	}
 
 	@Override
 	public void setItemName(final String itemName) {
-		node_.setAttribute("itemname", itemName);
+		node_.setAttribute("itemname", itemName); //$NON-NLS-1$
 		if (StringUtil.isEmpty(getFormulaActual())) {
 			setFormula(itemName);
 		}
@@ -100,7 +100,7 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 
 	@Override
 	public SortOrder getSortOrder() {
-		String sort = node_.getAttribute("sort");
+		String sort = node_.getAttribute("sort"); //$NON-NLS-1$
 		if (sort == null || sort.isEmpty()) {
 			return SortOrder.NONE;
 		}
@@ -109,30 +109,30 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 
 	@Override
 	public void setSortOrder(final SortOrder sortOrder) {
-		node_.setAttribute("sort", sortOrder.toString().toLowerCase());
+		node_.setAttribute("sort", sortOrder.toString().toLowerCase()); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getTitle() {
-		XMLNode columnHeader = node_.selectSingleNode("columnheader");
+		XMLNode columnHeader = node_.selectSingleNode("columnheader"); //$NON-NLS-1$
 		if (columnHeader == null) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
-		return columnHeader.getAttribute("title");
+		return columnHeader.getAttribute("title"); //$NON-NLS-1$
 	}
 
 	@Override
 	public void setTitle(final String title) {
-		XMLNode columnHeader = node_.selectSingleNode("columnheader");
+		XMLNode columnHeader = node_.selectSingleNode("columnheader"); //$NON-NLS-1$
 		if (columnHeader == null) {
 			XMLNode firstChild = node_.getFirstChild();
 			if (firstChild != null) {
-				columnHeader = node_.insertChildElementBefore("columnheader", firstChild);
+				columnHeader = node_.insertChildElementBefore("columnheader", firstChild); //$NON-NLS-1$
 			} else {
-				columnHeader = node_.addChildElement("columnheader");
+				columnHeader = node_.addChildElement("columnheader"); //$NON-NLS-1$
 			}
 		}
-		columnHeader.setAttribute("title", title);
+		columnHeader.setAttribute("title", title); //$NON-NLS-1$
 	}
 
 	@Override
@@ -144,39 +144,39 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 
 	// This is used so that the DXL can remain accurate - empty column formulas are illegal
 	protected String getFormulaActual() {
-		XMLNode formulaNode = node_.selectSingleNode("code[@event='value']/formula");
+		XMLNode formulaNode = node_.selectSingleNode("code[@event='value']/formula"); //$NON-NLS-1$
 		if (formulaNode != null) {
 			return formulaNode.getTextContent();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override
 	public void setFormula(final String formula) {
-		XMLNode formulaNode = node_.selectSingleNode("code[@event='value']/formula");
+		XMLNode formulaNode = node_.selectSingleNode("code[@event='value']/formula"); //$NON-NLS-1$
 		if (formulaNode != null) {
 			formulaNode.setTextContent(formula);
 		} else {
-			XMLNode code = node_.addChildElement("code");
-			code.setAttribute("event", "value");
-			formulaNode = code.addChildElement("formula");
+			XMLNode code = node_.addChildElement("code"); //$NON-NLS-1$
+			code.setAttribute("event", "value"); //$NON-NLS-1$ //$NON-NLS-2$
+			formulaNode = code.addChildElement("formula"); //$NON-NLS-1$
 			formulaNode.setTextContent(formula);
 		}
 	}
 
 	@Override
 	public boolean isCategorized() {
-		return node_.getAttribute("categorized").equals("true");
+		return node_.getAttribute("categorized").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	public void setCategorized(final boolean isCategorized) {
-		node_.setAttribute("categorized", isCategorized ? "true" : "false");
+		node_.setAttribute("categorized", isCategorized ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	@Override
 	public boolean isResortable() {
-		String resort = node_.getAttribute("resort");
+		String resort = node_.getAttribute("resort"); //$NON-NLS-1$
 		if (resort == null || resort.isEmpty()) {
 			return false;
 		}
@@ -185,7 +185,7 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 
 	@Override
 	public ResortOrder getResortOrder() {
-		String resort = node_.getAttribute("resort");
+		String resort = node_.getAttribute("resort"); //$NON-NLS-1$
 		if (resort == null || resort.isEmpty()) {
 			return ResortOrder.NONE;
 		}
@@ -195,19 +195,19 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 	@Override
 	public void setResortOrder(final ResortOrder type) {
 		if (ResortOrder.NONE.equals(type)) {
-			node_.removeAttribute("resort");
+			node_.removeAttribute("resort"); //$NON-NLS-1$
 		}
-		node_.setAttribute("resort", type.toString().toLowerCase());
+		node_.setAttribute("resort", type.toString().toLowerCase()); //$NON-NLS-1$
 	}
 
 	@Override
 	public void removeResort() {
-		node_.removeAttribute("resort");
+		node_.removeAttribute("resort"); //$NON-NLS-1$
 	}
 
 	@Override
 	public boolean isDeferIndexCreation() {
-		String deferIndex = node_.getAttribute("deferindexcreation");
+		String deferIndex = node_.getAttribute("deferindexcreation"); //$NON-NLS-1$
 		if (deferIndex == null || deferIndex.isEmpty()) {
 			return false;
 		}
@@ -217,15 +217,15 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 	@Override
 	public void setDeferIndexCreation(final boolean deferIndex) {
 		if (!deferIndex) {
-			node_.removeAttribute("deferindexcreation");
+			node_.removeAttribute("deferindexcreation"); //$NON-NLS-1$
 		} else {
-			node_.setAttribute("deferindexcreation", "true");
+			node_.setAttribute("deferindexcreation", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
 	@Override
 	public boolean hasSecondarySortColumn() {
-		String resort2Column = node_.getAttribute("resort2column");
+		String resort2Column = node_.getAttribute("resort2column"); //$NON-NLS-1$
 		if (resort2Column == null || resort2Column.isEmpty()) {
 			return false;
 		}
@@ -234,13 +234,13 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 
 	@Override
 	public void removeSecondarySortColumn() {
-		node_.removeAttribute("resort2column");
-		node_.removeAttribute("resort2");
+		node_.removeAttribute("resort2column"); //$NON-NLS-1$
+		node_.removeAttribute("resort2"); //$NON-NLS-1$
 	}
 
 	@Override
 	public int getSecondarySortColumn() {
-		String resort2Column = node_.getAttribute("resort2column");
+		String resort2Column = node_.getAttribute("resort2column"); //$NON-NLS-1$
 		if (resort2Column == null || resort2Column.isEmpty()) {
 			return Integer.MIN_VALUE;
 		}
@@ -249,13 +249,13 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 
 	@Override
 	public void setSecondarySortColumn(final int columnNo) {
-		node_.setAttribute("resort2column", Integer.toString(columnNo));
-		node_.setAttribute("resort2", SortOrder.ASCENDING.toString().toLowerCase());
+		node_.setAttribute("resort2column", Integer.toString(columnNo)); //$NON-NLS-1$
+		node_.setAttribute("resort2", SortOrder.ASCENDING.toString().toLowerCase()); //$NON-NLS-1$
 	}
 
 	@Override
 	public SortOrder getSecondaryResortOrder() {
-		String sort = node_.getAttribute("resort2");
+		String sort = node_.getAttribute("resort2"); //$NON-NLS-1$
 		if (sort == null || sort.isEmpty()) {
 			return SortOrder.NONE;
 		}
@@ -264,7 +264,7 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 
 	@Override
 	public void setSecondaryResortOrder(final SortOrder resortOrder) {
-		node_.setAttribute("resort2", resortOrder.toString().toLowerCase());
+		node_.setAttribute("resort2", resortOrder.toString().toLowerCase()); //$NON-NLS-1$
 
 	}
 }

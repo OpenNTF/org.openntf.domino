@@ -31,6 +31,7 @@ import org.openntf.domino.annotations.Incomplete;
  * @author Nathan T. Freeman
  */
 @Incomplete
+@SuppressWarnings("nls")
 public class DominoExecutor extends AbstractDominoExecutor {
 	private static final Logger log_ = Logger.getLogger(DominoExecutor.class.getName());
 

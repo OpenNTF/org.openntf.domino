@@ -29,11 +29,12 @@ import com.ibm.xsp.component.UIViewRootEx;
 import com.ibm.xsp.extlib.util.ExtLibUtil;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 
+@SuppressWarnings("nls")
 public enum MsgUtilXsp {
 	;
 
 	/*----------------------------------------------------------------------------*/
-	public static final String lXSPMsgPkg = "org.openntf.domino.xsp.i18n";
+	public static final String lXSPMsgPkg = "org.openntf.domino.xsp.i18n"; //$NON-NLS-1$
 
 	/*----------------------------------------------------------------------------*/
 	/**
@@ -82,13 +83,13 @@ public enum MsgUtilXsp {
 	 * @return
 	 */
 	private static ParseMsgPars inspectMsgPars(final FacesContext fc, final UIComponent uiComponent, final String msgPar) {
-		String[] parts = msgPar.split("@");
+		String[] parts = msgPar.split("@"); //$NON-NLS-1$
 		if (parts.length > 2)
 			return null;
 		ParseMsgPars ret = new ParseMsgPars();
 		if (parts.length == 2)
 			ret.iDocName = parts[1];
-		parts = parts[0].split("/");
+		parts = parts[0].split("/"); //$NON-NLS-1$
 		if (parts.length > 2)
 			return null;
 		ret.iKey = parts[parts.length - 1];

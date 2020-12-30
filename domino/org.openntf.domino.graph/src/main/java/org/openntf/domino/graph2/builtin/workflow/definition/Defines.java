@@ -22,7 +22,7 @@ import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 
 public interface Defines extends DEdgeFrame {
-	public final static String LABEL_FLOWABLEDEFINES = "FlowDefines";
+	public final static String LABEL_FLOWABLEDEFINES = "FlowDefines"; //$NON-NLS-1$
 
 	@OutVertex
 	public TaskDefinition getTaskDefinition();

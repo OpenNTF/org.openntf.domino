@@ -30,6 +30,7 @@ import org.openntf.formula.FunctionSet;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.annotation.ParamCount;
 
+@SuppressWarnings("nls")
 public enum DateTimeFunctions {
 	;
 
@@ -49,19 +50,19 @@ public enum DateTimeFunctions {
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(0)
 	public static ValueHolder atToday(final FormulaContext ctx) {
-		return todayTomorrYester(ctx, "TODAY");
+		return todayTomorrYester(ctx, "TODAY"); //$NON-NLS-1$
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(0)
 	public static ValueHolder atTomorrow(final FormulaContext ctx) {
-		return todayTomorrYester(ctx, "TOMORROW");
+		return todayTomorrYester(ctx, "TOMORROW"); //$NON-NLS-1$
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(0)
 	public static ValueHolder atYesterday(final FormulaContext ctx) {
-		return todayTomorrYester(ctx, "YESTERDAY");
+		return todayTomorrYester(ctx, "YESTERDAY"); //$NON-NLS-1$
 	}
 
 	/*----------------------------------------------------------------------------*/

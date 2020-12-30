@@ -51,6 +51,7 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 		return true; // so that's why we force RAW format
 	}
 
+	@SuppressWarnings("nls")
 	protected ScriptLibraryLS(final Database database) {
 		super(database);
 		throw new UnsupportedOperationException("There is still something todo!");

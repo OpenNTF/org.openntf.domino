@@ -21,7 +21,7 @@ import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 
 public interface Finishes extends DEdgeFrame {
-	public final static String LABEL_FINISHES = "finishes";
+	public final static String LABEL_FINISHES = "finishes"; //$NON-NLS-1$
 
 	@OutVertex
 	public TaskDefinition getTaskDefinition();

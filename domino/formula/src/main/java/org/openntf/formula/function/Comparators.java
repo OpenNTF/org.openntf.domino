@@ -38,6 +38,7 @@ import org.openntf.formula.impl.ParameterCollectionObject;
  * @author Roland Praml, Foconis AG
  * 
  */
+@SuppressWarnings("nls")
 public class Comparators extends OperatorsAbstract {
 
 	public static abstract class Matcher {

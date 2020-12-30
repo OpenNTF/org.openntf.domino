@@ -62,12 +62,12 @@ public final class JarResource extends AbstractDesignFileResource implements org
 			Map<String, byte[]> classData = new HashMap<String, byte[]>();
 			while (entry != null) {
 				String name = entry.getName();
-				if (name.endsWith(".class")) {
+				if (name.endsWith(".class")) { //$NON-NLS-1$
 					ByteArrayOutputStream bos = new ByteArrayOutputStream();
 					while (jis.available() > 0) {
 						bos.write(jis.read());
 					}
-					classData.put(DominoUtils.filePathToJavaBinaryName(name, "/"), bos.toByteArray());
+					classData.put(DominoUtils.filePathToJavaBinaryName(name, "/"), bos.toByteArray()); //$NON-NLS-1$
 				}
 
 				entry = jis.getNextJarEntry();

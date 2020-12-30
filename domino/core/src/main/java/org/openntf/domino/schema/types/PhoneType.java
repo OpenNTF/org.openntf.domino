@@ -43,7 +43,7 @@ public class PhoneType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "Phone Number";
+		return "Phone Number"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

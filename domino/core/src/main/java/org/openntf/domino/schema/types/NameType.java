@@ -39,7 +39,7 @@ public class NameType extends StringType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "Name";
+		return "Name"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -47,7 +47,7 @@ public class NameType extends StringType {
 	 */
 	@Override
 	public void setItemToDefault(final Item item) {
-		item.setValueString("");
+		item.setValueString(""); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -45,7 +45,7 @@ import com.ibm.xsp.application.events.SessionListener;
  * @author Nathan T. Freeman
  * 
  */
-@SuppressWarnings("deprecation")
+@SuppressWarnings({ "deprecation", "nls" })
 public enum NSA implements ApplicationListener, SessionListener {
 	INSTANCE;
 

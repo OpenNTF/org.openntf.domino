@@ -40,7 +40,7 @@ public class DecimalType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "Decimal Number";
+		return "Decimal Number"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

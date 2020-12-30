@@ -1547,7 +1547,7 @@ implements org.openntf.domino.ViewNavigator {
 		if (ve != null) {
 			startingPosition_ = ve.getPosition();
 		} else {
-			startingPosition_ = "";
+			startingPosition_ = ""; //$NON-NLS-1$
 		}
 	}
 

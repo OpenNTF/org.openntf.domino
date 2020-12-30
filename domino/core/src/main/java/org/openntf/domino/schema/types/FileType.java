@@ -40,7 +40,7 @@ public class FileType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "Files";
+		return "Files"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

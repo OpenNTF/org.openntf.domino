@@ -35,6 +35,7 @@ import org.openntf.formula.parse.ParseException;
  * @author Roland Praml, Foconis AG
  * 
  */
+@SuppressWarnings("nls")
 public class UserDefinedFunction extends AtFunction {
 	private String functionName;
 	private SimpleNode function;

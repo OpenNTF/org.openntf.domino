@@ -25,6 +25,7 @@ import org.openntf.domino.big.NoteCoordinate;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 
+@SuppressWarnings("nls")
 public class DEdgeIterable implements org.openntf.domino.graph2.DEdgeIterable {
 	private org.openntf.domino.graph2.impl.DElementIterable delegate_;
 

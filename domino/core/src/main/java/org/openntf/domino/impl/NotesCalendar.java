@@ -400,11 +400,12 @@ public class NotesCalendar extends BaseThreadSafe<org.openntf.domino.NotesCalend
 	 * @see org.openntf.domino.NotesCalendar#getApptunidFromUID(java.lang.String, boolean)
 	 */
 	@Override
+	@SuppressWarnings("nls")
 	public String getApptunidFromUID(final String arg0, final boolean arg1) {
 		String result = null;
 		Class<?> klazz = getDelegate().getClass();
 		try {
-			Method chkMethod = klazz.getMethod("getApptunidFromUID", String.class, Boolean.TYPE);
+			Method chkMethod = klazz.getMethod("getApptunidFromUID", String.class, Boolean.TYPE); //$NON-NLS-1$
 			try {
 				result = (String) chkMethod.invoke(getDelegate(), arg0, arg1);
 			} catch (IllegalArgumentException e) {

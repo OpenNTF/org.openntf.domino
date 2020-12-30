@@ -40,9 +40,9 @@ import org.openntf.domino.extmgr.events.UnknownEMEvent;
 
 public class ExtensionManagerBridge {
 
-	private static final String EM_EVENT_PREFIX = "[[event:"; // $NON-NLS-1$
-	private static final String EM_NSFHOOKEVENT_PREFIX = "[[dbhookevent:"; // $NON-NLS-1$
-	private static final String EM_EVENT_POSTFIX = "]];";
+	private static final String EM_EVENT_PREFIX = "[[event:"; //$NON-NLS-1$
+	private static final String EM_NSFHOOKEVENT_PREFIX = "[[dbhookevent:"; //$NON-NLS-1$
+	private static final String EM_EVENT_POSTFIX = "]];"; //$NON-NLS-1$
 
 	private static final Map<EMEventIds, Class<?>> eventsMap = new EnumMap<EMEventIds, Class<?>>(EMEventIds.class);
 

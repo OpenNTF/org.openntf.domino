@@ -54,8 +54,8 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 	@Override
 	public byte[] getFileData() {
 		if (enforceRawFormat())
-			return getFileDataRaw("$JavaScriptLibrary");
-		return getDxl().selectSingleNode("//code/javascript").getText().getBytes();
+			return getFileDataRaw("$JavaScriptLibrary"); //$NON-NLS-1$
+		return getDxl().selectSingleNode("//code/javascript").getText().getBytes(); //$NON-NLS-1$
 	}
 
 	//	@Override

@@ -98,7 +98,7 @@ public enum XSPUtil {
 	 */
 	public static Database getCurrentDatabase() {
 		try {
-			lotus.domino.Database db = (lotus.domino.Database) resolveVariable("database");
+			lotus.domino.Database db = (lotus.domino.Database) resolveVariable("database"); //$NON-NLS-1$
 			if (db instanceof org.openntf.domino.Database) {
 				return (org.openntf.domino.Database) db;
 			} else {
@@ -157,13 +157,13 @@ public enum XSPUtil {
 	@Deprecated
 	public static Object resolveVariable(final String varName) throws Exception {
 		// TODO RPr move to Xpage-Plugin
-		Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext", true, Factory.getClassLoader());
-		Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
-		Method getApplication = facesContextClass.getMethod("getApplication");
-		Class<?> applicationClass = Class.forName("javax.faces.application.Application", true, Factory.getClassLoader());
-		Method getVariableResolver = applicationClass.getMethod("getVariableResolver");
-		Class<?> variableResolverClass = Class.forName("javax.faces.el.VariableResolver", true, Factory.getClassLoader());
-		Method resolveVariable = variableResolverClass.getMethod("resolveVariable", facesContextClass, String.class);
+		Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext", true, Factory.getClassLoader()); //$NON-NLS-1$
+		Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance"); //$NON-NLS-1$
+		Method getApplication = facesContextClass.getMethod("getApplication"); //$NON-NLS-1$
+		Class<?> applicationClass = Class.forName("javax.faces.application.Application", true, Factory.getClassLoader()); //$NON-NLS-1$
+		Method getVariableResolver = applicationClass.getMethod("getVariableResolver"); //$NON-NLS-1$
+		Class<?> variableResolverClass = Class.forName("javax.faces.el.VariableResolver", true, Factory.getClassLoader()); //$NON-NLS-1$
+		Method resolveVariable = variableResolverClass.getMethod("resolveVariable", facesContextClass, String.class); //$NON-NLS-1$
 
 		Object facesContext = getCurrentInstance.invoke(null);
 		Object application = getApplication.invoke(facesContext);

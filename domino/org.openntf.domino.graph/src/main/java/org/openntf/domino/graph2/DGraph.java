@@ -26,7 +26,7 @@ import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "nls" })
 public interface DGraph
 		extends com.tinkerpop.blueprints.Graph, com.tinkerpop.blueprints.MetaGraph, com.tinkerpop.blueprints.TransactionalGraph {
 	public static enum Utils {

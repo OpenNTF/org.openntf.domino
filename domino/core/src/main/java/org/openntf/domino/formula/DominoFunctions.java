@@ -63,6 +63,7 @@ public enum DominoFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
+	@SuppressWarnings("nls")
 	@ParamCount(2)
 	public static ValueHolder atGetDocField(final FormulaContextNotes ctx, final ValueHolder[] params) {
 		Database db = ctx.getDatabase();
@@ -80,6 +81,7 @@ public enum DominoFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
+	@SuppressWarnings("nls")
 	@ParamCount(3)
 	public static ValueHolder atSetDocField(final FormulaContextNotes ctx, final ValueHolder[] params) {
 		Database db = ctx.getDatabase();

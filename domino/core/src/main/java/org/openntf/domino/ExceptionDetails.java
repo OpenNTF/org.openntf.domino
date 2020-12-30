@@ -57,7 +57,7 @@ public interface ExceptionDetails {
 
 		@Override
 		public String toString() {
-			return sourceCls.getName() + "=" + msg;
+			return sourceCls.getName() + "=" + msg; //$NON-NLS-1$
 		}
 
 		public Class<?> getSource() {

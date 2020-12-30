@@ -22,6 +22,7 @@ package org.openntf.formula;
  * @author Roland Praml, Foconis AG
  * 
  */
+@SuppressWarnings("nls")
 public class EvaluateException extends Exception {
 	private static final long serialVersionUID = 1L;
 
@@ -34,7 +35,7 @@ public class EvaluateException extends Exception {
 	}
 
 	private static String initialise(final int codeLine, final int codeColumn, final Throwable cause) {
-		String eol = System.getProperty("line.separator", "\n");
+		String eol = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String retval = "Encountered \"";
 		if (cause != null) {

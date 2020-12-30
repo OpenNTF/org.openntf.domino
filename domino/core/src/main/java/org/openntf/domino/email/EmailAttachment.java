@@ -49,7 +49,7 @@ public class EmailAttachment implements IEmailAttachment {
 	}
 
 	private String atUnique() {
-		return Factory.getSession(SessionType.CURRENT).evaluate("@Unique").toString();
+		return Factory.getSession(SessionType.CURRENT).evaluate("@Unique").toString(); //$NON-NLS-1$
 	}
 
 	/**

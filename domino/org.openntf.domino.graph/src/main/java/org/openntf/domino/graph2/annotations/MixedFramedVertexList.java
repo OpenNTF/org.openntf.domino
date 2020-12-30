@@ -35,7 +35,7 @@ import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.gremlin.Tokens.T;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked", "nls"})
 public class MixedFramedVertexList /*extends FramedVertexIterable<T>*/ implements List {
 	public static class MixedFramedListIterator implements ListIterator {
 		//		    protected final Direction direction_;

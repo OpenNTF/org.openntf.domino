@@ -20,39 +20,57 @@ import java.util.HashSet;
 import java.util.Set;
 
 public enum DesignFlagPattern {
-	V4SEARCHBAR("(+Qq-Bst5nmz*"), SEARCHBAR("(+QM-st5nmz*"), VIEWFORM("-FQMUGXWy#i:|@0nK;g~%z^"), VIEWFORM_MENUABLE(
-			"-FQMUGXWy#i:|@40nK;g~%z^}"), VIEWFORM_ALL_VERSIONS("-FQMUGXWy#i:|@K;g~%z^}"), FORM("-FQMUGXWy#i:|@0nK;g~%z^"), FORM_OR_SIMILAR(
-					"-FMGXy#i=:|@0K;g~%z^"), FORM_OR_PAGE("-FQMUGXy#i:|@0nK;g~%z^"), FORM_MENUABLE("-FQMUGXWy#i:|@40nK;g~%z^}"), FORM_ALL_VERSIONS(
-							"-FQMUGXWy#i:|@K;g~%z^}"), PRINTFORM_ALL_VERSIONS("+?"), FIELD("-FQMUGXWy#i@0nK;g~%z^"), FIELD_ALL_VERSIONS(
-									"-FQMUGXWy#i@K;g~%z^}"), TOOLSRUNMACRO("-QXMBESIst5nmz{"), AGENTSLIST("-QXstmz{"), PASTEAGENTS("+I"), SCRIPTLIB("+sh."), SCRIPTLIB_LS(
-			"(+s-jh.*"), SCRIPTLIB_JAVA("*sj"), SCRIPTLIB_JS("+h"), SCRIPTLIB_SERVER_JS("+."), DATABASESCRIPT("+t"), SUBFORM("(+U-40n*"), SUBFORM_DESIGN(
-			"(+U-40*"), SUBFORM_ALL_VERSIONS("+U"), DBRUNMACRO("+BS"), COMPOSE("-C40n"), NOHIDDENNOTES("-n"), NOHIDEDENWEB("-w"), QUERYBYFORM(
-															"-DU40gnyz{:|"), PRESERVE("+P"), SUBADD("(+-40*UA"), SUBNEW("(+-40*UN"), VIEW("-FG40n^"), VIEWMENUABLE(
-																	"-FQMUGXWy#i@40nK;g~%z^}"), VIEW_ALL_VERSIONS("-FG^"), VIEW_DESIGN("-FG40^"), NOTHIDDEN("-40n"), FOLDER("(+-04n*F"), FOLDER_DESIGN(
-																			"(+-04*F"), FOLDER_ALL_VERSIONS("*F"), CALENDAR("*c"), SHAREDVIEWS("-FGV^40n"), SHAREDVIEWSFOLDERS("-G^V40p"), SHAREDWEBVIEWS(
-			"-FGV40wp^"), SHAREDWEBVIEWSFOLDERS("-GV40wp^"), VIEWS_AND_FOLDERS("-G40n^"), VIEWS_AND_FOLDERS_DESIGN("-G40^"), SHARED_COLS(
-			"(+-*^"), VIEWMAP("(+-04n*G"), VIEWMAP_ALL_VERSIONS("*G"), VIEWMAPWEB("(+-04w*G"), VIEWMAP_DESIGN("(+-04*G"), WEBPAGE("(+-*W"), WEBPAGE_NOTES(
-			"(+W-n*"), WEBPAGE_WEB("(+W-w*"), OTHER_DLG("(+-04n*H"), CATEGORIZED_VIEW("(+-04n*T"), DEFAULT_DESIGN("+d"), FRAMESET("(+-*#"), FRAMESET_NOTES(
-			"(+#-n*"), FRAMESET_WEB("(+#-w*"), SITEMAP("+m"), SITEMAP_NOTES("(+m-n*"), SITEMAP_WEB("(+m-w*"), IMAGE_RESOURCE("+i"), IMAGE_RES_NOTES(
-			"(+i-n~*"), IMAGE_RES_WEB("(+i-w~*"), IMAGE_WELL_RESOURCE("(+-*iv"), IMAGE_WELL_NOTES("(+-n*iv"), IMAGE_WELL_WEB("(+-w*iv"), JAVAFILE(
-			"(+-*g["), JAVA_RESOURCE("+@"), JAVA_RESOURCE_NOTES("(+@-n*"), JAVA_RESOURCE_WEB("(+@-w*"), XSPPAGE("*gK"), XSPPAGE_WEB(
-																																	"(+-w*gK"), XSPPAGE_NOTES("(+-n*gK"), XSPPAGE_NOPROPS("(+-2*gK"), NOPROPS_WEB("(+-2w*gK"), NOPROPS_NOTES("(+-2n*gK"), XSPCC(
-																																			"*g;"), XSPCC_WEB("(+-w*g;"), XSPCC_NOTES("(+-n*g;"), DATA_CONNECTION_RESOURCE("+k"), DB2ACCESSVIEW("+z"), STYLE_SHEET_RESOURCE(
-																																					"+="), STYLE_SHEETS_NOTES("(+=-n*"), STYLE_SHEETS_WEB("(+=-w*"), FILE("+g-K[];`,"), FILE_DL("(+g-~K[];`,*"), FILE_NOTES(
-			"(+g-K[];n`,*"), FILE_WEB("(+g-K[];w`,*"), HTMLFILES("(+-*g>"), HTMLFILES_NOTES("(+-n*g>"), HTMLFILES_WEB("(+-w*g>"), FILE_ELEMS(
-			"(+gi|=-/[],*"), SERVLET("+z"), SERVLET_NOTES("(+z-n*"), SERVLET_WEB("(+z-w*"), WEBSERVICE("+{"), JAVA_WEBSERVICE("(+Jj-*{"), LS_WEBSERVICE(
-			"*{L"), JSP("(+-*g<"), STYLEKIT("(+-*g`"), STYLEKIT_NOTES("(+-n*g`"), STYLEKIT_WEB("(+-w*g`"), WIDGET("(+-*g_"), WIDGET_NOTES(
-																																													"(+-n*g_"), WEDGET_WEB("(+-w*g_"), SACTIONS_DESIGN("+y"), SACTIONS_WEB("(+-0*y"), SACTIONS_NOTES("(+-0*y"), COMPDEF("+:"), COMPAPP(
-																																															"+|"), NONWEB("+w80stVXp^"), NONWEB_EXCLUDE("-w80stVXp^"), AGENTSWEB("(+-QXstmz{*"), AGNTORWEBSVCWEB("(+-QXstmz*"), WEBSERVICEWEB(
-																																																	"+{"), FORMSWEB("-U#Wi@y:|"), SUBFORMSWEB("+U"), FRAMESETSWEB("+#"), PAGESWEB("+W"), VIEWSWEB("-G"), NAVIGATORSWEB("+G"), SHAREDFIELDSWEB(
-																																																			"*"), ALLWEB("*"), NO_FILERES_DIRS("-/"), FIRSTPATTERNCHAR("(+-*"), WEBHYBRIDDB("+%");
+	V4SEARCHBAR("(+Qq-Bst5nmz*"), SEARCHBAR("(+QM-st5nmz*"), VIEWFORM("-FQMUGXWy#i:|@0nK;g~%z^"), VIEWFORM_MENUABLE( //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"-FQMUGXWy#i:|@40nK;g~%z^}"), //$NON-NLS-1$
+	VIEWFORM_ALL_VERSIONS("-FQMUGXWy#i:|@K;g~%z^}"), FORM("-FQMUGXWy#i:|@0nK;g~%z^"), FORM_OR_SIMILAR( //$NON-NLS-1$ //$NON-NLS-2$
+			"-FMGXy#i=:|@0K;g~%z^"), //$NON-NLS-1$
+	FORM_OR_PAGE("-FQMUGXy#i:|@0nK;g~%z^"), FORM_MENUABLE("-FQMUGXWy#i:|@40nK;g~%z^}"), FORM_ALL_VERSIONS( //$NON-NLS-1$ //$NON-NLS-2$
+			"-FQMUGXWy#i:|@K;g~%z^}"), //$NON-NLS-1$
+	PRINTFORM_ALL_VERSIONS("+?"), FIELD("-FQMUGXWy#i@0nK;g~%z^"), FIELD_ALL_VERSIONS( //$NON-NLS-1$ //$NON-NLS-2$
+			"-FQMUGXWy#i@K;g~%z^}"), //$NON-NLS-1$
+	TOOLSRUNMACRO("-QXMBESIst5nmz{"), AGENTSLIST("-QXstmz{"), PASTEAGENTS("+I"), SCRIPTLIB("+sh."), SCRIPTLIB_LS( //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"(+s-jh.*"), //$NON-NLS-1$
+	SCRIPTLIB_JAVA("*sj"), SCRIPTLIB_JS("+h"), SCRIPTLIB_SERVER_JS("+."), DATABASESCRIPT("+t"), SUBFORM("(+U-40n*"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	SUBFORM_DESIGN("(+U-40*"), //$NON-NLS-1$
+	SUBFORM_ALL_VERSIONS("+U"), DBRUNMACRO("+BS"), COMPOSE("-C40n"), NOHIDDENNOTES("-n"), NOHIDEDENWEB("-w"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	QUERYBYFORM("-DU40gnyz{:|"), //$NON-NLS-1$
+	PRESERVE("+P"), SUBADD("(+-40*UA"), SUBNEW("(+-40*UN"), VIEW("-FG40n^"), VIEWMENUABLE( //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"-FQMUGXWy#i@40nK;g~%z^}"), //$NON-NLS-1$
+	VIEW_ALL_VERSIONS("-FG^"), VIEW_DESIGN("-FG40^"), NOTHIDDEN("-40n"), FOLDER("(+-04n*F"), FOLDER_DESIGN( //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"(+-04*F"), //$NON-NLS-1$
+	FOLDER_ALL_VERSIONS("*F"), CALENDAR("*c"), SHAREDVIEWS("-FGV^40n"), SHAREDVIEWSFOLDERS("-G^V40p"), SHAREDWEBVIEWS( //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"-FGV40wp^"), //$NON-NLS-1$
+	SHAREDWEBVIEWSFOLDERS("-GV40wp^"), VIEWS_AND_FOLDERS("-G40n^"), VIEWS_AND_FOLDERS_DESIGN("-G40^"), SHARED_COLS( //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"(+-*^"), //$NON-NLS-1$
+	VIEWMAP("(+-04n*G"), VIEWMAP_ALL_VERSIONS("*G"), VIEWMAPWEB("(+-04w*G"), VIEWMAP_DESIGN("(+-04*G"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	WEBPAGE("(+-*W"), WEBPAGE_NOTES( //$NON-NLS-1$
+			"(+W-n*"), //$NON-NLS-1$
+	WEBPAGE_WEB("(+W-w*"), OTHER_DLG("(+-04n*H"), CATEGORIZED_VIEW("(+-04n*T"), DEFAULT_DESIGN("+d"), FRAMESET("(+-*#"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	FRAMESET_NOTES("(+#-n*"), //$NON-NLS-1$
+	FRAMESET_WEB("(+#-w*"), SITEMAP("+m"), SITEMAP_NOTES("(+m-n*"), SITEMAP_WEB("(+m-w*"), IMAGE_RESOURCE("+i"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	IMAGE_RES_NOTES("(+i-n~*"), //$NON-NLS-1$
+	IMAGE_RES_WEB("(+i-w~*"), IMAGE_WELL_RESOURCE("(+-*iv"), IMAGE_WELL_NOTES("(+-n*iv"), IMAGE_WELL_WEB("(+-w*iv"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	JAVAFILE("(+-*g["), //$NON-NLS-1$
+	JAVA_RESOURCE("+@"), JAVA_RESOURCE_NOTES("(+@-n*"), JAVA_RESOURCE_WEB("(+@-w*"), XSPPAGE("*gK"), XSPPAGE_WEB( //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"(+-w*gK"), //$NON-NLS-1$
+	XSPPAGE_NOTES("(+-n*gK"), XSPPAGE_NOPROPS("(+-2*gK"), NOPROPS_WEB("(+-2w*gK"), NOPROPS_NOTES("(+-2n*gK"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	XSPCC("*g;"), XSPCC_WEB("(+-w*g;"), XSPCC_NOTES("(+-n*g;"), DATA_CONNECTION_RESOURCE("+k"), DB2ACCESSVIEW("+z"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	STYLE_SHEET_RESOURCE("+="), STYLE_SHEETS_NOTES("(+=-n*"), STYLE_SHEETS_WEB("(+=-w*"), FILE("+g-K[];`,"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	FILE_DL("(+g-~K[];`,*"), FILE_NOTES("(+g-K[];n`,*"), FILE_WEB("(+g-K[];w`,*"), HTMLFILES("(+-*g>"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	HTMLFILES_NOTES("(+-n*g>"), HTMLFILES_WEB("(+-w*g>"), FILE_ELEMS("(+gi|=-/[],*"), SERVLET("+z"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	SERVLET_NOTES("(+z-n*"), SERVLET_WEB("(+z-w*"), WEBSERVICE("+{"), JAVA_WEBSERVICE("(+Jj-*{"), LS_WEBSERVICE("*{L"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	JSP("(+-*g<"), STYLEKIT("(+-*g`"), STYLEKIT_NOTES("(+-n*g`"), STYLEKIT_WEB("(+-w*g`"), WIDGET("(+-*g_"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	WIDGET_NOTES("(+-n*g_"), WEDGET_WEB("(+-w*g_"), SACTIONS_DESIGN("+y"), SACTIONS_WEB("(+-0*y"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	SACTIONS_NOTES("(+-0*y"), COMPDEF("+:"), COMPAPP("+|"), NONWEB("+w80stVXp^"), NONWEB_EXCLUDE("-w80stVXp^"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	AGENTSWEB("(+-QXstmz{*"), AGNTORWEBSVCWEB("(+-QXstmz*"), WEBSERVICEWEB("+{"), FORMSWEB("-U#Wi@y:|"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	SUBFORMSWEB("+U"), FRAMESETSWEB("+#"), PAGESWEB("+W"), VIEWSWEB("-G"), NAVIGATORSWEB("+G"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	SHAREDFIELDSWEB("*"), ALLWEB("*"), NO_FILERES_DIRS("-/"), FIRSTPATTERNCHAR("(+-*"), WEBHYBRIDDB("+%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 
 	private final String value_;
 	private final Set<Character> any_;
 	private final Set<Character> none_;
 	private final Set<Character> all_;
 
-	@SuppressWarnings("null")
 	private DesignFlagPattern(final String value) {
 		value_ = value;
 

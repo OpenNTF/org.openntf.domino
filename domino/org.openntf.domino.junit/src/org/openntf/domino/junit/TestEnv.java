@@ -19,6 +19,7 @@ import lotus.domino.Session;
 
 import com.ibm.commons.util.StringUtil;
 
+@SuppressWarnings("nls")
 public enum TestEnv {
 	;
 	/** The username of the master session */

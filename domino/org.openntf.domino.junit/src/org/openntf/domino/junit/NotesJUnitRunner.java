@@ -26,6 +26,7 @@ import org.junit.runners.model.InitializationError;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.Factory;
 
+@SuppressWarnings("nls")
 public class NotesJUnitRunner extends AbstractJUnitRunner {
 	private lotus.domino.Session mastersession;
 

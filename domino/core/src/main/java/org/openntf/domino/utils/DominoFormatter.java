@@ -25,10 +25,10 @@ import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DominoFormatter.
  */
+@SuppressWarnings("nls")
 public class DominoFormatter extends ThreadLocal<Object> implements Serializable {
 	private static final long serialVersionUID = 1L;
 

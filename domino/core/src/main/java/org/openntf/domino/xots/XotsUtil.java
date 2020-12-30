@@ -26,6 +26,7 @@ import org.openntf.domino.xots.Tasklet.Interface;
 
 import com.ibm.commons.util.StringUtil;
 
+@SuppressWarnings("nls")
 public enum XotsUtil {
 	;
 	/**

@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 import org.openntf.domino.DocumentCollection;
 
+@SuppressWarnings("nls")
 public class DocumentCollectionIterator implements Iterator<org.openntf.domino.Document> {
 	private final org.openntf.domino.DocumentCollection documentCollection_;
 

@@ -40,19 +40,16 @@ import com.ibm.xsp.model.domino.wrapped.DominoDocument;
  * more control over some actions. Especially we want to replace the {@link DominoDocument} with our {@link OpenntfDominoDocument}
  * 
  */
+@SuppressWarnings("nls")
 public class OpenntfDominoDocumentData extends DominoDocumentData {
 	private static Method openDatabaseMethod;
 
 	static {
 		try {
-			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				// thanks for making this private :)
-				@Override
-				public Object run() throws Exception {
-					openDatabaseMethod = DominoDocumentData.class.getDeclaredMethod("openDatabase", (Class<?>[]) null);
-					openDatabaseMethod.setAccessible(true);
-					return null;
-				}
+			AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
+				openDatabaseMethod = DominoDocumentData.class.getDeclaredMethod("openDatabase", (Class<?>[]) null);
+				openDatabaseMethod.setAccessible(true);
+				return null;
 			});
 		} catch (Exception e) {
 			org.openntf.domino.utils.DominoUtils.handleException(e);
@@ -78,7 +75,6 @@ public class OpenntfDominoDocumentData extends DominoDocumentData {
 	/**
 	 * Invoked if you call a xpage.xsp without a document ID
 	 */
-	@SuppressWarnings("nls")
 	@Override
 	public DocumentDataContainer doNewDocument(final FacesContext context) throws FacesExceptionEx {
 		try {

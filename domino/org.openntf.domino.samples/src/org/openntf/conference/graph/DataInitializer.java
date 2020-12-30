@@ -39,6 +39,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedTransactionalGraph;
 import com.tinkerpop.frames.VertexFrame;
 
+@SuppressWarnings("nls")
 public class DataInitializer implements Runnable {
 	private long marktime;
 	private static final String SRC_DATA_PATH = "OpenNTF Downloads/sphere2015.nsf";

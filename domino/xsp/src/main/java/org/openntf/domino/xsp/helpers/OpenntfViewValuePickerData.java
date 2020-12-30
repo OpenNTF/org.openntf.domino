@@ -47,6 +47,7 @@ import com.ibm.xsp.model.domino.wrapped.DominoViewEntry;
  *         OpenNTF extension to DominoViewValuePickerData, required because DominoUtils.getViewEntryByKeyWithOptions() crashes the server if
  *         anything other than a lotus.domino.View is passed to it
  */
+@SuppressWarnings("nls")
 public class OpenntfViewValuePickerData extends DominoViewValuePickerData {
 
 	/**

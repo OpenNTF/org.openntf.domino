@@ -39,6 +39,7 @@ import com.ibm.commons.util.StringUtil;
 import com.ibm.designer.runtime.Application;
 import com.ibm.domino.napi.c.BackendBridge;
 
+@SuppressWarnings("nls")
 public enum ODAPlatform {
 	;
 	// TODO: create an OSGI-command
@@ -95,7 +96,7 @@ public enum ODAPlatform {
 							@SuppressWarnings("unused")
 							ClassLoader cl = tasklet.getClass().getClassLoader();
 
-							Factory.println("XOTS", "Registering tasklet " + tasklet);
+							Factory.println("XOTS", "Registering tasklet " + tasklet); //$NON-NLS-1$
 
 							if (tasklet instanceof Callable<?>) {
 								Xots.submit((Callable<?>) tasklet);
@@ -204,7 +205,7 @@ public enum ODAPlatform {
 	 * @since org.openntf.domino.xsp 5.0.0
 	 */
 	public static String getEnvironmentString(final String propertyName) {
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		try {
 			result = Platform.getInstance().getProperty(propertyName);
 			if (StringUtil.isEmpty(result)) {
@@ -231,7 +232,7 @@ public enum ODAPlatform {
 		try {
 			String setting = getEnvironmentString(propertyName);
 			if (StringUtil.isNotEmpty(setting)) {
-				if (StringUtil.indexOfIgnoreCase(setting, ",") > -1) {
+				if (StringUtil.indexOfIgnoreCase(setting, ",") > -1) { //$NON-NLS-1$
 					return StringUtil.splitString(setting, ',');
 				} else {
 					return new String[] { setting };
@@ -281,7 +282,7 @@ public enum ODAPlatform {
 	 * @since org.openntf.domino.xsp 4.5.0
 	 */
 	public static String getXspPropertyAsString(final String propertyName, Application app) {
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		try {
 			if (app == null)
 				app = Application.get();
@@ -320,7 +321,7 @@ public enum ODAPlatform {
 		try {
 			String setting = getXspPropertyAsString(propertyName, app);
 			if (StringUtil.isNotEmpty(setting)) {
-				if (StringUtil.indexOfIgnoreCase(setting, ",") > -1) {
+				if (StringUtil.indexOfIgnoreCase(setting, ",") > -1) { //$NON-NLS-1$
 					return StringUtil.splitString(setting, ',');
 				} else {
 					return new String[] { setting };
@@ -332,7 +333,7 @@ public enum ODAPlatform {
 		return new String[0];
 	}
 
-	private static String IS_API_ENABLED = "ODAPlatform.isAPIEnabled";
+	private static String IS_API_ENABLED = "ODAPlatform.isAPIEnabled"; //$NON-NLS-1$
 
 	/**
 	 * Checks whether or not the API is enabled for the current database
@@ -352,7 +353,7 @@ public enum ODAPlatform {
 		Boolean retVal_ = (Boolean) app.getObject(IS_API_ENABLED);
 		if (retVal_ == null) {
 			retVal_ = Boolean.FALSE;
-			for (String s : getXspProperty("xsp.library.depends", app)) {
+			for (String s : getXspProperty("xsp.library.depends", app)) { //$NON-NLS-1$
 				if (s.equalsIgnoreCase(XspLibrary.LIBRARY_ID)) {
 					retVal_ = Boolean.TRUE;
 					break;
@@ -379,7 +380,7 @@ public enum ODAPlatform {
 		if (app == null)
 			return false;
 
-		String key = "ODAPlatform.flag." + flagName;
+		String key = "ODAPlatform.flag." + flagName; //$NON-NLS-1$
 		Boolean retVal_ = (Boolean) app.getObject(key);
 		if (retVal_ == null) {
 			retVal_ = Boolean.FALSE;
@@ -394,7 +395,7 @@ public enum ODAPlatform {
 		return retVal_.booleanValue();
 	}
 
-	private static String GET_AUTO_MIME = "ODAPlatform.getAutoMime";
+	private static String GET_AUTO_MIME = "ODAPlatform.getAutoMime"; //$NON-NLS-1$
 
 	/**
 	 * Gets the AutoMime option enabled for the application, an instance of the enum {@link AutoMime}
@@ -416,10 +417,10 @@ public enum ODAPlatform {
 			retVal_ = AutoMime.WRAP_ALL;
 
 			for (String s : getXspProperty(Activator.PLUGIN_ID, app)) {
-				if (s.equalsIgnoreCase("automime32k")) {
+				if (s.equalsIgnoreCase("automime32k")) { //$NON-NLS-1$
 					retVal_ = AutoMime.WRAP_32K;
 					break;
-				} else if (s.equalsIgnoreCase("automimenone")) {
+				} else if (s.equalsIgnoreCase("automimenone")) { //$NON-NLS-1$
 					retVal_ = AutoMime.WRAP_NONE;
 					break;
 				}
@@ -439,7 +440,7 @@ public enum ODAPlatform {
 	 * @since org.openntf.domino.xsp 3.0.0
 	 */
 	public static boolean isAppAllFix(final Application app) {
-		return isAppFlagSet("KHAN", app);
+		return isAppFlagSet("KHAN", app); //$NON-NLS-1$
 	}
 
 	/**
@@ -451,7 +452,7 @@ public enum ODAPlatform {
 	 * @since org.openntf.domino.xsp 3.0.0
 	 */
 	public static boolean isAppViewExactMatch(final Application app) {
-		return isAppFlagSet("SNAP", app);
+		return isAppFlagSet("SNAP", app); //$NON-NLS-1$
 	}
 
 	/**
@@ -465,7 +466,7 @@ public enum ODAPlatform {
 	public static boolean isAppDebug(final Application app) {
 		if (debugAll)
 			return true;
-		return isAppFlagSet("RAID", app);
+		return isAppFlagSet("RAID", app); //$NON-NLS-1$
 	}
 
 	/**
@@ -478,7 +479,7 @@ public enum ODAPlatform {
 	 */
 
 	public static boolean isAppGodMode(final Application app) {
-		return isAppFlagSet("GODMODE", app);
+		return isAppFlagSet("GODMODE", app); //$NON-NLS-1$
 	}
 
 	/**
@@ -490,7 +491,7 @@ public enum ODAPlatform {
 	 * @since org.openntf.domino.xsp 3.0.0
 	 */
 	public static boolean isAppMimeFriendly(final Application app) {
-		return isAppFlagSet("MARCEL", app);
+		return isAppFlagSet("MARCEL", app); //$NON-NLS-1$
 	}
 
 	/**
@@ -516,9 +517,9 @@ public enum ODAPlatform {
 	}
 
 	public static ThreadConfig getAppThreadConfig(final Application app) {
-		Fixes[] fixes = isAppFlagSet("KHAN", app) ? Fixes.values() : null;
+		Fixes[] fixes = isAppFlagSet("KHAN", app) ? Fixes.values() : null; //$NON-NLS-1$
 		AutoMime autoMime = getAppAutoMime(app);
-		boolean bubbleExceptions = ODAPlatform.isAppFlagSet("BUBBLEEXCEPTIONS");
+		boolean bubbleExceptions = ODAPlatform.isAppFlagSet("BUBBLEEXCEPTIONS"); //$NON-NLS-1$
 		return new ThreadConfig(fixes, autoMime, bubbleExceptions);
 	}
 }

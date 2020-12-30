@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.nsfdata.structs;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
@@ -66,8 +67,8 @@ public class COLLATION extends AbstractStruct {
 	public final Unsigned8 signature = new Unsigned8();
 
 	static {
-		addVariableArray("Descriptors", "Items", COLLATE_DESCRIPTOR.class);
-		addVariableString("ItemNames", "getItemNamesLength");
+		addVariableArray("Descriptors", "Items", COLLATE_DESCRIPTOR.class); //$NON-NLS-1$ //$NON-NLS-2$
+		addVariableString("ItemNames", "getItemNamesLength"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public Set<Flag> getFlags() {
@@ -84,12 +85,12 @@ public class COLLATION extends AbstractStruct {
 	}
 
 	public COLLATE_DESCRIPTOR[] getDescriptors() {
-		return (COLLATE_DESCRIPTOR[]) getVariableElement("Descriptors");
+		return (COLLATE_DESCRIPTOR[]) getVariableElement("Descriptors"); //$NON-NLS-1$
 	}
 
 	public String[] getItemNames() {
-		COLLATE_DESCRIPTOR[] descriptors = (COLLATE_DESCRIPTOR[]) getVariableElement("Descriptors");
-		String itemNameData = (String) getVariableElement("ItemNames");
+		COLLATE_DESCRIPTOR[] descriptors = (COLLATE_DESCRIPTOR[]) getVariableElement("Descriptors"); //$NON-NLS-1$
+		String itemNameData = (String) getVariableElement("ItemNames"); //$NON-NLS-1$
 		String[] result = new String[descriptors.length];
 		for (int i = 0; i < descriptors.length; i++) {
 			int offset = descriptors[i].NameOffset.get();
@@ -101,8 +102,10 @@ public class COLLATION extends AbstractStruct {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": BufferSize=" + BufferSize.get() + ", Items=" + Items.get() + ", Flags=" + getFlags()
-				+ ", signature=" + signature.get() + ", Descriptors=" + Arrays.asList(getDescriptors()) + ", ItemNames="
-				+ Arrays.asList(getItemNames()) + "]";
+		return MessageFormat.format(
+				"[{0}: BufferSize={1}, Items={2}, Flags={3}, signature={4}, Descriptors={5}, ItemNames={6}]", //$NON-NLS-1$
+				getClass().getSimpleName(),
+				BufferSize.get(), Items.get(), getFlags()
+				, signature.get(), Arrays.asList(getDescriptors()), Arrays.asList(getItemNames()));
 	}
 }

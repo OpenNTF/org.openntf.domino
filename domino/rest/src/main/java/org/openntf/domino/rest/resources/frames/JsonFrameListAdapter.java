@@ -29,6 +29,7 @@ import org.openntf.domino.graph2.annotations.FramedVertexList;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 
+@SuppressWarnings("nls")
 public class JsonFrameListAdapter implements JsonArray {
 	protected static class FrameListAdapterIterator implements Iterator<Object> {
 		protected final JsonFrameListAdapter parent_;

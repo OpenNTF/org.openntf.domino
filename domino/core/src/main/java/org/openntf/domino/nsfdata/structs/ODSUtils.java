@@ -30,6 +30,7 @@ import org.openntf.domino.Stream;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+@SuppressWarnings("nls")
 public enum ODSUtils {
 	;
 	private static String X_LMBCS_1 = "x-lmbcs-1"; //$NON-NLS-1$
@@ -110,7 +111,7 @@ public enum ODSUtils {
 			}
 		}
 		try {
-			return new String(bos.toByteArray(), "US-ASCII");
+			return new String(bos.toByteArray(), "US-ASCII"); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}

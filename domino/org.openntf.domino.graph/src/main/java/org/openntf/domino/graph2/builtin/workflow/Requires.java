@@ -21,7 +21,7 @@ import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 
 public interface Requires extends DEdgeFrame {
-	public static final String LABEL_REQUIRES = "requires";
+	public static final String LABEL_REQUIRES = "requires"; //$NON-NLS-1$
 
 	@OutVertex
 	public Task getTask();

@@ -34,6 +34,7 @@ import org.openntf.domino.big.IndexDatabase;
  * @author Nathan T. Freeman
  * 
  */
+@SuppressWarnings("nls")
 public class IndexQuery {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(IndexQuery.class.getName());
@@ -89,7 +90,7 @@ public class IndexQuery {
 	public void setMergedTerms(final String terms) {
 		Set<String> set = new HashSet<String>();
 		if (terms.indexOf(' ') > 0) {
-			String[] strings = terms.split(" ");
+			String[] strings = terms.split(" "); //$NON-NLS-1$
 			for (String str : strings) {
 				set.add(str);
 			}
@@ -182,7 +183,7 @@ public class IndexQuery {
 			boolean isFirst = true;
 			for (String term : set) {
 				if (!isFirst) {
-					debug.append(" : ");
+					debug.append(" : "); //$NON-NLS-1$
 				}
 				isFirst = false;
 				debug.append(term);
@@ -206,9 +207,9 @@ public class IndexQuery {
 			for (CharSequence term : terms) {
 				if (!isFirst) {
 					if (isAnd()) {
-						debug.append(" AND ");
+						debug.append(" AND "); //$NON-NLS-1$
 					} else {
-						debug.append(" OR ");
+						debug.append(" OR "); //$NON-NLS-1$
 					}
 				}
 				isFirst = false;

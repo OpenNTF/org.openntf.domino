@@ -53,6 +53,7 @@ import org.openntf.domino.utils.DominoUtils.LoaderObjectInputStream;
  * Utility enum as a carrier for Document-centric static properties and methods.
  * 
  */
+@SuppressWarnings("nls")
 public enum Documents {
 	;
 

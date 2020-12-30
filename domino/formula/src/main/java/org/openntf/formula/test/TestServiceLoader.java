@@ -10,6 +10,7 @@ import org.openntf.formula.FormulaParser;
 import org.openntf.formula.FormulaProvider;
 import org.openntf.formula.Formulas;
 
+@SuppressWarnings("nls")
 public class TestServiceLoader {
 
 	public static void main(final String[] args) throws FormulaParseException, EvaluateException {

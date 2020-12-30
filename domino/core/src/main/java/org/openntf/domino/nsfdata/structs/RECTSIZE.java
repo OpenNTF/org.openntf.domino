@@ -26,6 +26,6 @@ public class RECTSIZE extends AbstractStruct {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Width=" + width.get() + ", Height=" + height.get() + "]";
+		return "[" + getClass().getSimpleName() + ": Width=" + width.get() + ", Height=" + height.get() + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 }

@@ -70,9 +70,9 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 	}
 
 	public static String toString(final Iterable<CaseInsensitiveString> cis) {
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		for (CaseInsensitiveString str : cis) {
-			result = result + (result.length() > 0 ? ", " : "") + str.toString();
+			result = result + (result.length() > 0 ? ", " : "") + str.toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return result;
 	}
@@ -161,6 +161,7 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 	}
 
 	@Override
+	@SuppressWarnings("nls")
 	public int compareTo(final CharSequence o) {
 		if (o == null) {
 			throw new IllegalArgumentException("Cannot compare to null");

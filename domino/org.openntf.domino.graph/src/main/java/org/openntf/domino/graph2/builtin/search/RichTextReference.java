@@ -51,7 +51,7 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(IndexDatabase.RICH_TEXT_FORM_NAME)
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 @JavaHandlerClass(RichTextReference.RichTextReferenceImpl.class)
 public interface RichTextReference extends DVertexFrame {
 	public static enum Utils {

@@ -48,7 +48,7 @@ public class FormulaContext {
 	public ValueHolder TRUE;
 	public ValueHolder FALSE;
 
-	public ValueHolder NEWLINE = ValueHolder.valueOf(System.getProperty("line.separator", "\n"));
+	public ValueHolder NEWLINE = ValueHolder.valueOf(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * @param dataMap
@@ -184,7 +184,7 @@ public class FormulaContext {
 				} catch (EvaluateException e) {
 					// TODO Don't know what is the best here
 					// dataMap.remove(key);
-					dataMap.put(key, "@ERROR: " + e.getMessage());
+					dataMap.put(key, "@ERROR: " + e.getMessage()); //$NON-NLS-1$
 				}
 			}
 		}

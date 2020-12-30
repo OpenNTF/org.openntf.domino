@@ -19,6 +19,7 @@ import org.openntf.domino.Base;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 
+@SuppressWarnings("nls")
 public class CustomNamedEvent implements IDominoEvent {
 
 	private final String name_;

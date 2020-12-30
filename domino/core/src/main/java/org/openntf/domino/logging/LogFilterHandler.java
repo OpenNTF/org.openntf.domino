@@ -47,6 +47,7 @@ import org.openntf.formula.Formulas;
  * handlers and calls <code>publish()</code> on them.
  * </p>
  */
+@SuppressWarnings("nls")
 public class LogFilterHandler extends Handler {
 
 	private class L_HandlerEx {

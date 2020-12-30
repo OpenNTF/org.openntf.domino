@@ -37,6 +37,7 @@ import java.util.Locale;
 import org.openntf.formula.DateTime;
 import org.openntf.formula.Formatter;
 
+@SuppressWarnings("nls")
 public class FormatterImpl implements Formatter {
 	private Locale iLocale;
 
@@ -92,11 +93,11 @@ public class FormatterImpl implements Formatter {
 		// Should an empty string lead to a DateTime with noDate=noTime=true?
 		// (Lotus doesn't accept empty strings here.)
 		char spec = 0;
-		if (image.equalsIgnoreCase("TODAY"))
+		if (image.equalsIgnoreCase("TODAY")) //$NON-NLS-1$
 			spec = 'H';
-		else if (image.equalsIgnoreCase("TOMORROW"))
+		else if (image.equalsIgnoreCase("TOMORROW")) //$NON-NLS-1$
 			spec = 'M';
-		else if (image.equalsIgnoreCase("YESTERDAY"))
+		else if (image.equalsIgnoreCase("YESTERDAY")) //$NON-NLS-1$
 			spec = 'G';
 		if (spec != 0) {
 			ret.setTime(new Date());

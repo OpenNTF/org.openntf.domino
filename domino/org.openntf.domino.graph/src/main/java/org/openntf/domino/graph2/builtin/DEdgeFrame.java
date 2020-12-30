@@ -33,6 +33,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeField("form")
 @TypeValue("edgeFrame")
 @JavaHandlerClass(DEdgeFrame.DEdgeFrameImpl.class)
+@SuppressWarnings("nls")
 public interface DEdgeFrame extends EdgeFrame {
 	@TypedProperty(value = "@CreatedDate", derived = true)
 	public Date getCreated();

@@ -25,6 +25,7 @@ import org.openntf.formula.FormulaParseException;
  * 
  * You can modify this class to customize your error reporting mechanisms so long as you retain the public fields.
  */
+@SuppressWarnings("nls")
 public class ParseException extends FormulaParseException {
 
 	/**

@@ -24,6 +24,7 @@ import java.util.logging.LogRecord;
  * @author withersp
  *
  */
+@SuppressWarnings("nls")
 public class ConsoleFormatter extends Formatter {
 
 	/** The UT c_ format. */

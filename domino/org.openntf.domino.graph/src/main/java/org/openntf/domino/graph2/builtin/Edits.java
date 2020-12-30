@@ -20,7 +20,7 @@ import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 
 public interface Edits extends EdgeFrame {
-	public static final String LABEL_EDITS = "edits";
+	public static final String LABEL_EDITS = "edits"; //$NON-NLS-1$
 
 	@OutVertex
 	public Editor getEditor();

@@ -36,6 +36,7 @@ import org.openntf.domino.utils.Strings;
  * @see "RFC822: Standard for ARPA Internet Text Messages" http://www.w3.org/Protocols/rfc822/
  * 
  */
+@SuppressWarnings("nls")
 public class RFC822name extends HashMap<RFC822name.Key, String> implements Serializable {
 
 	@SuppressWarnings("unused")

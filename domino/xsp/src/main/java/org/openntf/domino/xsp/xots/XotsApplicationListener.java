@@ -29,6 +29,7 @@ import com.ibm.xsp.application.ApplicationEx;
 import com.ibm.xsp.application.DesignerApplicationEx;
 import com.ibm.xsp.application.events.ApplicationListener2;
 
+@SuppressWarnings("nls")
 public class XotsApplicationListener implements ApplicationListener2 {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(XotsApplicationListener.class.getName());

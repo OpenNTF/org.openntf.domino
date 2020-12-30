@@ -346,7 +346,7 @@ public interface Person extends Name, Editor {
 
 	@TypeValue(ReportsTo.LABEL)
 	public abstract static interface ReportsTo extends DEdgeFrame {
-		public static final String LABEL = "ReportsTo";
+		public static final String LABEL = "ReportsTo"; //$NON-NLS-1$
 
 		@OutVertex
 		public Person getSupervisor();

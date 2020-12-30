@@ -31,7 +31,7 @@ import com.ibm.xsp.util.ValueBindingUtil;
 public class FormulaBindingFactory implements BindingFactory {
 
 	/** the prefix for the engine (= <code>"formula"</code>) */
-	public static final String FORMULA = "formula";
+	public static final String FORMULA = "formula"; //$NON-NLS-1$
 
 	/**
 	 * Create a method binding for the specified formula

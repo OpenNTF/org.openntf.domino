@@ -52,6 +52,7 @@ public class ELEMENTHEADER extends AbstractStruct {
 	public final COLOR_VALUE BackgroundColor = inner(new COLOR_VALUE());
 
 	@Override
+	@SuppressWarnings("nls")
 	public String toString() {
 		return "[" + getClass().getSimpleName() + ": Left=" + wLeft.get() + ", Top=" + wTop.get() + ", Width=" + wWidth.get() + ", Height="
 				+ wHeight.get() + ", FontID=" + FontID + ", BackColor=" + byBackColor.get() + ", BackgroundColor=" + BackgroundColor + "]";

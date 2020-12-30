@@ -37,6 +37,7 @@ import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
 import com.tinkerpop.frames.FramedTransactionalGraph;
 
+@SuppressWarnings("nls")
 public class EngageDataInitializer implements Runnable {
 	private long marktime;
 	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -23,7 +23,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(CommentsOn.LABEL)
 public interface CommentsOn extends DEdgeFrame {
-	public static final String LABEL = "commentsOn";
+	public static final String LABEL = "commentsOn"; //$NON-NLS-1$
 
 	@OutVertex
 	public Commenter getCommenter();

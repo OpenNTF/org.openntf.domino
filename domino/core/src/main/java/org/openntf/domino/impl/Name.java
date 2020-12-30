@@ -38,6 +38,7 @@ import org.openntf.domino.utils.Strings;
  * The Class Name.
  */
 
+@SuppressWarnings("nls")
 public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.Name, Session>
 		implements org.openntf.domino.Name, Comparable<Name>, Cloneable {
 	//	private static final Logger log_ = Logger.getLogger(Name.class.getName());

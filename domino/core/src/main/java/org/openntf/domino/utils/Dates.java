@@ -36,6 +36,7 @@ import org.openntf.domino.Item;
  * @author Devin S. Olson (dolson@czarnowski.com)
  * 
  */
+@SuppressWarnings("nls")
 public enum Dates {
 	DATEONLY(Strings.TIMESTAMP_DATEONLY, Strings.REGEX_DATEONLY, false),
 

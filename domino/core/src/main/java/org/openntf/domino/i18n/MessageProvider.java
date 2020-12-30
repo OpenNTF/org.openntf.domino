@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import org.openntf.domino.utils.Factory;
 
+@SuppressWarnings("nls")
 public class MessageProvider {
 
 	/**

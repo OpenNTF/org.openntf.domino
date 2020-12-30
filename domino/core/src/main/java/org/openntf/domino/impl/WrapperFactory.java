@@ -47,10 +47,10 @@ import org.openntf.domino.helpers.DatabaseMetaData;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.utils.DominoUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Enum Factory.
  */
+@SuppressWarnings("nls")
 public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.openntf.domino.WrapperFactory {
 
 	/** this is the holder for all other object that need to be recycled **/

@@ -35,6 +35,7 @@ import org.openntf.domino.iterators.DocumentList;
  * 
  * @author Devin S. Olson (dolson@czarnowski.com)
  */
+@SuppressWarnings("nls")
 public enum CollectionUtils {
 	;
 
@@ -261,10 +262,10 @@ public enum CollectionUtils {
 				if (object instanceof String[]) {
 					return CollectionUtils.getListStrings((String[]) object);
 				}
-				if (classname.equalsIgnoreCase("java.lang.String[]") || classname.equalsIgnoreCase("[Ljava.lang.String;")) {
+				if (classname.equalsIgnoreCase("java.lang.String[]") || classname.equalsIgnoreCase("[Ljava.lang.String;")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return CollectionUtils.getListStrings((String[]) object);
 				}
-				if (classname.equalsIgnoreCase("java.lang.String")) {
+				if (classname.equalsIgnoreCase("java.lang.String")) { //$NON-NLS-1$
 					return CollectionUtils.getListStrings((String) object);
 				}
 

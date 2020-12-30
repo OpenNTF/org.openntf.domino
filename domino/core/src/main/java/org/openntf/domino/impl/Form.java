@@ -267,10 +267,10 @@ public class Form extends BaseThreadSafe<org.openntf.domino.Form, lotus.domino.F
 	 */
 	@Override
 	public String getXPageAlt() {
-		if (getDocument().hasItem("$XPageAlt")) {
-			return getDocument().getItemValueString("$XPageAlt");
+		if (getDocument().hasItem("$XPageAlt")) { //$NON-NLS-1$
+			return getDocument().getItemValueString("$XPageAlt"); //$NON-NLS-1$
 		} else {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 
@@ -279,12 +279,12 @@ public class Form extends BaseThreadSafe<org.openntf.domino.Form, lotus.domino.F
 	 */
 	@Override
 	public String getXPageAltClient() {
-		if (getDocument().hasItem("$XPageAltClient")) {
-			return getDocument().getItemValueString("$XPageAltClient");
-		} else if (getDocument().hasItem("$XPageAlt")) {
-			return getDocument().getItemValueString("$XPageAlt");
+		if (getDocument().hasItem("$XPageAltClient")) { //$NON-NLS-1$
+			return getDocument().getItemValueString("$XPageAltClient"); //$NON-NLS-1$
+		} else if (getDocument().hasItem("$XPageAlt")) { //$NON-NLS-1$
+			return getDocument().getItemValueString("$XPageAlt"); //$NON-NLS-1$
 		} else {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 
@@ -631,17 +631,17 @@ public class Form extends BaseThreadSafe<org.openntf.domino.Form, lotus.domino.F
 	@Override
 	public String getSelectionFormula() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT ");
-		sb.append("Form=\"");
+		sb.append("SELECT "); //$NON-NLS-1$
+		sb.append("Form=\""); //$NON-NLS-1$
 		sb.append(this.getName());
-		sb.append("\"");
+		sb.append("\""); //$NON-NLS-1$
 		if (!this.getAliases().isEmpty()) {
 			Vector<String> aliases = getAliases();
 			for (String alias : aliases) {
-				sb.append("|");
-				sb.append("Form=\"");
+				sb.append("|"); //$NON-NLS-1$
+				sb.append("Form=\""); //$NON-NLS-1$
 				sb.append(alias);
-				sb.append("\"");
+				sb.append("\""); //$NON-NLS-1$
 			}
 		}
 		return sb.toString();

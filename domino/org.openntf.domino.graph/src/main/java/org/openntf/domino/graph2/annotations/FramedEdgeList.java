@@ -42,7 +42,7 @@ import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.structures.FramedEdgeIterable;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> implements List<T> {
 	public static class FramedListIterator<T> implements ListIterator<T> {
 		protected final Class<T> kind_;

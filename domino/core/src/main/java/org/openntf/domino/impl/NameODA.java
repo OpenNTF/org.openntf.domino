@@ -42,6 +42,7 @@ import org.openntf.formula.impl.StringSplitSimple;
  * @author Praml, Steinsiek
  */
 
+@SuppressWarnings("nls")
 public class NameODA extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.Name, Session> implements org.openntf.domino.Name,
 Comparable<org.openntf.domino.Name>, Cloneable {
 	@SuppressWarnings("unused")

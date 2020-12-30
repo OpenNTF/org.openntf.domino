@@ -44,34 +44,34 @@ public class DesignForm extends Subform implements org.openntf.domino.design.Des
 	 * @since ODA 4.3.0
 	 */
 	protected DesignForm(final Database database) {
-		super(database, DesignForm.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_form.xml"));
+		super(database, DesignForm.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_form.xml")); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getXPageAlt() {
-		List<Object> itemValue = getItemValue("$XPageAlt");
-		return itemValue.isEmpty() ? "" : String.valueOf(itemValue.get(0));
+		List<Object> itemValue = getItemValue("$XPageAlt"); //$NON-NLS-1$
+		return itemValue.isEmpty() ? "" : String.valueOf(itemValue.get(0)); //$NON-NLS-1$
 	}
 
 	@Override
 	public void setXPageAlt(final String xpageAlt) {
-		setItemValue("$XPageAlt", xpageAlt, FLAG_SIGN_SUMMARY);
+		setItemValue("$XPageAlt", xpageAlt, FLAG_SIGN_SUMMARY); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getXPageAltClient() {
-		List<Object> itemValue = getItemValue("$XPageAltClient");
-		return itemValue.isEmpty() ? "" : String.valueOf(itemValue.get(0));
+		List<Object> itemValue = getItemValue("$XPageAltClient"); //$NON-NLS-1$
+		return itemValue.isEmpty() ? "" : String.valueOf(itemValue.get(0)); //$NON-NLS-1$
 	}
 
 	@Override
 	public void setXPageAltClient(final String xpageAltClient) {
-		setItemValue("$XPageAltClient", xpageAltClient, FLAG_SIGN_SUMMARY);
+		setItemValue("$XPageAltClient", xpageAltClient, FLAG_SIGN_SUMMARY); //$NON-NLS-1$
 	}
 
 	@Override
 	protected XMLNode getBody() {
-		XMLNode body = getDxl().selectSingleNode("/form/body/richtext");
+		XMLNode body = getDxl().selectSingleNode("/form/body/richtext"); //$NON-NLS-1$
 		return body;
 	}
 

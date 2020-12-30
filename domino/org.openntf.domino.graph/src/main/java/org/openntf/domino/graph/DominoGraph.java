@@ -56,7 +56,7 @@ import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.DefaultGraphQuery;
 
-@SuppressWarnings({ "rawtypes", "unused" })
+@SuppressWarnings({ "rawtypes", "unused", "nls" })
 @Deprecated
 public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public static class GraphCacheLoader extends CacheLoader {

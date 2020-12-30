@@ -25,7 +25,7 @@ public class DXLItemText extends AbstractDXLItem {
 	protected DXLItemText(final XMLNode node, final int dupItemId) {
 		super(node, dupItemId);
 
-		XMLNode dataNode = node.selectSingleNode("./text");
+		XMLNode dataNode = node.selectSingleNode("./text"); //$NON-NLS-1$
 		value_ = dataNode.getText();
 	}
 

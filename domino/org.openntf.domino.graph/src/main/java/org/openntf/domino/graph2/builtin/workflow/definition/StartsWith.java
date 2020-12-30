@@ -21,7 +21,7 @@ import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 
 public interface StartsWith extends DEdgeFrame {
-	public final static String LABEL_STARTSWITH = "startsWith";
+	public final static String LABEL_STARTSWITH = "startsWith"; //$NON-NLS-1$
 
 	@OutVertex
 	public FlowDefinition getFlowDefinition();

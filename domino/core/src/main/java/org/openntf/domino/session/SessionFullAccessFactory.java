@@ -36,6 +36,7 @@ public class SessionFullAccessFactory extends AbstractSessionFactory implements 
 	}
 
 	@Override
+	@SuppressWarnings("nls")
 	public Session createSession(final String userName) {
 		if (userName != null) {
 			//			Thread.currentThread().interrupt();

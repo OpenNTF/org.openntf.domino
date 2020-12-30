@@ -27,6 +27,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 /**
  * The Class DominoThread extends the NotesThread and clones the current SessionFactory.
  */
+@SuppressWarnings("nls")
 public class DominoThread extends NotesThread {
 	private static final Logger log_ = Logger.getLogger(DominoThread.class.getName());
 	private transient Runnable runnable_;

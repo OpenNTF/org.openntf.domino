@@ -39,6 +39,7 @@ import org.openntf.domino.utils.Factory;
  * of IBM's DOTS. Except it will use modern thread management instead of acting like it was
  * written in Java 1.1
  */
+@SuppressWarnings("nls")
 public class Xots {
 	;
 	public static Comparator<DominoFutureTask<?>> TASKS_BY_ID = new Comparator<DominoFutureTask<?>>() {

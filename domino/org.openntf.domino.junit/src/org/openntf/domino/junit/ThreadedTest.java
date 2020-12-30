@@ -36,7 +36,7 @@ public abstract class ThreadedTest implements Callable<String> {
 			futures[i] = Xots.submit(this.getClass().newInstance());
 		}
 		for (i = 0; i < threadCount; i++) {
-			assertEquals("SUCCESS", futures[i].get());
+			assertEquals("SUCCESS", futures[i].get()); //$NON-NLS-1$
 		}
 	}
 

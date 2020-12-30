@@ -66,7 +66,7 @@ public class XMLDocument extends XMLNode {
 	}
 
 	public void loadString(final String s) throws SAXException, IOException, ParserConfigurationException {
-		loadInputStream(new ByteArrayInputStream(s.getBytes("UTF-8")));
+		loadInputStream(new ByteArrayInputStream(s.getBytes("UTF-8"))); //$NON-NLS-1$
 	}
 
 	private DocumentBuilder getBuilder() throws ParserConfigurationException {
@@ -77,7 +77,7 @@ public class XMLDocument extends XMLNode {
 	}
 
 	public static String escapeXPathValue(final String input) {
-		return input.replace("'", "\\'");
+		return input.replace("'", "\\'"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override

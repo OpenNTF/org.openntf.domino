@@ -41,6 +41,7 @@ import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.rest.service.Routes;
 
 @Path(Routes.ROOT + "/" + Routes.COMMAND + "/" + Routes.NAMESPACE_PATH_PARAM)
+@SuppressWarnings("nls")
 public class CommandResource extends AbstractResource {
 
 	public CommandResource(ODAGraphService service) {

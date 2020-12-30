@@ -27,6 +27,7 @@ import com.tinkerpop.frames.OutVertex;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Presentation")
+@SuppressWarnings("nls")
 public interface Presentation extends Event {
 	@TypeValue(PresentedBy.LABEL)
 	public static interface PresentedBy extends DEdgeFrame {

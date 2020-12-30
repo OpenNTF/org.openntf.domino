@@ -35,6 +35,7 @@ import org.openntf.domino.utils.DominoUtils;
  * @author Devin S. Olson (dolson@czarnowski.com)
  *
  */
+@SuppressWarnings("nls")
 public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serializable {
 
 	// Enum Key moved to Interface ext-Name (org.openntf.domino.ext.Name.NamePartKey)

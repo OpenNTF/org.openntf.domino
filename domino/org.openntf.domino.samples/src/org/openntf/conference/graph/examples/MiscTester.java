@@ -27,6 +27,7 @@ import org.openntf.domino.junit.TestRunnerUtil;
 
 import com.google.common.collect.Lists;
 
+@SuppressWarnings("nls")
 public class MiscTester implements Runnable {
 	private long marktime;
 

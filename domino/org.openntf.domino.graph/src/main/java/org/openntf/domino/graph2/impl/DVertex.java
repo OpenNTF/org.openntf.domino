@@ -42,6 +42,7 @@ import com.tinkerpop.blueprints.util.VerticesFromEdgesIterable;
 import javolution.util.FastMap;
 import javolution.util.FastSet;
 
+@SuppressWarnings("nls")
 public class DVertex extends DElement implements org.openntf.domino.graph2.DVertex {
 	private static final long serialVersionUID = 1L;
 

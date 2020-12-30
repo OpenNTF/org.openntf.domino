@@ -118,8 +118,8 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 		if (def == null)
 			return null;
 		Document result = db.createDocument();
-		result.replaceItemValue("$$SchemaType", doctype);
-		result.replaceItemValue("form", def.getName());
+		result.replaceItemValue("$$SchemaType", doctype); //$NON-NLS-1$
+		result.replaceItemValue("form", def.getName()); //$NON-NLS-1$
 		Map<String, IItemDefinition> itemDefs = def.getItemDefinitions();
 		for (String key : itemDefs.keySet()) {
 			IItemDefinition itemDef = itemDefs.get(key);
@@ -131,7 +131,7 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 
 	@Override
 	public boolean validateDocument(final Document doc) {
-		String doctype = doc.getItemValueString("$$SchemaType");
+		String doctype = doc.getItemValueString("$$SchemaType"); //$NON-NLS-1$
 		DocumentDefinition def = getDocumentDefinitions().get(doctype);
 		if (def == null)
 			return true;

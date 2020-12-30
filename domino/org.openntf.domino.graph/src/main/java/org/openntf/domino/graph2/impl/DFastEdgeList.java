@@ -31,7 +31,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "nls" })
 public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 	protected final DVertex sourceVertex_;
 	protected final DGraph parentGraph_;

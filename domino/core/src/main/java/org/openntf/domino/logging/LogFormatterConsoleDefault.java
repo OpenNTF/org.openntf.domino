@@ -25,6 +25,7 @@ import org.openntf.domino.exceptions.OpenNTFNotesException;
  * Default formatter for writing log messages to the Domino console when no formatter is specified in the configuration file. Date and time
  * is written as 'yyyy-MM-dd HH:mm:ss'. Does not write the full stack trace if there is one.
  */
+@SuppressWarnings("nls")
 public class LogFormatterConsoleDefault extends Formatter {
 
 	public static LogFormatterConsoleDefault getInstance() {

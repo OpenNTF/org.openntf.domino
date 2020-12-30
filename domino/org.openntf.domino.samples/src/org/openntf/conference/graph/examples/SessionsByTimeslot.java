@@ -30,7 +30,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 
 import com.google.common.collect.Ordering;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "nls" })
 public class SessionsByTimeslot implements Runnable {
 	private long marktime;
 	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM HH:mm");

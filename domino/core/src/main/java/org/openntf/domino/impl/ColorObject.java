@@ -231,7 +231,7 @@ public class ColorObject extends BaseThreadSafe<org.openntf.domino.ColorObject, 
 			g = g.toLowerCase();
 			b = b.toLowerCase();
 		}
-		return (r.length() < 2 ? "0" : "") + r + (g.length() < 2 ? "0" : "") + g + (b.length() < 2 ? "0" : "") + b;
+		return (r.length() < 2 ? "0" : "") + r + (g.length() < 2 ? "0" : "") + g + (b.length() < 2 ? "0" : "") + b; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	}
 
 	/*

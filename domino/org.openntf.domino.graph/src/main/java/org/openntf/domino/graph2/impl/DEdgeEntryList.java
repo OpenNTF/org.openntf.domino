@@ -36,6 +36,7 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 
+@SuppressWarnings("nls")
 public class DEdgeEntryList implements DEdgeList {
 	@SuppressWarnings("serial")
 	public static class KeyNotFoundException extends RuntimeException {

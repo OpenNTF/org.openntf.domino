@@ -88,10 +88,10 @@ import org.openntf.domino.utils.xml.XMLDocument;
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.util.JsonWriter;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Document.
  */
+@SuppressWarnings("nls")
 public class Document extends BaseResurrectable<org.openntf.domino.Document, lotus.domino.Document, Database>
 implements org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
@@ -112,24 +112,24 @@ implements org.openntf.domino.Document {
 
 		protected ExtendedNoteInfos() {
 			long start = System.nanoTime();
-			if (Document.this.hasItem("$ACLDigest")) {// the DXL of an ACL is empty
+			if (Document.this.hasItem("$ACLDigest")) {// the DXL of an ACL is empty //$NON-NLS-1$
 				noteClass = NoteClass.ACL;
 				isDefault = true;
 			} else {
 				DxlExporter exporter = getAncestorSession().createDxlExporter();
 				try {
 					Vector<String> items = new Vector<String>();
-					items.add("-dummy-");
+					items.add("-dummy-"); //$NON-NLS-1$
 					exporter.setRestrictToItemNames(items);
 					exporter.setForceNoteFormat(true);
 					exporter.setOutputDOCTYPE(false);
 					start = System.nanoTime() - start;
 					XMLDocument dxl = new XMLDocument();
 					dxl.loadString(exporter.exportDxl(Document.this));
-					String cls = dxl.getDocumentElement().getAttribute("class");
+					String cls = dxl.getDocumentElement().getAttribute("class"); //$NON-NLS-1$
 					noteClass = NoteClass.valueOf(cls.toUpperCase());
-					isDefault = "true".equals(dxl.getDocumentElement().getAttribute("default"));
-					isPrivate = "true".equals(dxl.getDocumentElement().getAttribute("private"));
+					isDefault = "true".equals(dxl.getDocumentElement().getAttribute("default")); //$NON-NLS-1$ //$NON-NLS-2$
+					isPrivate = "true".equals(dxl.getDocumentElement().getAttribute("private")); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

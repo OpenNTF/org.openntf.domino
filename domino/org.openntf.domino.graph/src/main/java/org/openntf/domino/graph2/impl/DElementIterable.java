@@ -25,6 +25,7 @@ import org.openntf.domino.big.NoteCoordinate;
 
 import com.tinkerpop.blueprints.Element;
 
+@SuppressWarnings("nls")
 public class DElementIterable implements org.openntf.domino.graph2.DElementIterable, List<Element> {
 
 	public static class DElementIterator implements org.openntf.domino.graph2.DElementIterable.DElementIterator {

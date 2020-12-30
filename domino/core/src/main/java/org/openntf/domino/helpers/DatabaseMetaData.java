@@ -158,13 +158,13 @@ public class DatabaseMetaData implements Serializable {
 
 	public String getApiPath() {
 		if (server_.length() > 0)
-			return server_ + "!!" + filePath_;
+			return server_ + "!!" + filePath_; //$NON-NLS-1$
 		return filePath_;
 	}
 
 	public String getMetaReplicaID() {
 		if (server_.length() > 0)
-			return server_ + "!!" + replicaID_;
+			return server_ + "!!" + replicaID_; //$NON-NLS-1$
 		return replicaID_;
 	}
 

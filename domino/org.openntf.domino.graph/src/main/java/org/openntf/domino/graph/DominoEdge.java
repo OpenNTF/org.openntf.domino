@@ -22,6 +22,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
 
 @Deprecated
+@SuppressWarnings("nls")
 public class DominoEdge extends DominoElement implements IDominoEdge, Serializable {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoEdge.class.getName());

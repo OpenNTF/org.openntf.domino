@@ -40,6 +40,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
+@SuppressWarnings("nls")
 public class SessionsByTrack implements Runnable {
 	private long marktime;
 

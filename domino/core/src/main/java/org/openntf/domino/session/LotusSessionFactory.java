@@ -53,14 +53,14 @@ enum LotusSessionFactory {
 	private static Field F_webuser;
 	static {
 		try {
-			F_webuser = lotus.domino.local.Session.class.getDeclaredField("webuser");
+			F_webuser = lotus.domino.local.Session.class.getDeclaredField("webuser"); //$NON-NLS-1$
 			F_webuser.setAccessible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	//----------------------- FindOrCreateSession 
-	private static Method M_FindOrCreateSession = getSessionMethod("FindOrCreateSession", long.class, int.class);
+	private static Method M_FindOrCreateSession = getSessionMethod("FindOrCreateSession", long.class, int.class); //$NON-NLS-1$
 
 	private static lotus.domino.local.Session FindOrCreateSession(final long cpp_id, final int unknown) throws IllegalArgumentException,
 	IllegalAccessException, InvocationTargetException {
@@ -68,7 +68,7 @@ enum LotusSessionFactory {
 	}
 
 	// ----------------- createNativeSession --------------
-	private static Method M_NCreateSession = getSessionMethod("NCreateSession", int.class);
+	private static Method M_NCreateSession = getSessionMethod("NCreateSession", int.class); //$NON-NLS-1$
 
 	private static long NCreateSession(final int unknown) throws IllegalArgumentException, IllegalAccessException,
 	InvocationTargetException {
@@ -87,7 +87,7 @@ enum LotusSessionFactory {
 	}
 
 	// ----------------- createTrustedSession --------------
-	private static Method M_NCreateTrustedSession = getSessionMethod("NCreateTrustedSession", boolean.class);
+	private static Method M_NCreateTrustedSession = getSessionMethod("NCreateTrustedSession", boolean.class); //$NON-NLS-1$
 
 	private static long NCreateTrustedSession(final boolean unknown) throws IllegalArgumentException, IllegalAccessException,
 	InvocationTargetException {
@@ -105,7 +105,7 @@ enum LotusSessionFactory {
 	}
 
 	// ----------------- createSessionWithFullAccess --------------
-	private static Method M_NCreateSessionWithFullAccess = getSessionMethod("NCreateSessionWithFullAccess", String.class);
+	private static Method M_NCreateSessionWithFullAccess = getSessionMethod("NCreateSessionWithFullAccess", String.class); //$NON-NLS-1$
 
 	private static long NCreateSessionWithFullAccess(final String userName) throws IllegalArgumentException, IllegalAccessException,
 	InvocationTargetException {
@@ -123,7 +123,7 @@ enum LotusSessionFactory {
 	}
 
 	// ----------------- createSessionWithTokenEx --------------
-	private static Method M_NCreateSessionWithTokenEx = getSessionMethod("NCreateSessionWithTokenEx", String.class);
+	private static Method M_NCreateSessionWithTokenEx = getSessionMethod("NCreateSessionWithTokenEx", String.class); //$NON-NLS-1$
 
 	private static long NCreateSessionWithTokenEx(final String userName) throws IllegalArgumentException, IllegalAccessException,
 	InvocationTargetException {
@@ -143,7 +143,7 @@ enum LotusSessionFactory {
 	}
 
 	// ----------------- createSessionWithTokenEx --------------
-	private static Method M_NCreateSessionWithPasswd = getSessionMethod("NCreateSessionWithPasswd", String.class);
+	private static Method M_NCreateSessionWithPasswd = getSessionMethod("NCreateSessionWithPasswd", String.class); //$NON-NLS-1$
 
 	private static long NCreateSessionWithPasswd(final String password) throws IllegalArgumentException, IllegalAccessException,
 	InvocationTargetException {

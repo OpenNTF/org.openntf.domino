@@ -48,7 +48,7 @@ public class NFMT extends AbstractStruct {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Digits: " + Digits.get() + ", Format: " + Format.get() + ", Attributes: "
-				+ getAttributes() + "]";
+		return "[" + getClass().getSimpleName() + ", Digits: " + Digits.get() + ", Format: " + Format.get() + ", Attributes: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				+ getAttributes() + "]"; //$NON-NLS-1$
 	}
 }

@@ -69,7 +69,7 @@ public class DasCurrentSessionFactory extends AbstractXPageSessionFactory {
 					if (StringUtil.isEmpty(rawDb.getServer())) {
 						currentApiPath_ = rawDb.getFilePath();
 					} else {
-						currentApiPath_ = rawDb.getServer() + "!!" + rawDb.getFilePath();
+						currentApiPath_ = rawDb.getServer() + "!!" + rawDb.getFilePath(); //$NON-NLS-1$
 					}
 				}
 			} catch (NotesException e) {
@@ -93,7 +93,7 @@ public class DasCurrentSessionFactory extends AbstractXPageSessionFactory {
 				if (StringUtil.isEmpty(rawDb.getServer())) {
 					currentApiPath_ = rawDb.getFilePath();
 				} else {
-					currentApiPath_ = rawDb.getServer() + "!!" + rawDb.getFilePath();
+					currentApiPath_ = rawDb.getServer() + "!!" + rawDb.getFilePath(); //$NON-NLS-1$
 				}
 			}
 			return wrapSession(rawSession, true);

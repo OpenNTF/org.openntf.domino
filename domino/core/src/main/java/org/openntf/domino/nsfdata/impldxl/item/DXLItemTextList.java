@@ -29,7 +29,7 @@ public class DXLItemTextList extends AbstractDXLItem {
 	protected DXLItemTextList(final XMLNode node, final int dupItemId) {
 		super(node, dupItemId);
 
-		XMLNodeList dataNodes = node.selectNodes("./textlist/text");
+		XMLNodeList dataNodes = node.selectNodes("./textlist/text"); //$NON-NLS-1$
 		value_ = new String[dataNodes.size()];
 		for (int i = 0; i < dataNodes.size(); i++) {
 			value_[i] = dataNodes.get(i).getText();
@@ -53,6 +53,6 @@ public class DXLItemTextList extends AbstractDXLItem {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": " + getValue() + "]";
+		return "[" + getClass().getSimpleName() + ": " + getValue() + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

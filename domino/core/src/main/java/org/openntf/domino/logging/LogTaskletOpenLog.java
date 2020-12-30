@@ -19,7 +19,7 @@ import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "nls" })
 public class LogTaskletOpenLog extends AbstractDominoRunnable {
 
 	public LogTaskletOpenLog() {

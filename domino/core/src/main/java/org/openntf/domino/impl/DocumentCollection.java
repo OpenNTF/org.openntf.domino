@@ -34,10 +34,10 @@ import org.openntf.domino.iterators.DocumentCollectionIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DocumentCollection.
  */
+@SuppressWarnings("nls")
 public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database>
 		implements org.openntf.domino.DocumentCollection {
 

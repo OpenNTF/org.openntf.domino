@@ -37,10 +37,10 @@ import org.openntf.domino.utils.Factory.SessionType;
 
 import lotus.domino.NotesException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DateTime.
  */
+@SuppressWarnings("nls")
 public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.domino.DateTime, Session>
 		implements org.openntf.domino.DateTime {
 	private static final Logger log_ = Logger.getLogger(DateTime.class.getName());

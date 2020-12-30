@@ -25,6 +25,7 @@ import com.tinkerpop.blueprints.Vertex;
  * @author nfreeman
  * 
  */
+@SuppressWarnings("nls")
 public interface DEdge extends DElement, com.tinkerpop.blueprints.Edge {
 	public static final String GRAPH_TYPE_VALUE = "E";
 	public static final String IN_NAME = "_OPEN_IN";

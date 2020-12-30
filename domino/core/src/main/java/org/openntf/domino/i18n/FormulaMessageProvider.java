@@ -37,6 +37,7 @@ import org.openntf.formula.Formulas;
  * @author Roland Praml, FOCONIS AG
  * 
  */
+@SuppressWarnings("nls")
 public class FormulaMessageProvider extends MessageProvider {
 	private static final Logger log_ = Logger.getLogger(FormulaMessageProvider.class.getName());
 

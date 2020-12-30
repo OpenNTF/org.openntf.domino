@@ -23,75 +23,75 @@ package org.openntf.domino.design.impl;
 public enum ODPMapping {
 
 	// AppProperties
-	ACL_NOTE("AppProperties", "database.properties", ACLNote.class), //
-	DB_IMAGE("AppProperties", "$DBIcon", DbImage.class), //hicolor image
+	ACL_NOTE("AppProperties", "database.properties", ACLNote.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	DB_IMAGE("AppProperties", "$DBIcon", DbImage.class), //hicolor image //$NON-NLS-1$ //$NON-NLS-2$
 
 	// Code
-	DATABASE_SCRIPT("Code", "dbscript.lsdb", DatabaseScript.class), //
-	SHARED_ACTIONS_NOTE("Code/actions", "Shared Actions", SharedActionsNote.class), // should be *.shac?
-	DESIGN_AGENT_F("Code/Agents", ".fa", DesignAgentF.class), //
-	DESIGN_AGENT_IJ("Code/Agents", ".ija", DesignAgentIJ.class), //
-	DESIGN_AGENT_J("Code/Agents", ".ja", DesignAgentJ.class), //
-	DESIGN_AGENT_LS("Code/Agents", ".lsa", DesignAgentLS.class), //
-	DESIGN_AGENT_A("Code/Agents", ".aa", DesignAgentA.class), //
-	JAR_RESOURCE("Code/Jars", null, JarResource.class), //
-	JAVA_FILE("Code/Java", "*", XspJavaResource.class), //
-	SCRIPT_LIBRARY_JAVA("Code/ScriptLibraries", ".javalib", ScriptLibraryJava.class), //
-	SCRIPT_LIBRARY_SSJS("Code/ScriptLibraries", ".jss", ScriptLibrarySSJS.class), //
-	SCRIPT_LIBRARY_CSJS("Code/ScriptLibraries", ".js", ScriptLibraryCSJS.class), //
-	SCRIPT_LIBRARY_LS("Code/ScriptLibraries", ".lss", ScriptLibraryLS.class), //
-	WEB_SERVICE_CONSUMER_LS("Code/WebServiceConsumer", ".lswsc", WebServiceConsumerLS.class), //
-	WEB_SERVICE_CONSUMER_JAVA("Code/WebServiceConsumer", ".javalib", WebServiceConsumerJava.class), //
-	WEB_SERVICE_PROVIDER_LS("Code/WebServices", ".lws", WebServiceProviderLS.class), //
-	WEB_SERVICE_PROVIDER_JAVA("Code/WebServices", ".jws", WebServiceProviderJava.class), //
+	DATABASE_SCRIPT("Code", "dbscript.lsdb", DatabaseScript.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	SHARED_ACTIONS_NOTE("Code/actions", "Shared Actions", SharedActionsNote.class), // should be *.shac? //$NON-NLS-1$ //$NON-NLS-2$
+	DESIGN_AGENT_F("Code/Agents", ".fa", DesignAgentF.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	DESIGN_AGENT_IJ("Code/Agents", ".ija", DesignAgentIJ.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	DESIGN_AGENT_J("Code/Agents", ".ja", DesignAgentJ.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	DESIGN_AGENT_LS("Code/Agents", ".lsa", DesignAgentLS.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	DESIGN_AGENT_A("Code/Agents", ".aa", DesignAgentA.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	JAR_RESOURCE("Code/Jars", null, JarResource.class), // //$NON-NLS-1$
+	JAVA_FILE("Code/Java", "*", XspJavaResource.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	SCRIPT_LIBRARY_JAVA("Code/ScriptLibraries", ".javalib", ScriptLibraryJava.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	SCRIPT_LIBRARY_SSJS("Code/ScriptLibraries", ".jss", ScriptLibrarySSJS.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	SCRIPT_LIBRARY_CSJS("Code/ScriptLibraries", ".js", ScriptLibraryCSJS.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	SCRIPT_LIBRARY_LS("Code/ScriptLibraries", ".lss", ScriptLibraryLS.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	WEB_SERVICE_CONSUMER_LS("Code/WebServiceConsumer", ".lswsc", WebServiceConsumerLS.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	WEB_SERVICE_CONSUMER_JAVA("Code/WebServiceConsumer", ".javalib", WebServiceConsumerJava.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	WEB_SERVICE_PROVIDER_LS("Code/WebServices", ".lws", WebServiceProviderLS.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	WEB_SERVICE_PROVIDER_JAVA("Code/WebServices", ".jws", WebServiceProviderJava.class), // //$NON-NLS-1$ //$NON-NLS-2$
 
 	// CompositeApplication
-	COMPOSITE_APP("CompositeApplications/Applications", ".ca", CompositeApp.class), //
-	COMPOSITE_COMPONENT("CompositeApplications/Components", null, CompositeComponent.class), //
-	COMPOSITE_WIRING("CompositeApplications/WiringProperties", ".wsdl", CompositeWiring.class), //
+	COMPOSITE_APP("CompositeApplications/Applications", ".ca", CompositeApp.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	COMPOSITE_COMPONENT("CompositeApplications/Components", null, CompositeComponent.class), // //$NON-NLS-1$
+	COMPOSITE_WIRING("CompositeApplications/WiringProperties", ".wsdl", CompositeWiring.class), // //$NON-NLS-1$ //$NON-NLS-2$
 
-	CUSTOM_CONTROL("CustomControls", null, CustomControl.class), //
+	CUSTOM_CONTROL("CustomControls", null, CustomControl.class), // //$NON-NLS-1$
 
-	DATA_CONNECTION_RESOURCE("Data/DataConnections", ".dcr", DataConnectionResource.class), //
-	DB2_VIEW("Data/DB2AccessViews", ".db2v", DB2View.class), //
+	DATA_CONNECTION_RESOURCE("Data/DataConnections", ".dcr", DataConnectionResource.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	DB2_VIEW("Data/DB2AccessViews", ".db2v", DB2View.class), // //$NON-NLS-1$ //$NON-NLS-2$
 
-	FOLDER("Folders", ".folder", Folder.class), //
+	FOLDER("Folders", ".folder", Folder.class), // //$NON-NLS-1$ //$NON-NLS-2$
 
-	DESIGN_FORM("Forms", ".form", DesignForm.class), //
+	DESIGN_FORM("Forms", ".form", DesignForm.class), // //$NON-NLS-1$ //$NON-NLS-2$
 
-	FRAMESET("Framesets", ".frameset", Frameset.class), //
+	FRAMESET("Framesets", ".frameset", Frameset.class), // //$NON-NLS-1$ //$NON-NLS-2$
 
-	DESIGN_PAGE("Pages", ".page", DesignPage.class), //
+	DESIGN_PAGE("Pages", ".page", DesignPage.class), // //$NON-NLS-1$ //$NON-NLS-2$
 
 	// Resources
-	ABOUT_DOCUMENT("Resources", "AboutDocument", AboutDocument.class), //
-	ICON_NOTE("Resources", "IconNote", IconNote.class), //
-	USINGDOCUMENT("Resources", "UsingDocument", UsingDocument.class), //
-	DESIGN_APPLET("Resources/Applets", ".applet", DesignApplet.class), //
-	FILE_RESOURCE("Resources/Files", null, FileResource.class), //
-	IMAGE_RESOURCE("Resources/Images", null, ImageResource.class), //
-	STYLESHEET("Resources/StyleSheets", ".css", StyleSheet.class), //
-	THEME("Resources/Themes", null, Theme.class), //
+	ABOUT_DOCUMENT("Resources", "AboutDocument", AboutDocument.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	ICON_NOTE("Resources", "IconNote", IconNote.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	USINGDOCUMENT("Resources", "UsingDocument", UsingDocument.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	DESIGN_APPLET("Resources/Applets", ".applet", DesignApplet.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	FILE_RESOURCE("Resources/Files", null, FileResource.class), // //$NON-NLS-1$
+	IMAGE_RESOURCE("Resources/Images", null, ImageResource.class), // //$NON-NLS-1$
+	STYLESHEET("Resources/StyleSheets", ".css", StyleSheet.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	THEME("Resources/Themes", null, Theme.class), // //$NON-NLS-1$
 
 	// Shared elements
-	SHARED_COLUMN("SharedElements/Columns", ".column", SharedColumn.class), //
-	SHARED_FIELD("SharedElements/Fields", ".field", SharedField.class), //
-	NAVIGATOR("SharedElements/Navigators", ".navigator", Navigator.class), //
-	DESIGN_OUTLINE("SharedElements/Outlines", ".outline", DesignOutline.class), //
-	SUBFORM("SharedElements/Subforms", ".subform", Subform.class), //
+	SHARED_COLUMN("SharedElements/Columns", ".column", SharedColumn.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	SHARED_FIELD("SharedElements/Fields", ".field", SharedField.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	NAVIGATOR("SharedElements/Navigators", ".navigator", Navigator.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	DESIGN_OUTLINE("SharedElements/Outlines", ".outline", DesignOutline.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	SUBFORM("SharedElements/Subforms", ".subform", Subform.class), // //$NON-NLS-1$ //$NON-NLS-2$
 
-	DESIGN_VIEW("Views", ".view", DesignView.class), //
+	DESIGN_VIEW("Views", ".view", DesignView.class), // //$NON-NLS-1$ //$NON-NLS-2$
 
-	FILE_RESOURCE_WEB_CONTENT("WebContent", null, FileResourceWebContent.class), //
-	XPAGE("XPages", null, XPage.class), //
+	FILE_RESOURCE_WEB_CONTENT("WebContent", null, FileResourceWebContent.class), // //$NON-NLS-1$
+	XPAGE("XPages", null, XPage.class), // //$NON-NLS-1$
 
-	FILE_RESOURCE_HIDDEN("", null, FileResourceHidden.class), //
+	FILE_RESOURCE_HIDDEN("", null, FileResourceHidden.class), // //$NON-NLS-1$
 
 	// other design elements
-	AGENT_DATA("Other/AgentData", ".agentdata", AgentData.class), //
-	OTHER_DESIGN_ELEMENT("Other/Unknown", null, OtherDesignElement.class), //
-	REPLICATION_FORMULA("Other/ReplicationFormulas", null, ReplicationFormula.class), //
-	SAVED_QUERY("Other/SavedQueries", null, SavedQuery.class), //
+	AGENT_DATA("Other/AgentData", ".agentdata", AgentData.class), // //$NON-NLS-1$ //$NON-NLS-2$
+	OTHER_DESIGN_ELEMENT("Other/Unknown", null, OtherDesignElement.class), // //$NON-NLS-1$
+	REPLICATION_FORMULA("Other/ReplicationFormulas", null, ReplicationFormula.class), // //$NON-NLS-1$
+	SAVED_QUERY("Other/SavedQueries", null, SavedQuery.class), // //$NON-NLS-1$
 
 	;
 
@@ -110,6 +110,7 @@ public enum ODPMapping {
 		clazz_ = clazz;
 	}
 
+	@SuppressWarnings("nls")
 	public static ODPMapping valueOf(final Class<? extends AbstractDesignBase> clazz) {
 		for (ODPMapping mapping : values()) {
 			if (mapping.getInstanceClass() == clazz)

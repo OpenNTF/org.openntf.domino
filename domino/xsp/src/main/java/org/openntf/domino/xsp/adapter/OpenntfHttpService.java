@@ -40,6 +40,7 @@ import com.ibm.domino.xsp.module.nsf.NSFService;
  * @author Roland Praml, FOCONIS AG
  * 
  */
+@SuppressWarnings("nls")
 public class OpenntfHttpService extends HttpService {
 	private static final Logger log_ = Logger.getLogger(OpenntfHttpService.class.getName());
 	private static OpenntfHttpService INSTANCE;

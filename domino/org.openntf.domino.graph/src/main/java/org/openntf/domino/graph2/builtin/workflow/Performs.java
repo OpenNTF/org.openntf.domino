@@ -22,7 +22,7 @@ import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 
 public interface Performs extends DEdgeFrame {
-	public static final String LABEL_PERFORMS = "performs";
+	public static final String LABEL_PERFORMS = "performs"; //$NON-NLS-1$
 
 	@TypedProperty("Outcome")
 	public String getOutcome();

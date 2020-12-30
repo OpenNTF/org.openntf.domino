@@ -62,6 +62,7 @@ import org.openntf.domino.types.DatabaseDescendant;
  * </pre>
  * </p>
  */
+@SuppressWarnings("nls")
 public class DatabaseTransaction {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DatabaseTransaction.class.getName());

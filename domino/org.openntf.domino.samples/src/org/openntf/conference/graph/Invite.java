@@ -27,6 +27,7 @@ import com.tinkerpop.frames.OutVertex;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Invite")
+@SuppressWarnings("nls")
 public interface Invite extends DVertexFrame {
 	@TypeValue(Invites.LABEL)
 	public static interface Invites extends DEdgeFrame {

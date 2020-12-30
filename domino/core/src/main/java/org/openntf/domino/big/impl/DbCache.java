@@ -27,9 +27,10 @@ import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+@SuppressWarnings("nls")
 public class DbCache {
 	private final Map<Long, Database> dbMap_ = new HashMap<Long, Database>();	//note: not Thread-safe yet.
-	private String defaultServerName_ = "";
+	private String defaultServerName_ = ""; //$NON-NLS-1$
 
 	public DbCache() {
 
@@ -62,7 +63,6 @@ public class DbCache {
 		return result;
 	}
 
-	@SuppressWarnings("null")
 	public Document getDocument(final NoteCoordinate nc) {
 		Document result = null;
 		long id = nc.getDbid();

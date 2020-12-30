@@ -24,6 +24,7 @@ import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.Tasklet;
 
+@SuppressWarnings("nls")
 public class XotsConfiguration extends ConfigurationObject {
 
 	private String apiPath_;
@@ -33,8 +34,8 @@ public class XotsConfiguration extends ConfigurationObject {
 
 	public XotsConfiguration(final String path, final String taskletName, final boolean isDatabase) {
 		if (isDatabase) {
-			bundle_ = "";
-			if (path.indexOf("!!") < 0) {
+			bundle_ = ""; //$NON-NLS-1$
+			if (path.indexOf("!!") < 0) { //$NON-NLS-1$
 				apiPath_ = Factory.getLocalServerName() + "!!" + path;
 			} else {
 				apiPath_ = path;

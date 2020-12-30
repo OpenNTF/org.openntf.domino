@@ -46,7 +46,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(IndexDatabase.VALUE_FORM_NAME)
 @JavaHandlerClass(Value.ValueImpl.class)
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({"unchecked", "rawtypes", "nls"})
 public interface Value extends DVertexFrame {
 	public static final String REPLICA_KEY = "replica";
 	public static final String FORM_KEY = "form";

@@ -1,5 +1,6 @@
 package org.openntf.formula.impl;
 
+@SuppressWarnings("nls")
 public class StringSplitSimple {
 
 	public enum SpecialSplit {

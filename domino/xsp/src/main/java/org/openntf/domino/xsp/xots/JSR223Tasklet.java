@@ -53,8 +53,8 @@ public class JSR223Tasklet extends AbstractDominoRunnable {
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByExtension(scriptExt_);
 
-		engine.put("database", database);
-		engine.put("session", database.getAncestorSession());
+		engine.put("database", database); //$NON-NLS-1$
+		engine.put("session", database.getAncestorSession()); //$NON-NLS-1$
 
 		ScriptContext context = engine.getContext();
 		context.setWriter(new PrintWriter(System.out));

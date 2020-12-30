@@ -27,6 +27,7 @@ import com.tinkerpop.frames.OutVertex;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Track")
+@SuppressWarnings("nls")
 public interface Track extends DVertexFrame {
 	@TypeValue(Includes.LABEL)
 	public static interface Includes extends DEdgeFrame {

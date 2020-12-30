@@ -16,6 +16,7 @@
 package org.openntf.domino.helpers;
 
 public class DataGenerator {
+	@SuppressWarnings("nls")
 	public static final String[] RANDOM_NAMES = { "Loren Everest", "Corina Quail", "Bev Nakamura", "Kirsten Mcquillan", "Ena Oropeza",
 		"Roy Deforge", "Leia Culton", "Doreatha Higgs", "Alleen Harriott", "Suzy Kelsch", "Isabella Marek", "Isabelle Azcona",
 		"Freddie Albano", "Desiree Stansell", "Clair Magill", "Goldie Esteves", "Harvey Herren", "Leonel Coney", "Honey Knee",

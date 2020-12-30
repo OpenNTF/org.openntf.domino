@@ -29,6 +29,7 @@ import com.tinkerpop.blueprints.Element;
  * 
  */
 @Deprecated
+@SuppressWarnings("nls")
 public interface IDominoProperties {
 	public enum Reflect {
 		;

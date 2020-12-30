@@ -25,6 +25,7 @@ import com.tinkerpop.frames.OutVertex;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Sponsor")
+@SuppressWarnings("nls")
 public abstract interface Sponsor extends Group {
 
 	public static enum Level {

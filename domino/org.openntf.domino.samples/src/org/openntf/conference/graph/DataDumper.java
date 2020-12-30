@@ -33,7 +33,7 @@ import org.openntf.domino.utils.Strings;
 
 import com.tinkerpop.frames.FramedTransactionalGraph;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "nls" })
 public class DataDumper implements Runnable {
 	private long marktime;
 	private static final String SRC_DATA_PATH = "OpenNTF Downloads/sphere2015.nsf";

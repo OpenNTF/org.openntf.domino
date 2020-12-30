@@ -35,6 +35,7 @@ import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.iterators.DocumentList;
 import org.openntf.domino.types.Null;
 
+@SuppressWarnings("nls")
 public class DocumentSorter implements Externalizable {
 	private static final long serialVersionUID = 1L;
 	private static boolean debug = false;
@@ -245,7 +246,7 @@ public class DocumentSorter implements Externalizable {
 		if (dataset_ == null) {
 			List<String> criteria = getCriteria();
 			if (criteria.isEmpty()) {
-				addCriteria("@created");
+				addCriteria("@created"); //$NON-NLS-1$
 			}
 			if (sourceColl_ == null) {
 				throw new IllegalStateException(

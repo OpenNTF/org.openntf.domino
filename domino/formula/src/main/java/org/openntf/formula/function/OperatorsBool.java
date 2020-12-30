@@ -37,6 +37,7 @@ import org.openntf.formula.impl.ParameterCollectionInt;
  * @author Roland Praml, Foconis AG
  * 
  */
+@SuppressWarnings("nls")
 public class OperatorsBool extends OperatorsAbstract {
 
 	public static abstract class Computer {
@@ -69,7 +70,7 @@ public class OperatorsBool extends OperatorsAbstract {
 
 		static {
 			// Define the computers
-			Computer or = new Computer("|") {
+			Computer or = new Computer("|") { //$NON-NLS-1$
 
 				@Override
 				public boolean compute(final int v1, final int v2) {
@@ -88,7 +89,7 @@ public class OperatorsBool extends OperatorsAbstract {
 			};
 
 			// Define the computers
-			Computer and = new Computer("&") {
+			Computer and = new Computer("&") { //$NON-NLS-1$
 
 				@Override
 				public boolean compute(final int v1, final int v2) {
@@ -106,8 +107,8 @@ public class OperatorsBool extends OperatorsAbstract {
 				}
 			};
 
-			add(new OperatorsBool(and, "&"));
-			add(new OperatorsBool(or, "|"));
+			add(new OperatorsBool(and, "&")); //$NON-NLS-1$
+			add(new OperatorsBool(or, "|")); //$NON-NLS-1$
 		}
 	}
 

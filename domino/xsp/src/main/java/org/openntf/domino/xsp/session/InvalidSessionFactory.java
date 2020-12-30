@@ -18,6 +18,7 @@ package org.openntf.domino.xsp.session;
 import org.openntf.domino.Session;
 import org.openntf.domino.session.ISessionFactory;
 
+@SuppressWarnings("nls")
 public class InvalidSessionFactory implements ISessionFactory {
 	private static final long serialVersionUID = 1L;
 

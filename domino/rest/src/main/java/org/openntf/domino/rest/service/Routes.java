@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.rest.service;
 
+@SuppressWarnings("nls")
 public enum Routes {
 	;
 

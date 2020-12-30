@@ -40,7 +40,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("org.openntf.domino.graph2.builtin.identity.Name")
 @JavaHandlerClass(Name.NameImpl.class)
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 public interface Name extends DVertexFrame, Socializer {
 	public static enum Utils {
 		;

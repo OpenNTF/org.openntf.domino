@@ -38,13 +38,14 @@ import com.google.common.hash.Hashing;
  * @author Roland Praml, FOCONIS AG
  * 
  */
+@SuppressWarnings("nls")
 public enum Configuration {
 	;
 
 	private static DominoExecutor executor_;
 	private static Database odaDb_;
 	private static boolean inititalized;
-	public static String ODA_NSF = "oda.nsf"; // will be overriden by Notes.ini "ODA_NSF" entry
+	public static String ODA_NSF = "oda.nsf"; // will be overriden by Notes.ini "ODA_NSF" entry //$NON-NLS-1$
 
 	protected static Set<ConfigurationObject> dirtyObjects = new FastSet<ConfigurationObject>();
 	private static Map<String, String> md5Cache_ = new FastMap<String, String>().atomic();
@@ -98,7 +99,7 @@ public enum Configuration {
 	protected static synchronized DominoExecutor getExecutor() {
 		if (executor_ == null) {
 			if (Factory.isStarted()) {
-				executor_ = new DominoExecutor(2, "Config");
+				executor_ = new DominoExecutor(2, "Config"); //$NON-NLS-1$
 				executor_.scheduleAtFixedRate(new ObjectFlusher(), 5, 5, TimeUnit.SECONDS);
 				Factory.addShutdownHook(SHUTDOWN_HOOK);
 			}
@@ -128,24 +129,24 @@ public enum Configuration {
 			try {
 				// ODA-DB is thread safe, so we may cache it :)
 				Session sess = Factory.getSession(SessionType.CURRENT);
-				String s = sess.getEnvironmentString("ODA_NSF");
+				String s = sess.getEnvironmentString("ODA_NSF"); //$NON-NLS-1$
 				if (!s.isEmpty()) {
 					ODA_NSF = s;
-					Factory.println("INFO", "Using notes.ini variable ODA_NSF=" + ODA_NSF);
+					Factory.println("INFO", "Using notes.ini variable ODA_NSF=" + ODA_NSF); //$NON-NLS-1$
 				}
 				Database db = sess.getDatabase(ODA_NSF);
 				if (db == null) {
-					Factory.println("WARNING", "cannot find " + ODA_NSF + " as user " + sess.getEffectiveUserName()
+					Factory.println("WARNING", "cannot find " + ODA_NSF + " as user " + sess.getEffectiveUserName() //$NON-NLS-1$
 							+ ". - using default values.");
 				} else if (!db.isOpen()) {
-					Factory.println("ERROR", "cannot open " + ODA_NSF + " as user " + sess.getEffectiveUserName()
+					Factory.println("ERROR", "cannot open " + ODA_NSF + " as user " + sess.getEffectiveUserName() //$NON-NLS-1$
 							+ ". - using default values.");
 				} else {
 					odaDb_ = db;
 					Factory.println(Configuration.class, "Using " + db + " as configuration database.");
 				}
 			} catch (Exception e) {
-				Factory.println("ERROR", "cannot open " + ODA_NSF + ": " + e.toString() + " - using default values.");
+				Factory.println("ERROR", "cannot open " + ODA_NSF + ": " + e.toString() + " - using default values."); //$NON-NLS-1$
 			}
 		}
 		return odaDb_;

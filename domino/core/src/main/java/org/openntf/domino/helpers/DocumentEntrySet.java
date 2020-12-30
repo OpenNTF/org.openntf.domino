@@ -60,7 +60,7 @@ public class DocumentEntrySet extends AbstractSet<Entry<String, Object>> {
 
 				@Override
 				public String toString() {
-					return key + "=" + getValue();
+					return key + "=" + getValue(); //$NON-NLS-1$
 				}
 			};
 		}

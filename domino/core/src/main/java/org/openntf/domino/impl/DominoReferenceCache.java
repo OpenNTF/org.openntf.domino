@@ -46,6 +46,7 @@ import static java.text.MessageFormat.format;
  * @author Roland Praml, Foconis AG
  */
 
+@SuppressWarnings("nls")
 public class DominoReferenceCache {
 	private static final Logger log_ = Logger.getLogger(DominoReferenceCache.class.getName());
 

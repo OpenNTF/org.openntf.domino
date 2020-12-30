@@ -22,11 +22,11 @@ import java.util.logging.Logger;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class VectorIterator.
  * 
  */
+@SuppressWarnings("nls")
 public class ItemVectorIterator implements ListIterator<Item> {
 
 	/** The Constant log_. */

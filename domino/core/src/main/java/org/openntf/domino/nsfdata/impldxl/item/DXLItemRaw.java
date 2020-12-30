@@ -23,8 +23,8 @@ public class DXLItemRaw extends AbstractDXLItem {
 	private static final long serialVersionUID = 1L;
 
 	protected static DXLItemRaw create(final XMLNode node, final int dupItemId) {
-		XMLNode rawitemdata = node.selectSingleNode("rawitemdata");
-		int typeCode = Integer.parseInt(rawitemdata.getAttribute("type"), 16);
+		XMLNode rawitemdata = node.selectSingleNode("rawitemdata"); //$NON-NLS-1$
+		int typeCode = Integer.parseInt(rawitemdata.getAttribute("type"), 16); //$NON-NLS-1$
 		Type type = Type.valueOf(typeCode);
 
 		switch (type) {
@@ -50,8 +50,8 @@ public class DXLItemRaw extends AbstractDXLItem {
 	protected DXLItemRaw(final XMLNode node, final int dupItemId) {
 		super(node, dupItemId);
 
-		XMLNode rawitemdata = node.selectSingleNode("rawitemdata");
-		int typeCode = Integer.parseInt(rawitemdata.getAttribute("type"), 16);
+		XMLNode rawitemdata = node.selectSingleNode("rawitemdata"); //$NON-NLS-1$
+		int typeCode = Integer.parseInt(rawitemdata.getAttribute("type"), 16); //$NON-NLS-1$
 		type_ = Type.valueOf(typeCode);
 
 		String rawData = rawitemdata.getText();

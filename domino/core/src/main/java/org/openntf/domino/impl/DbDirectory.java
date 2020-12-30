@@ -45,6 +45,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class DbDirectory.
  */
+@SuppressWarnings("nls")
 public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session>
 		implements org.openntf.domino.DbDirectory, Encapsulated {
 	private static final Logger log_ = Logger.getLogger(DbDirectory.class.getName());

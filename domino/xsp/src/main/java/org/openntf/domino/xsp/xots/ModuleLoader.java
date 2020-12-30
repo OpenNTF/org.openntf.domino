@@ -32,6 +32,7 @@ import com.ibm.designer.runtime.domino.adapter.util.PageNotFoundException;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NSFService;
 
+@SuppressWarnings("nls")
 public enum ModuleLoader {
 	;
 
@@ -65,7 +66,7 @@ public enum ModuleLoader {
 		dbPath = NSFService.FILE_CASE_INSENSITIVE ? dbPath.toLowerCase() : dbPath;
 		if (!StringUtil.isEmpty(db.getServer())) {
 			if (!db.getServer().equals(Factory.getLocalServerName())) {
-				dbPath = db.getServer() + "!!" + dbPath;
+				dbPath = db.getServer() + "!!" + dbPath; //$NON-NLS-1$
 			}
 		}
 		return loadModule(dbPath, ensureRefresh);
@@ -79,12 +80,12 @@ public enum ModuleLoader {
 		if (ensureRefresh) {
 			// The component module is SO weird. You cannot precheck with "shouldRefresh" as it returns always false for the next 2 seconds.
 			// So we ALWAYS do a simple request, to ensure that the module is fresh
-			final String path = "/" + module.getModuleName() + "/dummyrequest/to/trigger/refresh";
+			final String path = "/" + module.getModuleName() + "/dummyrequest/to/trigger/refresh"; //$NON-NLS-1$ //$NON-NLS-2$
 			final PreloadSession session = new PreloadSession();
-			final PreloadRequest request = new PreloadRequest("", "", path);
+			final PreloadRequest request = new PreloadRequest("", "", path); //$NON-NLS-1$ //$NON-NLS-2$
 			final PreloadResponse response = new PreloadResponse();
 			try {
-				getNsfService().doService("", path, session, request, response);
+				getNsfService().doService("", path, session, request, response); //$NON-NLS-1$
 			} catch (PageNotFoundException pnfe) {
 				// Thats ok (unless someone really creates a resource with name dummyrequest/to/trigger/refresh)
 			} catch (com.ibm.xsp.acl.NoAccessSignal nas) {

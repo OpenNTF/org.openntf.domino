@@ -71,6 +71,7 @@ public class DominoReference extends WeakReference<Base<?>> {
 	/**
 	 * Recycle.
 	 */
+	@SuppressWarnings("nls")
 	boolean recycle() {
 		boolean result = false;
 		if (delegate_ != null && !noRecycle) {

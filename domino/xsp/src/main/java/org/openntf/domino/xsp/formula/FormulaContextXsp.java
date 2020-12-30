@@ -152,7 +152,7 @@ public class FormulaContextXsp extends FormulaContextNotes {
 		ValueBinding ret = valueBindings.get(variable);
 		if (ret == null) {
 			ApplicationEx app = (ApplicationEx) context.getApplication();
-			ret = app.createValueBinding("#{" + variable + "}");
+			ret = app.createValueBinding("#{" + variable + "}"); //$NON-NLS-1$ //$NON-NLS-2$
 			if ((ret instanceof ValueBindingEx)) {
 				ValueBindingEx valueEx = (ValueBindingEx) ret;
 				valueEx.setComponent(component);

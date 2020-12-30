@@ -28,6 +28,7 @@ import org.openntf.domino.graph2.DGraphUtils;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 
+@SuppressWarnings("nls")
 public class DVertexIterable implements org.openntf.domino.graph2.DVertexIterable {
 	private org.openntf.domino.graph2.impl.DElementIterable delegate_;
 

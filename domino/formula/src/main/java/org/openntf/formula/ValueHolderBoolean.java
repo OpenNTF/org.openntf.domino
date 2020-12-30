@@ -134,10 +134,10 @@ public class ValueHolderBoolean extends ValueHolder implements Serializable {
 		throwError();
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(values[0] ? "1" : "0");
+		sb.append(values[0] ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 1; i < values.length; i++) {
 			sb.append(':');
-			sb.append(values[i] ? "1" : "0");
+			sb.append(values[i] ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		return sb.toString();

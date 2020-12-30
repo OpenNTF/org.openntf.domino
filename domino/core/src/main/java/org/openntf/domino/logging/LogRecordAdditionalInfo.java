@@ -28,6 +28,7 @@ import org.openntf.domino.utils.Factory;
  * {@link org.openntf.domino.exceptions.OpenNTFNotesException}. Such exceptions contain details about the environment (Notes user name,
  * current database and so on).
  */
+@SuppressWarnings("nls")
 public class LogRecordAdditionalInfo {
 
 	private List<ExceptionDetails.Entry> exceptionDetails;

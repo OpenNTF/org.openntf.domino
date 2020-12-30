@@ -74,7 +74,7 @@ public class ViewFormat {
 				localData.get(itemNameBytes);
 				itemNames_[i] = ODSUtils.fromLMBCS(itemNameBytes);
 			} else {
-				itemNames_[i] = "";
+				itemNames_[i] = ""; //$NON-NLS-1$
 			}
 
 			int columnTitleSize = columnFormats_[i].TitleSize.get();
@@ -83,7 +83,7 @@ public class ViewFormat {
 				localData.get(columnTitleBytes);
 				columnTitles_[i] = ODSUtils.fromLMBCS(columnTitleBytes);
 			} else {
-				columnTitles_[i] = "";
+				columnTitles_[i] = ""; //$NON-NLS-1$
 			}
 
 			int formulaSize = columnFormats_[i].FormulaSize.get();
@@ -146,7 +146,7 @@ public class ViewFormat {
 					localData.get(twistieResourceBytes);
 					twistieResources_[i] = ODSUtils.fromLMBCS(twistieResourceBytes);
 				} else {
-					twistieResources_[i] = "";
+					twistieResources_[i] = ""; //$NON-NLS-1$
 				}
 			}
 		} else {

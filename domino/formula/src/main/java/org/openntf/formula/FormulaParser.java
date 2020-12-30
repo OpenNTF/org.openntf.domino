@@ -67,7 +67,7 @@ public abstract class FormulaParser {
 			@Override
 			public int compare(final Object ent1, final Object ent2) {
 				if (!(ent1 instanceof Map.Entry) || !(ent2 instanceof Map.Entry)) {
-					throw new IllegalArgumentException("FCMapEntryComparator");
+					throw new IllegalArgumentException("FCMapEntryComparator"); //$NON-NLS-1$
 				}
 				@SuppressWarnings("unchecked")
 				int us1 = ((Map.Entry<String, FormulaCacheEntry>) ent1).getValue().usageCount;
@@ -233,7 +233,7 @@ public abstract class FormulaParser {
 	 * @return
 	 */
 	private FormulaParser getCopy() {
-		AtFormulaParserImpl parser = new AtFormulaParserImpl(new java.io.StringReader(""));
+		AtFormulaParserImpl parser = new AtFormulaParserImpl(new java.io.StringReader("")); //$NON-NLS-1$
 		parser.reset();
 		parser.formatter = formatter;
 		parser.functionFactory = getFunctionFactory();

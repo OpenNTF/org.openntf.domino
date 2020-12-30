@@ -26,48 +26,49 @@ import com.ibm.commons.util.StringUtil;
  * @author jgallagher
  *
  */
+@SuppressWarnings("nls")
 public enum DesignFactory {
 	INSTANCE;
 
 	//public static final String DFLAGPAT_IMAGE_DBICON = "(+-*i~";
 
-	public static final String DFLAGPAT_FOLDER_ALL_VERSIONS = "*F";
-	public static final String DFLAGPAT_STYLEKIT = "*g`";
-	public static final String DFLAGPAT_XSPPAGE = "*gK";
-	public static final String DFLAGPAT_XSPCC = "*g;";
-	public static final String DFLAGPAT_JAVAFILE = "*g[";
-	public static final String DFLAGPAT_JAVARESOURCE = "(+K;[-*g";
-	public static final String DFLAGPAT_WIDGET = "*g_";
-	public static final String DFLAGPAT_FILE_DL = "(+g-~K[],;`_*";
-	public static final String DFLAGPAT_FILE_HIDDEN = "(+-K[],;`*g~";
-	public static final String DFLAGPAT_JAVAJAR = "*g,";
+	public static final String DFLAGPAT_FOLDER_ALL_VERSIONS = "*F"; //$NON-NLS-1$
+	public static final String DFLAGPAT_STYLEKIT = "*g`"; //$NON-NLS-1$
+	public static final String DFLAGPAT_XSPPAGE = "*gK"; //$NON-NLS-1$
+	public static final String DFLAGPAT_XSPCC = "*g;"; //$NON-NLS-1$
+	public static final String DFLAGPAT_JAVAFILE = "*g["; //$NON-NLS-1$
+	public static final String DFLAGPAT_JAVARESOURCE = "(+K;[-*g"; //$NON-NLS-1$
+	public static final String DFLAGPAT_WIDGET = "*g_"; //$NON-NLS-1$
+	public static final String DFLAGPAT_FILE_DL = "(+g-~K[],;`_*"; //$NON-NLS-1$
+	public static final String DFLAGPAT_FILE_HIDDEN = "(+-K[],;`*g~"; //$NON-NLS-1$
+	public static final String DFLAGPAT_JAVAJAR = "*g,"; //$NON-NLS-1$
 	//public static final String DFLAGPAT_FILE = "(+g-K;`"; //RPr: corrected. orignal IBM string: "+g-K;`"
-	public static final String DFLAGPAT_NAVIGATORSWEB = "+G";
-	public static final String DFLAGPAT_IMAGE_RESOURCES_DESIGN = "(+i-~*";
-	public static final String DFLAGPAT_IMAGE_DBICON = "(+-*i~";
-	public static final String DFLAGPAT_DATA_CONNECTION_RESOURCE = "+k";
-	public static final String DFLAGPAT_SITEMAP = "+m";
-	public static final String DFLAGPAT_QUERY_V4_OBJECT = "+O";
-	public static final String DFLAGPAT_SCRIPTLIB_LS = "(+s-jh.*";
-	public static final String DFLAGPAT_SCRIPTLIB_JAVA = "*sj";
-	public static final String DFLAGPAT_SCRIPTLIB_JS = "+h";
-	public static final String DFLAGPAT_SCRIPTLIB_SERVER_JS = "+.";
-	public static final String DFLAGPAT_DATABASESCRIPT = "+t";
-	public static final String DFLAGPAT_SUBFORM_ALL_VERSIONS = "+U";
-	public static final String DFLAGPAT_PAGE = "+W";
-	public static final String DFLAGPAT_AGENT_DATA = "+X";
-	public static final String DFLAGPAT_SACTIONS_DESIGN = "+y";
-	public static final String DFLAGPAT_DB2ACCESSVIEW = "+z";
-	public static final String DFLAGPAT_FRAMESETSWEB = "+#";
-	public static final String DFLAGPAT_APPLET_RESOURCE = "+@";
-	public static final String DFLAGPAT_STYLE_SHEET_RESOURCE = "+=";
-	public static final String DFLAGPAT_WEBSERVICE = "+{";
-	public static final String DFLAGPAT_WEBSERVICE_LS = "(+{-j*";
-	public static final String DFLAGPAT_WEBSERVICE_JAVA = "*{j";
-	public static final String DFLAGPAT_SHARED_COLS = "(+-*^";
-	public static final String DFLAGPAT_COMPAPP = "+|";
-	public static final String DFLAGPAT_COMPDEF = "+:";
-	public static final String DFLAGPAT_VIEWFORM_ALL_VERSIONS = "-FQMUGXWy#i@K;g~%z^}";
+	public static final String DFLAGPAT_NAVIGATORSWEB = "+G"; //$NON-NLS-1$
+	public static final String DFLAGPAT_IMAGE_RESOURCES_DESIGN = "(+i-~*"; //$NON-NLS-1$
+	public static final String DFLAGPAT_IMAGE_DBICON = "(+-*i~"; //$NON-NLS-1$
+	public static final String DFLAGPAT_DATA_CONNECTION_RESOURCE = "+k"; //$NON-NLS-1$
+	public static final String DFLAGPAT_SITEMAP = "+m"; //$NON-NLS-1$
+	public static final String DFLAGPAT_QUERY_V4_OBJECT = "+O"; //$NON-NLS-1$
+	public static final String DFLAGPAT_SCRIPTLIB_LS = "(+s-jh.*"; //$NON-NLS-1$
+	public static final String DFLAGPAT_SCRIPTLIB_JAVA = "*sj"; //$NON-NLS-1$
+	public static final String DFLAGPAT_SCRIPTLIB_JS = "+h"; //$NON-NLS-1$
+	public static final String DFLAGPAT_SCRIPTLIB_SERVER_JS = "+."; //$NON-NLS-1$
+	public static final String DFLAGPAT_DATABASESCRIPT = "+t"; //$NON-NLS-1$
+	public static final String DFLAGPAT_SUBFORM_ALL_VERSIONS = "+U"; //$NON-NLS-1$
+	public static final String DFLAGPAT_PAGE = "+W"; //$NON-NLS-1$
+	public static final String DFLAGPAT_AGENT_DATA = "+X"; //$NON-NLS-1$
+	public static final String DFLAGPAT_SACTIONS_DESIGN = "+y"; //$NON-NLS-1$
+	public static final String DFLAGPAT_DB2ACCESSVIEW = "+z"; //$NON-NLS-1$
+	public static final String DFLAGPAT_FRAMESETSWEB = "+#"; //$NON-NLS-1$
+	public static final String DFLAGPAT_APPLET_RESOURCE = "+@"; //$NON-NLS-1$
+	public static final String DFLAGPAT_STYLE_SHEET_RESOURCE = "+="; //$NON-NLS-1$
+	public static final String DFLAGPAT_WEBSERVICE = "+{"; //$NON-NLS-1$
+	public static final String DFLAGPAT_WEBSERVICE_LS = "(+{-j*"; //$NON-NLS-1$
+	public static final String DFLAGPAT_WEBSERVICE_JAVA = "*{j"; //$NON-NLS-1$
+	public static final String DFLAGPAT_SHARED_COLS = "(+-*^"; //$NON-NLS-1$
+	public static final String DFLAGPAT_COMPAPP = "+|"; //$NON-NLS-1$
+	public static final String DFLAGPAT_COMPDEF = "+:"; //$NON-NLS-1$
+	public static final String DFLAGPAT_VIEWFORM_ALL_VERSIONS = "-FQMUGXWy#i@K;g~%z^}"; //$NON-NLS-1$
 
 	//	public static final String DFLAGPAT_AGENTSLIST = "-QXstmz{";
 	//	public static final String DFLAGPAT_VIEWFORM = "-FQMUGXWy#i@0nK;g~%z^";
@@ -188,7 +189,7 @@ public enum DesignFactory {
 	 */
 	public static String buildFlagFormula(final String pattern) {
 		if (pattern.length() < 1) {
-			return "@False";
+			return "@False"; //$NON-NLS-1$
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -197,7 +198,7 @@ public enum DesignFactory {
 		switch (pattern.charAt(i++)) {
 
 		case '+': // flags must contain ANY char of pattern
-			sb.append("@Contains($FLAGS;");
+			sb.append("@Contains($FLAGS;"); //$NON-NLS-1$
 			while (i < pattern.length()) {
 				if (!first) {
 					sb.append(':');
@@ -211,7 +212,7 @@ public enum DesignFactory {
 			return sb.toString();
 
 		case '-': // flags must NOT contain ANY char of pattern
-			sb.append("!@Contains($FLAGS;");
+			sb.append("!@Contains($FLAGS;"); //$NON-NLS-1$
 			while (i < pattern.length()) {
 				if (!first) {
 					sb.append(':');
@@ -230,9 +231,9 @@ public enum DesignFactory {
 				if (!first) {
 					sb.append('&');
 				}
-				sb.append("@Contains($FLAGS;\"");
+				sb.append("@Contains($FLAGS;\""); //$NON-NLS-1$
 				sb.append(pattern.charAt(i++));
-				sb.append("\")");
+				sb.append("\")"); //$NON-NLS-1$
 				first = false;
 			}
 			sb.append(')');
@@ -242,22 +243,22 @@ public enum DesignFactory {
 
 			// must follow with '+' "(+...."
 			if (pattern.charAt(i++) != '+') {
-				return "@False";
+				return "@False"; //$NON-NLS-1$
 			}
 
 			char ch = 0;
 			// verify + rule and scan to next -
-			sb.append("(@True");
+			sb.append("(@True"); //$NON-NLS-1$
 			while (i < pattern.length()) {
 				ch = pattern.charAt(i++);
 				if (ch == '-') {
 					if (!first) {
-						sb.append(")");
+						sb.append(")"); //$NON-NLS-1$
 					}
 					break;
 				}
 				if (first) {
-					sb.append("& @Contains($FLAGS;");
+					sb.append("& @Contains($FLAGS;"); //$NON-NLS-1$
 				} else {
 					sb.append(':');
 				}
@@ -269,7 +270,7 @@ public enum DesignFactory {
 
 			// verify the negative list and scan to next '*'
 			if (ch != '-') {
-				return "@False";
+				return "@False"; //$NON-NLS-1$
 			}
 
 			first = true;
@@ -277,12 +278,12 @@ public enum DesignFactory {
 				ch = pattern.charAt(i++);
 				if (ch == '*') {
 					if (!first) {
-						sb.append(")");
+						sb.append(")"); //$NON-NLS-1$
 					}
 					break;
 				}
 				if (first) {
-					sb.append("& !@Contains($FLAGS;");
+					sb.append("& !@Contains($FLAGS;"); //$NON-NLS-1$
 				} else {
 					sb.append(':');
 				}
@@ -293,31 +294,31 @@ public enum DesignFactory {
 			}
 
 			if (ch != '*') {
-				return "@False";
+				return "@False"; //$NON-NLS-1$
 			}
 
 			while (i < pattern.length()) {
-				sb.append("& @Contains($FLAGS;\"");
+				sb.append("& @Contains($FLAGS;\""); //$NON-NLS-1$
 				sb.append(pattern.charAt(i++));
-				sb.append("\")");
+				sb.append("\")"); //$NON-NLS-1$
 			}
-			sb.append(')');
+			sb.append(')'); //$NON-NLS-1$
 			return sb.toString();
 
 		}
 
-		return "@False";
+		return "@False"; //$NON-NLS-1$
 	}
 
 	private DesignFactory() {
 	}
 
 	public static org.openntf.domino.design.DesignBase fromDocument(final Document doc) {
-		if (doc.hasItem("IconBitmap") && doc.getNoteClass() == NoteClass.ICON) {
+		if (doc.hasItem("IconBitmap") && doc.getNoteClass() == NoteClass.ICON) { //$NON-NLS-1$
 			return new IconNote(doc);
 		}
 		// RPr: Flags :) Dont ask! accept it! (Tested with a database that contains at least one element of each type)
-		String flags = doc.getItemValueString("$Flags");
+		String flags = doc.getItemValueString("$Flags"); //$NON-NLS-1$
 
 		if (testFlag(flags, DFLAGPAT_FOLDER_ALL_VERSIONS)) {
 			return new Folder(doc);
@@ -344,8 +345,8 @@ public enum DesignFactory {
 			return new FileResource(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_FILE_HIDDEN)) {
-			String flagsExt = doc.getItemValueString("$FlagsExt");
-			if (testFlag(flagsExt, "+w")) {
+			String flagsExt = doc.getItemValueString("$FlagsExt"); //$NON-NLS-1$
+			if (testFlag(flagsExt, "+w")) { //$NON-NLS-1$
 				return new FileResourceWebContent(doc);
 			} else {
 				return new FileResourceHidden(doc);
@@ -370,13 +371,13 @@ public enum DesignFactory {
 			return new SavedQuery(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_LS)) {
-			if (testFlag(doc.getItemValueString("$FlagsExt"), "+W")) {
+			if (testFlag(doc.getItemValueString("$FlagsExt"), "+W")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return new WebServiceConsumerLS(doc);
 			}
 			return new ScriptLibraryLS(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_JAVA)) {
-			if (testFlag(doc.getItemValueString("$FlagsExt"), "+W")) {
+			if (testFlag(doc.getItemValueString("$FlagsExt"), "+W")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return new WebServiceConsumerJava(doc);
 			}
 			return new ScriptLibraryJava(doc);
@@ -432,8 +433,8 @@ public enum DesignFactory {
 
 		if (testFlag(flags, DFLAGPAT_VIEWFORM_ALL_VERSIONS)) {
 
-			if (doc.hasItem("$AssistType")) {
-				Integer assist = doc.getItemValue("$AssistType", Integer.class);
+			if (doc.hasItem("$AssistType")) { //$NON-NLS-1$
+				Integer assist = doc.getItemValue("$AssistType", Integer.class); //$NON-NLS-1$
 				if (assist == 65413) {
 					return new DesignAgentLS(doc);
 				}
@@ -441,7 +442,7 @@ public enum DesignFactory {
 					return new DesignAgentF(doc);
 				}
 				if (assist == 65427) {
-					if (testFlag(flags, "+J")) {
+					if (testFlag(flags, "+J")) { //$NON-NLS-1$
 						return new DesignAgentJ(doc);
 					}
 					return new DesignAgentIJ(doc);
@@ -449,10 +450,10 @@ public enum DesignFactory {
 				return new DesignAgentA(doc);
 			}
 
-			if (doc.hasItem("$FormulaClass")) { //View
+			if (doc.hasItem("$FormulaClass")) { //View //$NON-NLS-1$
 				return new DesignView(doc);
 			}
-			if (doc.hasItem("$ACLDigest")) {
+			if (doc.hasItem("$ACLDigest")) { //$NON-NLS-1$
 				return new ACLNote(doc);
 			}
 
@@ -478,18 +479,18 @@ public enum DesignFactory {
 	}
 
 	public static boolean isView(final Document doc) {
-		return (doc.hasItem("$FormulaClass") || doc.hasItem("$Index") || doc.hasItem("$Collation") || doc.hasItem("$VIEWFORMAT")
-				|| doc.hasItem("$Collection"));
+		return (doc.hasItem("$FormulaClass") || doc.hasItem("$Index") || doc.hasItem("$Collation") || doc.hasItem("$VIEWFORMAT") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				|| doc.hasItem("$Collection")); //$NON-NLS-1$
 	}
 
-	public static final String NOTEID_ICONNOTE = "FFFF0010";
+	public static final String NOTEID_ICONNOTE = "FFFF0010"; //$NON-NLS-1$
 
 	public static boolean isIcon(final Document doc) {
-		return NOTEID_ICONNOTE.equals(doc.getNoteID()) || doc.hasItem("IconBitmap");
+		return NOTEID_ICONNOTE.equals(doc.getNoteID()) || doc.hasItem("IconBitmap"); //$NON-NLS-1$
 	}
 
 	public static boolean isACL(final Document doc) {
-		return doc.hasItem("$ACLDigest");
+		return doc.hasItem("$ACLDigest"); //$NON-NLS-1$
 	}
 
 	public static Document getIconNote(final Database db) {
@@ -500,9 +501,9 @@ public enum DesignFactory {
 			final String filter) {
 		NoteCollection coll = db.createNoteCollection(false);
 
-		String selectFormula = "@All";
+		String selectFormula = "@All"; //$NON-NLS-1$
 		if (!StringUtil.isEmpty(filter)) {
-			selectFormula = "(" + filter + ")";
+			selectFormula = "(" + filter + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		if (org.openntf.domino.design.IconNote.class.isAssignableFrom(type)) {
@@ -511,47 +512,47 @@ public enum DesignFactory {
 		} else if (org.openntf.domino.design.DesignView.class.isAssignableFrom(type)) {
 			// Hmm. A view is also a folder.
 			coll.setSelectViews(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_VIEWFORM_ALL_VERSIONS);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_VIEWFORM_ALL_VERSIONS); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.Folder.class.isAssignableFrom(type)) {
 			coll.setSelectFolders(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_FOLDER_ALL_VERSIONS);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_FOLDER_ALL_VERSIONS); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.Theme.class.isAssignableFrom(type)) {
 			// a Theme is considered as file resource
 			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_STYLEKIT);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_STYLEKIT); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.XspJavaResource.class.isAssignableFrom(type)) {
 			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVAFILE);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVAFILE); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.CompositeComponent.class.isAssignableFrom(type)) {
 			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_WIDGET);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_WIDGET); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.JarResource.class.isAssignableFrom(type)) {
 			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVAJAR);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVAJAR); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.FileResource.class.isAssignableFrom(type)) {
 			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_FILE_DL);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_FILE_DL); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.FileResourceHidden.class.isAssignableFrom(type)) {
 			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_FILE_HIDDEN) + " & !@Contains($FlagsExt;{w})";
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_FILE_HIDDEN) + " & !@Contains($FlagsExt;{w})"; //$NON-NLS-1$ //$NON-NLS-2$
 
 		} else if (org.openntf.domino.design.FileResourceWebContent.class.isAssignableFrom(type)) {
 			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_FILE_HIDDEN) + " & @Contains($FlagsExt;{w})";
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_FILE_HIDDEN) + " & @Contains($FlagsExt;{w})"; //$NON-NLS-1$ //$NON-NLS-2$
 
 		} else if (org.openntf.domino.design.Navigator.class.isAssignableFrom(type)) {
 			coll.setSelectNavigators(true);
 
 		} else if (org.openntf.domino.design.ImageResource.class.isAssignableFrom(type)) {
 			coll.setSelectImageResources(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_IMAGE_RESOURCES_DESIGN);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_IMAGE_RESOURCES_DESIGN); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.DataConnectionResource.class.isAssignableFrom(type)) {
 			coll.setSelectDataConnections(true);
@@ -561,41 +562,41 @@ public enum DesignFactory {
 
 		} else if (org.openntf.domino.design.SavedQuery.class.isAssignableFrom(type)) {
 			coll.selectAllDesignElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_QUERY_V4_OBJECT);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_QUERY_V4_OBJECT); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.WebServiceConsumer.class.isAssignableFrom(type)) {
 			coll.setSelectScriptLibraries(true);
 
-			selectFormula += " & @Contains($FlagsExt;{W})";
+			selectFormula += " & @Contains($FlagsExt;{W})"; //$NON-NLS-1$
 			if (org.openntf.domino.design.impl.WebServiceConsumerLS.class.isAssignableFrom(type)) {
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_LS);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_LS); //$NON-NLS-1$
 			} else if (org.openntf.domino.design.impl.WebServiceConsumerJava.class.isAssignableFrom(type)) {
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JAVA);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JAVA); //$NON-NLS-1$
 			}
 
 		} else if (org.openntf.domino.design.ScriptLibrary.class.isAssignableFrom(type)) {
 			if (org.openntf.domino.design.ScriptLibraryLS.class.isAssignableFrom(type)) {
 				coll.setSelectScriptLibraries(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_LS) + " & !@Contains($FlagsExt;{W})";
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_LS) + " & !@Contains($FlagsExt;{W})"; //$NON-NLS-1$ //$NON-NLS-2$
 
 			} else if (org.openntf.domino.design.ScriptLibraryJava.class.isAssignableFrom(type)) {
 				coll.setSelectScriptLibraries(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JAVA) + " & !@Contains($FlagsExt;{W})";
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JAVA) + " & !@Contains($FlagsExt;{W})"; //$NON-NLS-1$ //$NON-NLS-2$
 
 			} else if (org.openntf.domino.design.ScriptLibraryCSJS.class.isAssignableFrom(type)) {
 				coll.setSelectScriptLibraries(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JS);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JS); //$NON-NLS-1$
 
 			} else if (org.openntf.domino.design.ScriptLibrarySSJS.class.isAssignableFrom(type)) {
 				coll.setSelectScriptLibraries(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_SERVER_JS);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_SERVER_JS); //$NON-NLS-1$
 			} else {
 				// ALL script libraries:
 				coll.setSelectScriptLibraries(true);
-				selectFormula += " & ((" + buildFlagFormula(DFLAGPAT_SCRIPTLIB_LS) + " & !@Contains($FlagsExt;{W}))";
-				selectFormula += " | (" + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JAVA) + " & !@Contains($FlagsExt;{W}))";
-				selectFormula += " | ( " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JS) + ")";
-				selectFormula += " | (" + buildFlagFormula(DFLAGPAT_SCRIPTLIB_SERVER_JS) + "))";
+				selectFormula += " & ((" + buildFlagFormula(DFLAGPAT_SCRIPTLIB_LS) + " & !@Contains($FlagsExt;{W}))"; //$NON-NLS-1$ //$NON-NLS-2$
+				selectFormula += " | (" + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JAVA) + " & !@Contains($FlagsExt;{W}))"; //$NON-NLS-1$ //$NON-NLS-2$
+				selectFormula += " | ( " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JS) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+				selectFormula += " | (" + buildFlagFormula(DFLAGPAT_SCRIPTLIB_SERVER_JS) + "))"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 		} else if (org.openntf.domino.design.DatabaseScript.class.isAssignableFrom(type)) {
@@ -609,21 +610,21 @@ public enum DesignFactory {
 
 		} else if (org.openntf.domino.design.AgentData.class.isAssignableFrom(type)) {
 			coll.setSelectMiscCodeElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_AGENT_DATA);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_AGENT_DATA); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.SharedActions.class.isAssignableFrom(type)) {
 			coll.setSelectActions(true);
 
 		} else if (org.openntf.domino.design.DB2View.class.isAssignableFrom(type)) {
 			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_DB2ACCESSVIEW);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_DB2ACCESSVIEW); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.Frameset.class.isAssignableFrom(type)) {
 			coll.setSelectFramesets(true);
 
 		} else if (org.openntf.domino.design.DesignApplet.class.isAssignableFrom(type)) {
 			coll.setSelectJavaResources(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_APPLET_RESOURCE);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_APPLET_RESOURCE); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.StyleSheet.class.isAssignableFrom(type)) {
 			coll.setSelectStylesheetResources(true);
@@ -631,42 +632,42 @@ public enum DesignFactory {
 
 		} else if (org.openntf.domino.design.WebServiceProvider.class.isAssignableFrom(type)) {
 			coll.setSelectMiscCodeElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_WEBSERVICE);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_WEBSERVICE); //$NON-NLS-1$
 			if (org.openntf.domino.design.impl.WebServiceProviderLS.class.isAssignableFrom(type)) {
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_WEBSERVICE_LS);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_WEBSERVICE_LS); //$NON-NLS-1$
 			} else if (org.openntf.domino.design.impl.WebServiceProviderJava.class.isAssignableFrom(type)) {
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_WEBSERVICE_JAVA);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_WEBSERVICE_JAVA); //$NON-NLS-1$
 			}
 		} else if (org.openntf.domino.design.SharedColumn.class.isAssignableFrom(type)) {
 			coll.setSelectMiscIndexElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_SHARED_COLS);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_SHARED_COLS); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.CompositeApp.class.isAssignableFrom(type)) {
 			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_COMPAPP);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_COMPAPP); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.CompositeWiring.class.isAssignableFrom(type)) {
 			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_COMPDEF);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_COMPDEF); //$NON-NLS-1$
 
 		} else if (org.openntf.domino.design.DbImage.class.isAssignableFrom(type)) {
 			coll.setSelectImageResources(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_IMAGE_DBICON);
+			selectFormula += " & " + buildFlagFormula(DFLAGPAT_IMAGE_DBICON); //$NON-NLS-1$
 
 			// Agents
 		} else if (org.openntf.domino.design.DesignAgent.class.isAssignableFrom(type)) {
 			coll.setSelectAgents(true);
 			// argh... why is this soooo complex, IBM?
 			if (org.openntf.domino.design.impl.DesignAgentF.class.isAssignableFrom(type)) {
-				selectFormula += " & $AssistType = 65426";
+				selectFormula += " & $AssistType = 65426"; //$NON-NLS-1$
 			} else if (org.openntf.domino.design.impl.DesignAgentLS.class.isAssignableFrom(type)) {
-				selectFormula += " & $AssistType = 65413";
+				selectFormula += " & $AssistType = 65413"; //$NON-NLS-1$
 			} else if (org.openntf.domino.design.impl.DesignAgentA.class.isAssignableFrom(type)) {
-				selectFormula += " & !($AssistType = 65413:65426:65427)";
+				selectFormula += " & !($AssistType = 65413:65426:65427)"; //$NON-NLS-1$
 			} else if (org.openntf.domino.design.impl.DesignAgentJ.class.isAssignableFrom(type)) {
-				selectFormula += " & $AssistType = 65427 & " + buildFlagFormula("+J");
+				selectFormula += " & $AssistType = 65427 & " + buildFlagFormula("+J"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (org.openntf.domino.design.impl.DesignAgentIJ.class.isAssignableFrom(type)) {
-				selectFormula += " & $AssistType = 65427 & " + buildFlagFormula("-J");
+				selectFormula += " & $AssistType = 65427 & " + buildFlagFormula("-J"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 		} else if (org.openntf.domino.design.UsingDocument.class.isAssignableFrom(type)) {
@@ -690,18 +691,18 @@ public enum DesignFactory {
 		} else if (org.openntf.domino.design.XspResource.class.isAssignableFrom(type)) {
 			if (org.openntf.domino.design.XPage.class.isAssignableFrom(type)) {
 				coll.setSelectMiscFormatElements(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPPAGE);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPPAGE); //$NON-NLS-1$
 
 			} else if (org.openntf.domino.design.CustomControl.class.isAssignableFrom(type)) {
 				coll.setSelectMiscFormatElements(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPCC);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPCC); //$NON-NLS-1$
 
 			} else if (org.openntf.domino.design.XspJavaResource.class.isAssignableFrom(type)) {
 				coll.setSelectMiscFormatElements(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVAFILE);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVAFILE); //$NON-NLS-1$
 			} else {
 				coll.setSelectMiscFormatElements(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVARESOURCE);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVARESOURCE); //$NON-NLS-1$
 			}
 		} else {
 			throw new IllegalArgumentException("Class " + type.getName() + " is unsupported");

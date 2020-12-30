@@ -326,6 +326,7 @@ org.openntf.domino.MIMEHeader {
 	}
 
 	@Override
+	@SuppressWarnings("nls")
 	protected void resurrect() {
 		if (headerName_ != null) {
 			try {

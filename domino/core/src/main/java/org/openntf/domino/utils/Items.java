@@ -33,7 +33,7 @@ public enum Items {
 
 		@Override
 		public String toString() {
-			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name();
+			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	};
 

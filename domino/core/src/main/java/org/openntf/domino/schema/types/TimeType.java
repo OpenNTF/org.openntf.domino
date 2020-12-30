@@ -41,7 +41,7 @@ public class TimeType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "Time";
+		return "Time"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

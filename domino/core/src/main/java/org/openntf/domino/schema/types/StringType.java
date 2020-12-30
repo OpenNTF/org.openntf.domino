@@ -41,7 +41,7 @@ public class StringType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "Text";
+		return "Text"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

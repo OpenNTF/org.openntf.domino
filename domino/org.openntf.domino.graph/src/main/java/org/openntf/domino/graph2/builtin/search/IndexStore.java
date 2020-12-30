@@ -41,7 +41,7 @@ import org.openntf.domino.types.CaseInsensitiveString;
 
 import com.tinkerpop.blueprints.Graph;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "unchecked", "rawtypes", "nls" })
 public class IndexStore extends DElementStore implements IndexDatabase, IScannerStateManager {
 
 	private IndexDatabase indexDb_;

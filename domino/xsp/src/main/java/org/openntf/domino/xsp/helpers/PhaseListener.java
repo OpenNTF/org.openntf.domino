@@ -27,6 +27,7 @@ import com.ibm.xsp.context.FacesContextEx;
 /**
  * PhaseListener for the library
  */
+@SuppressWarnings("nls")
 public class PhaseListener extends AbstractListener implements javax.faces.event.PhaseListener, com.ibm.xsp.event.FacesContextListener {
 	public static final long serialVersionUID = -6528380677556637393L;
 	private final static boolean _debug = false;

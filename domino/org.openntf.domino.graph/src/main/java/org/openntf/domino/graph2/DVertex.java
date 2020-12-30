@@ -29,6 +29,7 @@ import com.tinkerpop.blueprints.Vertex;
  * @author nfreeman
  *
  */
+@SuppressWarnings("nls")
 public interface DVertex extends com.tinkerpop.blueprints.Vertex, DElement {
 	public static final String GRAPH_TYPE_VALUE = "V";
 	public static final String FORMULA_FILTER = DElement.TYPE_FIELD + "=\"" + GRAPH_TYPE_VALUE + "\"";

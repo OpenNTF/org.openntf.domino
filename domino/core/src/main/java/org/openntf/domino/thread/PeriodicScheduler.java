@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import com.ibm.commons.util.StringUtil;
 
+@SuppressWarnings("nls")
 public class PeriodicScheduler implements Scheduler {
 	private static final Logger log_ = Logger.getLogger(DominoExecutor.class.getName());
 

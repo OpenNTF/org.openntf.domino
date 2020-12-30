@@ -40,7 +40,7 @@ public class ColorType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "Color";
+		return "Color"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

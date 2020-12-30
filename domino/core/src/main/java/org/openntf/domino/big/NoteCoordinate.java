@@ -26,6 +26,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
 import com.google.common.primitives.UnsignedLongs;
 
+@SuppressWarnings("nls")
 public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinate> {
 	public static enum Utils {
 		;

@@ -38,6 +38,7 @@ import java.util.logging.LogRecord;
  * Handler.HConsole.Class=org.openntf.domino.logging.LogHandlerConsole
  * </pre>
  */
+@SuppressWarnings("nls")
 public class LogHandlerConsole extends ConsoleHandler implements LogHandlerUpdateIF {
 
 	private static class LHCConfig implements LogHandlerConfigIF {

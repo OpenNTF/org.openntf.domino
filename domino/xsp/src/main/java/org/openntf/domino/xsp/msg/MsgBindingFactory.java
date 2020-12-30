@@ -25,7 +25,7 @@ import com.ibm.xsp.util.ValueBindingUtil;
 public class MsgBindingFactory implements BindingFactory {
 
 	/** the prefix for the engine (= <code>"msg"</code>) */
-	public static final String MSG = "msg";
+	public static final String MSG = "msg"; //$NON-NLS-1$
 
 	/**
 	 * Create a method binding for the specified formula

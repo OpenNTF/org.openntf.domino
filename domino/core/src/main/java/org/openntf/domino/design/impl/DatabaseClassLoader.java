@@ -61,10 +61,10 @@ public class DatabaseClassLoader extends org.openntf.domino.design.DatabaseClass
 			return defineClass(name, classData, 0, classData.length);
 		}
 
-		String binaryName = DominoUtils.escapeForFormulaString(DominoUtils.javaBinaryNameToFilePath(name, "/"));
+		String binaryName = DominoUtils.escapeForFormulaString(DominoUtils.javaBinaryNameToFilePath(name, "/")); //$NON-NLS-1$
 
 		Iterator<XspResource> classes = design_.getDesignElements(XspResource.class,
-				String.format("$ClassIndexItem='WEB-INF/classes/%s' ", binaryName)).iterator();
+				String.format("$ClassIndexItem='WEB-INF/classes/%s' ", binaryName)).iterator(); //$NON-NLS-1$
 		if (classes.hasNext()) {
 			XspResource res = classes.next();
 			// Load up our class queue with the data
@@ -81,7 +81,7 @@ public class DatabaseClassLoader extends org.openntf.domino.design.DatabaseClass
 		// It's also possible that it's stored only as a .class file (e.g. secondary, non-inner classes in a .java)
 
 		Iterator<FileResourceWebContent> webContentFiles = design_.getDesignElements(FileResourceWebContent.class,
-				String.format("$FileNames='WEB-INF/classes/%s' ", binaryName)).iterator();
+				String.format("$FileNames='WEB-INF/classes/%s' ", binaryName)).iterator(); //$NON-NLS-1$
 		if (webContentFiles.hasNext()) {
 			FileResourceWebContent res = webContentFiles.next();
 			byte[] classData = res.getFileData();

@@ -25,10 +25,11 @@ import org.openntf.domino.utils.Factory;
  *
  * @author withersp
  */
+@SuppressWarnings("nls")
 public class DefaultConsoleHandler extends Handler {
 
 	/** The ol debug level. */
-	private static String olDebugLevel = "1";
+	private static String olDebugLevel = "1"; //$NON-NLS-1$
 
 	/**
 	 * Instantiates a new default file handler.

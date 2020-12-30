@@ -43,6 +43,7 @@ import org.openntf.domino.utils.Factory;
  * @author steinsiek
  *
  */
+@SuppressWarnings("nls")
 public class Logging {
 
 	private static ThreadLocal<SimpleDateFormat> sdfISO = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")); //$NON-NLS-1$

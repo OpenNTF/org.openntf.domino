@@ -34,7 +34,7 @@ public class OLE_GUID extends AbstractStruct {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Data1=" + Data1.get() + ", Data2=" + Data2.get() + ", Data3=" + Data3.get()
-				+ ", Data4=" + Data4 + "]";
+		return "[" + getClass().getSimpleName() + ": Data1=" + Data1.get() + ", Data2=" + Data2.get() + ", Data3=" + Data3.get() //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				+ ", Data4=" + Data4 + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

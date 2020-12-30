@@ -39,6 +39,7 @@ import org.openntf.domino.nsfdata.structs.cd.CDRecord;
 import org.openntf.domino.nsfdata.structs.cd.CData;
 import org.openntf.domino.utils.xml.XMLNode;
 
+@SuppressWarnings("nls")
 public class DXLNote implements NSFNote, Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -58,31 +59,31 @@ public class DXLNote implements NSFNote, Serializable {
 	}
 
 	private DXLNote(final XMLNode node) {
-		String noteClass = node.getAttribute("class");
-		if ("replicationformula".equalsIgnoreCase(noteClass)) {
-			noteClass = "replformula";
-		} else if ("helpindex".equalsIgnoreCase(noteClass)) {
-			noteClass = "help_index";
+		String noteClass = node.getAttribute("class"); //$NON-NLS-1$
+		if ("replicationformula".equalsIgnoreCase(noteClass)) { //$NON-NLS-1$
+			noteClass = "replformula"; //$NON-NLS-1$
+		} else if ("helpindex".equalsIgnoreCase(noteClass)) { //$NON-NLS-1$
+			noteClass = "help_index"; //$NON-NLS-1$
 		}
 		noteClass_ = NoteClass.valueOf(noteClass.toUpperCase());
-		default_ = "true".equals(node.getAttribute("default"));
+		default_ = "true".equals(node.getAttribute("default")); //$NON-NLS-1$ //$NON-NLS-2$
 
-		XMLNode noteInfo = node.selectSingleNode("noteinfo");
-		noteId_ = Integer.parseInt(noteInfo.getAttribute("noteid"), 16);
-		universalId_ = noteInfo.getAttribute("unid");
-		sequence_ = Integer.parseInt(noteInfo.getAttribute("sequence"), 10);
+		XMLNode noteInfo = node.selectSingleNode("noteinfo"); //$NON-NLS-1$
+		noteId_ = Integer.parseInt(noteInfo.getAttribute("noteid"), 16); //$NON-NLS-1$
+		universalId_ = noteInfo.getAttribute("unid"); //$NON-NLS-1$
+		sequence_ = Integer.parseInt(noteInfo.getAttribute("sequence"), 10); //$NON-NLS-1$
 
 		if (DEBUG)
-			System.out.println("\tUNID: " + universalId_);
+			System.out.println("\tUNID: " + universalId_); //$NON-NLS-1$
 
-		for (XMLNode itemNode : node.selectNodes("./item")) {
+		for (XMLNode itemNode : node.selectNodes("./item")) { //$NON-NLS-1$
 			if (DEBUG)
-				System.out.println("\tItem: " + itemNode.getAttribute("name"));
+				System.out.println("\tItem: " + itemNode.getAttribute("name")); //$NON-NLS-1$ //$NON-NLS-2$
 
 			// Find out whether this is a duplicate item - solo items are all 0, while
 			// dups are 1-based. I am aware that this is horrible.
-			String name = itemNode.getAttribute("name");
-			boolean duplicate = node.selectNodes("./item[@name='" + name + "']").size() > 1;
+			String name = itemNode.getAttribute("name"); //$NON-NLS-1$
+			boolean duplicate = node.selectNodes("./item[@name='" + name + "']").size() > 1; //$NON-NLS-1$ //$NON-NLS-2$
 			int dupItemId = duplicate ? (getItems(name).size() + 1) : 0;
 
 			NSFItem item = DXLItemFactory.create(itemNode, dupItemId);

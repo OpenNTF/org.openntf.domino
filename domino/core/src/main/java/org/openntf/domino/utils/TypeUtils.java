@@ -69,6 +69,7 @@ import com.ibm.commons.util.StringUtil;
  * @author nfreeman
  *
  */
+@SuppressWarnings("nls")
 public enum TypeUtils {
 	;
 

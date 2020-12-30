@@ -35,66 +35,58 @@ public class OsgiServiceLocatorFactory implements IServiceLocatorFactory {
 
 	@Override
 	public IServiceLocator createServiceLocator() {
-		return AccessController.doPrivileged(new PrivilegedAction<IServiceLocator>() {
-			@Override
-			public IServiceLocator run() {
-				ApplicationFactory aFactory = (ApplicationFactory) FactoryFinder.getFactory("javax.faces.application.ApplicationFactory");
-				final ApplicationEx app_ = aFactory == null ? null : (ApplicationEx) aFactory.getApplication();
+		return AccessController.doPrivileged((PrivilegedAction<IServiceLocator>) () -> {
+			ApplicationFactory aFactory = (ApplicationFactory) FactoryFinder.getFactory("javax.faces.application.ApplicationFactory"); //$NON-NLS-1$
+			final ApplicationEx app_ = aFactory == null ? null : (ApplicationEx) aFactory.getApplication();
 
-				if (app_ == null) {
-					return new IServiceLocator() {
-						final Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
+			if (app_ == null) {
+				return new IServiceLocator() {
+					final Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
 
-						@SuppressWarnings({ "rawtypes", "unchecked" })
-						@Override
-						public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
-							List<T> ret = (List<T>) cache.get(serviceClazz);
+					@SuppressWarnings({ "rawtypes", "unchecked" })
+					@Override
+					public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
+						List<T> ret = (List<T>) cache.get(serviceClazz);
 
-							if (ret == null) {
-								ret = AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
-									@Override
-									public List<T> run() {
-										return (List<T>) ExtensionManager.findApplicationServices(null, Thread.currentThread()
-												.getContextClassLoader(), serviceClazz.getName());
-									}
-								});
-								if (Comparable.class.isAssignableFrom(serviceClazz)) {
-									Collections.sort((List<? extends Comparable>) ret);
+						if (ret == null) {
+							ret = AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
+								@Override
+								public List<T> run() {
+									return (List<T>) ExtensionManager.findApplicationServices(null, Thread.currentThread()
+											.getContextClassLoader(), serviceClazz.getName());
 								}
-								cache.put(serviceClazz, ret);
+							});
+							if (Comparable.class.isAssignableFrom(serviceClazz)) {
+								Collections.sort((List<? extends Comparable>) ret);
 							}
-							return ret;
+							cache.put(serviceClazz, ret);
 						}
-					};
+						return ret;
+					}
+				};
 
-				} else {
+			} else {
 
-					return new IServiceLocator() {
-						final Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
+				return new IServiceLocator() {
+					final Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
 
-						@SuppressWarnings({ "unchecked", "rawtypes" })
-						@Override
-						public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
-							List<T> ret = (List<T>) cache.get(serviceClazz);
+					@SuppressWarnings({ "unchecked", "rawtypes" })
+					@Override
+					public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
+						List<T> ret = (List<T>) cache.get(serviceClazz);
 
-							if (ret == null) {
-								ret = AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
-									@Override
-									public List<T> run() {
-										return app_.findServices(serviceClazz.getName());
-									}
-								});
-								if (Comparable.class.isAssignableFrom(serviceClazz)) {
-									Collections.sort((List<? extends Comparable>) ret);
-								}
-								cache.put(serviceClazz, ret);
+						if (ret == null) {
+							ret = AccessController.doPrivileged((PrivilegedAction<List<T>>) () -> app_.findServices(serviceClazz.getName()));
+							if (Comparable.class.isAssignableFrom(serviceClazz)) {
+								Collections.sort((List<? extends Comparable>) ret);
 							}
-							return ret;
+							cache.put(serviceClazz, ret);
 						}
-					};
-				}
-
+						return ret;
+					}
+				};
 			}
+
 		});
 	}
 

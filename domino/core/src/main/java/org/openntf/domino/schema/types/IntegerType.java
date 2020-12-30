@@ -40,7 +40,7 @@ public class IntegerType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "Number";
+		return "Number"; //$NON-NLS-1$
 	}
 
 	@Override

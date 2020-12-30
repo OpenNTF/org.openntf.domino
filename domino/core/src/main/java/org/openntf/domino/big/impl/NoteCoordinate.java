@@ -47,6 +47,7 @@ import javolution.util.FastMap;
  * an entire enterprise
  */
 
+@SuppressWarnings("nls")
 public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 	private static ThreadLocal<byte[]> extreadbuffer_ = new ThreadLocal<byte[]>() {
 		@Override

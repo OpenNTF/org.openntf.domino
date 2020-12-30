@@ -36,7 +36,7 @@ public class VariableResolver extends javax.faces.el.VariableResolver {
 	 * 
 	 */
 	public VariableResolver() throws FacesException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-		this._resolver = ((javax.faces.el.VariableResolver) Delegation.getImplementation("variable-resolver"));
+		this._resolver = ((javax.faces.el.VariableResolver) Delegation.getImplementation("variable-resolver")); //$NON-NLS-1$
 		// TODO
 	}
 

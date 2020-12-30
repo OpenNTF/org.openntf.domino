@@ -54,43 +54,43 @@ public class DXLItemObjectFile extends DXLItemObject {
 		XMLNode objectNode = node.getFirstChildElement();
 		XMLNode fileNode = objectNode.getFirstChildElement();
 
-		String hostType = fileNode.getAttribute("hosttype");
+		String hostType = fileNode.getAttribute("hosttype"); //$NON-NLS-1$
 		if (!hostType.isEmpty()) {
 			hostType_ = HostType.valueOf(hostType.toUpperCase());
 		} else {
 			hostType_ = null;
 		}
-		String compressionType = fileNode.getAttribute("compression");
+		String compressionType = fileNode.getAttribute("compression"); //$NON-NLS-1$
 		if (!compressionType.isEmpty()) {
 			compressionType_ = CompressionType.valueOf(compressionType.toUpperCase());
 		} else {
 			compressionType_ = null;
 		}
-		encoding_ = fileNode.getAttribute("encoding");
-		fileName_ = fileNode.getAttribute("name");
-		fileSize_ = Long.parseLong(fileNode.getAttribute("size"), 10);
+		encoding_ = fileNode.getAttribute("encoding"); //$NON-NLS-1$
+		fileName_ = fileNode.getAttribute("name"); //$NON-NLS-1$
+		fileSize_ = Long.parseLong(fileNode.getAttribute("size"), 10); //$NON-NLS-1$
 
 		flags_ = EnumSet.noneOf(Flag.class);
-		for (String flag : fileNode.getAttribute("flags").split("[,\\s]")) {
+		for (String flag : fileNode.getAttribute("flags").split("[,\\s]")) { //$NON-NLS-1$ //$NON-NLS-2$
 			if (!flag.trim().isEmpty()) {
 				flags_.add(Flag.valueOf(flag.toUpperCase()));
 			}
 		}
 
-		XMLNode createdNode = fileNode.selectSingleNode("./created/datetime");
+		XMLNode createdNode = fileNode.selectSingleNode("./created/datetime"); //$NON-NLS-1$
 		if (!createdNode.getText().isEmpty()) {
 			fileCreated_ = DXLItemFactory.createDateTime(createdNode).toDate();
 		} else {
 			fileCreated_ = null;
 		}
-		XMLNode modifiedNode = fileNode.selectSingleNode("./modified/datetime");
+		XMLNode modifiedNode = fileNode.selectSingleNode("./modified/datetime"); //$NON-NLS-1$
 		if (!modifiedNode.getText().isEmpty()) {
 			fileModified_ = DXLItemFactory.createDateTime(modifiedNode).toDate();
 		} else {
 			fileModified_ = null;
 		}
 
-		value_ = parseBase64Binary(fileNode.selectSingleNode("./filedata").getText());
+		value_ = parseBase64Binary(fileNode.selectSingleNode("./filedata").getText()); //$NON-NLS-1$
 	}
 
 	@Override

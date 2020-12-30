@@ -40,10 +40,11 @@ import org.openntf.domino.utils.Factory;
  * for use in the new logging mechanism.
  *
  */
+@SuppressWarnings("nls")
 public class LogGeneratorOpenLog {
 
 	/*-------------------------------------------------------------*/
-	private static final String _logFormName = "LogEvent";
+	private static final String _logFormName = "LogEvent"; //$NON-NLS-1$
 
 	//	private static final String _xotsDemonClassName = "org.openntf.domino.xots.XotsDaemon";
 	//	private static final String _xotsDemonToQueueMethodName = "addToQueue";
@@ -130,10 +131,10 @@ public class LogGeneratorOpenLog {
 			}
 			ollr._userName = sess.getUserName();
 			ollr._effectiveUserName = sess.getEffectiveUserName();
-			ollr._userRoles = sess.evaluate("@UserRoles");
+			ollr._userRoles = sess.evaluate("@UserRoles"); //$NON-NLS-1$
 			String clVer = sess.getNotesVersion();
 			if (clVer != null) {
-				ollr._clientVersion = clVer.split("\\|");
+				ollr._clientVersion = clVer.split("\\|"); //$NON-NLS-1$
 				for (int i = 0; i < ollr._clientVersion.length; i++) {
 					ollr._clientVersion[i] = ollr._clientVersion[i].trim();
 				}
@@ -155,7 +156,7 @@ public class LogGeneratorOpenLog {
 		logRec.setThrown(localExc);
 		logRec.setMillis(System.currentTimeMillis());
 		ollr = new OL_LogRecord(logRec, null, null);
-		ollr._agentName = "LogGeneratorOpenLog";
+		ollr._agentName = "LogGeneratorOpenLog"; //$NON-NLS-1$
 		ollr._dbPath = _logDBPath;
 		if (_olQueue != null) {
 			_olQueue.add(new OL_EntryToWrite(this, ollr));
@@ -228,7 +229,7 @@ public class LogGeneratorOpenLog {
 				return;
 			}
 			try {
-				olDoc.replaceItemValue("Form", _logFormName);
+				olDoc.replaceItemValue("Form", _logFormName); //$NON-NLS-1$
 				Throwable t = ollr._logRec.getThrown();
 				if (t != null) {
 					StackTraceElement[] sttr = t.getStackTrace();
@@ -241,53 +242,53 @@ public class LogGeneratorOpenLog {
 						interestingInd++;
 					}
 					if (ne != null) {
-						olDoc.replaceItemValue("LogErrorNumber", ne.id);
-						olDoc.replaceItemValue("LogErrorMessage", ne.text);
+						olDoc.replaceItemValue("LogErrorNumber", ne.id); //$NON-NLS-1$
+						olDoc.replaceItemValue("LogErrorMessage", ne.text); //$NON-NLS-1$
 
 					} else {
-						olDoc.replaceItemValue("LogErrorMessage", getMessage(ollr._logRec));
+						olDoc.replaceItemValue("LogErrorMessage", getMessage(ollr._logRec)); //$NON-NLS-1$
 					}
 					if (interestingInd >= 0) {
 						StackTraceElement ste = sttr[interestingInd];
-						olDoc.replaceItemValue("LogErrorLine", ste.getLineNumber());
-						olDoc.replaceItemValue("LogFromMethod", ste.getClassName() + "." + ste.getMethodName());
+						olDoc.replaceItemValue("LogErrorLine", ste.getLineNumber()); //$NON-NLS-1$
+						olDoc.replaceItemValue("LogFromMethod", ste.getClassName() + "." + ste.getMethodName()); //$NON-NLS-1$
 					}
 				}
-				olDoc.replaceItemValue("LogStackTrace", getStackTrace(t));
+				olDoc.replaceItemValue("LogStackTrace", getStackTrace(t)); //$NON-NLS-1$
 				Level l = ollr._logRec.getLevel();
 				if (l == null) {
 					l = Level.WARNING;
 				}
-				olDoc.replaceItemValue("LogSeverity", l.getName());
-				olDoc.replaceItemValue("LogEventTime", new Date(ollr._logRec.getMillis()));
-				olDoc.replaceItemValue("LogEventType", "Log");
-				olDoc.replaceItemValue("LogMessage", getMessage(ollr._logRec));
-				olDoc.replaceItemValue("LogFromDatabase", ollr._dbPath);
-				olDoc.replaceItemValue("LogFromServer", ollr._serverName);
-				olDoc.replaceItemValue("LogFromAgent", ollr._agentName);
-				olDoc.replaceItemValue("LogAgentLanguage", "Java");
-				olDoc.replaceItemValue("LogUserName", ollr._userName);
-				olDoc.replaceItemValue("LogEffectiveName", ollr._effectiveUserName);
-				olDoc.replaceItemValue("LogAccessLevel", ollr._accessLevel);
-				olDoc.replaceItemValue("LogUserRoles", ollr._userRoles);
-				olDoc.replaceItemValue("LogClientVersion", ollr._clientVersion);
-				olDoc.replaceItemValue("LogAgentStartTime", logStartTime);
+				olDoc.replaceItemValue("LogSeverity", l.getName()); //$NON-NLS-1$
+				olDoc.replaceItemValue("LogEventTime", new Date(ollr._logRec.getMillis())); //$NON-NLS-1$
+				olDoc.replaceItemValue("LogEventType", "Log"); //$NON-NLS-1$ //$NON-NLS-2$
+				olDoc.replaceItemValue("LogMessage", getMessage(ollr._logRec)); //$NON-NLS-1$
+				olDoc.replaceItemValue("LogFromDatabase", ollr._dbPath); //$NON-NLS-1$
+				olDoc.replaceItemValue("LogFromServer", ollr._serverName); //$NON-NLS-1$
+				olDoc.replaceItemValue("LogFromAgent", ollr._agentName); //$NON-NLS-1$
+				olDoc.replaceItemValue("LogAgentLanguage", "Java"); //$NON-NLS-1$ //$NON-NLS-2$
+				olDoc.replaceItemValue("LogUserName", ollr._userName); //$NON-NLS-1$
+				olDoc.replaceItemValue("LogEffectiveName", ollr._effectiveUserName); //$NON-NLS-1$
+				olDoc.replaceItemValue("LogAccessLevel", ollr._accessLevel); //$NON-NLS-1$
+				olDoc.replaceItemValue("LogUserRoles", ollr._userRoles); //$NON-NLS-1$
+				olDoc.replaceItemValue("LogClientVersion", ollr._clientVersion); //$NON-NLS-1$
+				olDoc.replaceItemValue("LogAgentStartTime", logStartTime); //$NON-NLS-1$
 				if (ollr._exceptionDetails == null) {
-					olDoc.replaceItemValue("LogExceptionDetails", "* Not available *");
+					olDoc.replaceItemValue("LogExceptionDetails", "* Not available *"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					int sz = ollr._exceptionDetails.size();
 					String[] excds = new String[sz];
 					for (int i = 0; i < sz; i++) {
 						excds[i] = ollr._exceptionDetails.get(i).toString();
 					}
-					olDoc.replaceItemValue("LogExceptionDetails", excds);
+					olDoc.replaceItemValue("LogExceptionDetails", excds); //$NON-NLS-1$
 				}
 				if (ollr._lastWrappedDocs == null) {
-					olDoc.replaceItemValue("LogLastWrappedDocuments", "* Not available *");
+					olDoc.replaceItemValue("LogLastWrappedDocuments", "* Not available *"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
-					olDoc.replaceItemValue("LogLastWrappedDocuments", ollr._lastWrappedDocs);
+					olDoc.replaceItemValue("LogLastWrappedDocuments", ollr._lastWrappedDocs); //$NON-NLS-1$
 				}
-				olDoc.replaceItemValue("$PublicAccess", "1");
+				olDoc.replaceItemValue("$PublicAccess", "1"); //$NON-NLS-1$ //$NON-NLS-2$
 				olDoc.save(true);
 			} catch (Exception e) {
 				printException(e);
@@ -303,7 +304,7 @@ public class LogGeneratorOpenLog {
 			if (t != null) {
 				ret = t.getMessage();
 			}
-			return (ret == null) ? "" : ret;
+			return (ret == null) ? "" : ret; //$NON-NLS-1$
 		}
 
 		private ArrayList<String> getStackTrace(final Throwable t) {
@@ -313,7 +314,7 @@ public class LogGeneratorOpenLog {
 			} else {
 				StringWriter sw = new StringWriter();
 				t.printStackTrace(new PrintWriter(sw));
-				StringTokenizer st = new StringTokenizer(sw.toString(), "\n");
+				StringTokenizer st = new StringTokenizer(sw.toString(), "\n"); //$NON-NLS-1$
 				while (st.hasMoreTokens()) {
 					v.add(st.nextToken().trim());
 				}

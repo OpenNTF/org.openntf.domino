@@ -47,6 +47,7 @@ import com.ibm.xsp.webapp.XspHttpServletResponse;
  * 
  *         Class of XPages utilities
  */
+@SuppressWarnings("nls")
 public class XspUtils {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(XspUtils.class.getName());

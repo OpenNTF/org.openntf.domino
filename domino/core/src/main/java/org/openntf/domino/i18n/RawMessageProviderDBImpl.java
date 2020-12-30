@@ -29,6 +29,7 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
 /*----------------------------------------------------------------------------*/
+@SuppressWarnings("nls")
 public class RawMessageProviderDBImpl extends RawMessageProvider {
 
 	private Database iDB;
@@ -60,7 +61,7 @@ public class RawMessageProviderDBImpl extends RawMessageProvider {
 	}
 
 	/*----------------------------------------------------------------------------*/
-	private static final String lLotusDefaultLocale = "*";
+	private static final String lLotusDefaultLocale = "*"; //$NON-NLS-1$
 
 	@Override
 	public String getRawText(final String bundleName, final String key, final Locale loc) {
@@ -126,7 +127,7 @@ public class RawMessageProviderDBImpl extends RawMessageProvider {
 			return;
 		int lh = lang.length();
 		if (lh >= 5)
-			lang = lang.substring(0, 2) + "_" + lang.substring(3, 5);
+			lang = lang.substring(0, 2) + "_" + lang.substring(3, 5); //$NON-NLS-1$
 		else if (lh >= 2)
 			lang = lang.substring(0, 2);
 		Map<String, Map<String, String>> cmBundle = iMsgCache.get(bundle);

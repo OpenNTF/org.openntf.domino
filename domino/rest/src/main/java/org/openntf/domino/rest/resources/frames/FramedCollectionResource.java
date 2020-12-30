@@ -344,6 +344,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		return response;
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	private boolean processJsonObject(final JsonJavaObject jsonItems, final DFramedTransactionalGraph graph, final JsonGraphWriter writer,
 			final Map<Object, Object> results) {
 		Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
@@ -613,6 +614,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		return response;
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	private void processJsonUpdate(final JsonJavaObject jsonItems, final DFramedTransactionalGraph graph, final JsonGraphWriter writer,
 			final ParamMap pm, final String method) throws JsonException, IOException {
 		boolean commit = true;

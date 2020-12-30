@@ -1,5 +1,6 @@
 package org.openntf.formula.function;
 
+@SuppressWarnings("nls")
 public class TextMatchLotus {
 	/*----------------------------------------------------------------------------*/
 	private static final char BACK_SLASH = '\\';

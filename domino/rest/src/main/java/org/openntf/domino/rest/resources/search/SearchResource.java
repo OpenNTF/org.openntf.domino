@@ -63,6 +63,7 @@ import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.domino.das.utils.ErrorHelper;
 
 @Path(Routes.ROOT + "/" + Routes.SEARCH + "/" + Routes.NAMESPACE_PATH_PARAM)
+@SuppressWarnings("nls")
 public class SearchResource extends AbstractResource {
 
 	public SearchResource(final ODAGraphService service) {

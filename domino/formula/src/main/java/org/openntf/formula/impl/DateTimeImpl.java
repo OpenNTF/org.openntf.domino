@@ -91,7 +91,7 @@ public class DateTimeImpl implements DateTime, Externalizable {
 
 	public String getDateOnly() {
 		if (_noDate)
-			return "";
+			return ""; //$NON-NLS-1$
 		return Formulas.getFormatter(_locale).formatCalDateOnly(_cal);
 	}
 
@@ -105,7 +105,7 @@ public class DateTimeImpl implements DateTime, Externalizable {
 
 	public String getTimeOnly() {
 		if (_noTime)
-			return "";
+			return ""; //$NON-NLS-1$
 		return Formulas.getFormatter(_locale).formatCalTimeOnly(_cal);
 	}
 

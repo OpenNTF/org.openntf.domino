@@ -43,12 +43,12 @@ public class DesignView extends AbstractFolder implements org.openntf.domino.des
 	}
 
 	protected DesignView(final Database database) {
-		super(database, DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_view.xml"));
+		super(database, DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_view.xml")); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getSelectionFormula() {
-		XMLNode formula = getDxl().selectSingleNode("/view/code[@event='selection']/formula");
+		XMLNode formula = getDxl().selectSingleNode("/view/code[@event='selection']/formula"); //$NON-NLS-1$
 		if (formula != null) {
 			return formula.getText();
 		}
@@ -57,7 +57,7 @@ public class DesignView extends AbstractFolder implements org.openntf.domino.des
 
 	@Override
 	public void setSelectionFormula(final String selectionFormula) {
-		XMLNode formula = getDxl().selectSingleNode("/view/code[@event='selection']/formula");
+		XMLNode formula = getDxl().selectSingleNode("/view/code[@event='selection']/formula"); //$NON-NLS-1$
 		if (formula != null) {
 			formula.setTextContent(selectionFormula);
 		}

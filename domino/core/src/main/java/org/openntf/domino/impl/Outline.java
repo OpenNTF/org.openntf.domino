@@ -346,7 +346,7 @@ org.openntf.domino.Outline {
 	public String getNoteID() {
 		NoteCollection notes = this.getParentDatabase().createNoteCollection(false);
 		notes.setSelectOutlines(true);
-		notes.setSelectionFormula("$TITLE=\"" + this.getName().replace("\"", "\\\"") + "\"");
+		notes.setSelectionFormula("$TITLE=\"" + this.getName().replace("\"", "\\\"") + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		notes.buildCollection();
 		return notes.getFirstNoteID();
 	}
@@ -413,7 +413,7 @@ org.openntf.domino.Outline {
 	public String getUniversalID() {
 		NoteCollection notes = this.getParentDatabase().createNoteCollection(false);
 		notes.setSelectOutlines(true);
-		notes.setSelectionFormula("$TITLE=\"" + this.getName().replace("\"", "\\\"") + "\"");
+		notes.setSelectionFormula("$TITLE=\"" + this.getName().replace("\"", "\\\"") + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		notes.buildCollection();
 		return notes.getUNID(notes.getFirstNoteID());
 	}

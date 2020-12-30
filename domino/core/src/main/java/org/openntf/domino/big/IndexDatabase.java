@@ -33,6 +33,7 @@ import org.openntf.domino.big.impl.IndexHit;
 import org.openntf.domino.helpers.DocumentScanner;
 import org.openntf.domino.types.CaseInsensitiveString;
 
+@SuppressWarnings("nls")
 public interface IndexDatabase extends IScannerStateManager {
 
 	public static final String TERM_VIEW_NAME = "$TermIndex";

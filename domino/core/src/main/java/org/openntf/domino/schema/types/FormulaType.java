@@ -40,7 +40,7 @@ public class FormulaType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "Formula";
+		return "Formula"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

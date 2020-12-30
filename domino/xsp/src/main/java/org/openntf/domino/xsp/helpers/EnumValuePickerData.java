@@ -36,7 +36,7 @@ import org.openntf.domino.utils.DominoUtils;
  *         NOTE: This has not been fully tested
  */
 // TODO: Remove before 3.0 - all functionality introduced in ExtLib 14
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "nls" })
 public class EnumValuePickerData extends MapValuePickerData {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(EnumValuePickerData.class.getName());
@@ -105,7 +105,7 @@ public class EnumValuePickerData extends MapValuePickerData {
 		if (sorted != null) {
 			return sorted;
 		}
-		ValueBinding vb = getValueBinding("sorted");// $NON-NLS-1$
+		ValueBinding vb = getValueBinding("sorted");//$NON-NLS-1$
 		if (vb != null) {
 			Boolean b = (Boolean) vb.getValue(getFacesContext());
 			if (b != null) {
@@ -144,7 +144,7 @@ public class EnumValuePickerData extends MapValuePickerData {
 			if (enumClass.isEnum()) {
 				Enum[] enums = enumClass.getEnumConstants();
 				for (Enum e : enums) {
-					opts.put(e.name(), enumClass.getName() + " " + e.name());
+					opts.put(e.name(), enumClass.getName() + " " + e.name()); //$NON-NLS-1$
 				}
 			} else {
 				throw new UnsupportedDataTypeException("Value is not an Enum");

@@ -36,9 +36,9 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 * @since ODA 4.1.0
 	 */
 	public enum LaunchContextNotes {
-		LAST_VIEWED(""), ABOUT_DOC("openaboutdocument"), NAVIGATOR("opennavigator"), NAVIGATOR_IN_WINDOW("opennavigatorinwindow"),
-		FRAMESET("openframeset"), XPAGE("openxpage"), ABOUT_ATTACHMENT("openfirstaboutattachment"), ABOUT_DOCLINK("openfirstdoclink"),
-		COMPOSITE_APP("opencompapp");
+		LAST_VIEWED(""), ABOUT_DOC("openaboutdocument"), NAVIGATOR("opennavigator"), NAVIGATOR_IN_WINDOW("opennavigatorinwindow"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		FRAMESET("openframeset"), XPAGE("openxpage"), ABOUT_ATTACHMENT("openfirstaboutattachment"), ABOUT_DOCLINK("openfirstdoclink"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		COMPOSITE_APP("opencompapp"); //$NON-NLS-1$
 
 		String propName;
 
@@ -58,9 +58,9 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 * @since ODA 4.1.0
 	 */
 	public enum LaunchContextWeb {
-		NOTES_LAUNCH(""), ABOUT_DOC("openaboutdocument"), NAVIGATOR("opennavigator"), NAVIGATOR_IN_WINDOW("opennavigatorinwindow"),
-		FRAMESET("openframeset"), PAGE("openpage"), XPAGE("openxpage"), ABOUT_DOCLINK("openfirstdoclink"),
-		SPECIFIC_DOC_LINK("openspecifieddoclink"), FIRST_DOC_IN_VIEW("openfirstdocumentinview");
+		NOTES_LAUNCH(""), ABOUT_DOC("openaboutdocument"), NAVIGATOR("opennavigator"), NAVIGATOR_IN_WINDOW("opennavigatorinwindow"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		FRAMESET("openframeset"), PAGE("openpage"), XPAGE("openxpage"), ABOUT_DOCLINK("openfirstdoclink"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		SPECIFIC_DOC_LINK("openspecifieddoclink"), FIRST_DOC_IN_VIEW("openfirstdocumentinview"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String propName;
 
@@ -80,7 +80,7 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 * @since ODA 4.1.0
 	 */
 	public enum ShowAboutContext {
-		FIRST_OPENED(""), FIRST_OPENED_AND_CHANGED("firstopenandchanged"), NEVER("never");
+		FIRST_OPENED(""), FIRST_OPENED_AND_CHANGED("firstopenandchanged"), NEVER("never"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		String propName;
 
@@ -100,7 +100,7 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 * @since ODA 4.1.0
 	 */
 	public enum PreviewPaneDefault {
-		BOTTOM(""), BOTTOM_RIGHT("bottomright"), RIGHT("right");
+		BOTTOM(""), BOTTOM_RIGHT("bottomright"), RIGHT("right"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		String propName;
 
@@ -121,7 +121,7 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 *
 	 */
 	public enum UnreadReplicationSetting {
-		NEVER(""), CLUSTER("cluster"), ALL_SERVERS("all");
+		NEVER(""), CLUSTER("cluster"), ALL_SERVERS("all"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		String propName;
 
@@ -141,21 +141,21 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 * @since ODA 4.1.0
 	 */
 	public enum DbProperties {
-		USE_JS("usejavascriptinpages"), REQUIRE_SSL("requiressl"), NO_URL_OPEN("nourlopen"), ENHANCED_HTML("$AllowPost8HTML"),
-		BLOCK_ICAA("$DisallowOpenInNBP"), DISABLE_BACKGROUND_AGENTS("allowbackgroundagents"), ALLOW_STORED_FORMS("allowstoredforms"),
-		DEFER_IMAGE_LOADING("imageloadsdeferred"), ALLOW_DOC_LOCKING("allowdocumentlocking"), INHERIT_OS_THEME("inheritostheme"),
-		ALLOW_DESIGN_LOCKING("allowdesignlocking"), SHOW_IN_OPEN_DIALOG("showinopendialog"), MULTI_DB_INDEXING("multidbindexed"),
-		MODIFIED_NOT_UNREAD("markmodifiedunread"), MARK_PARENT_REPLY_FORWARD("trackreplyforward"), INHERIT_FROM_TEMPLATE("fromtemplate"),
-		DB_IS_TEMPLATE("templatename"), ADVANCED_TEMPLATE("advancedtemplate"), MULTILINGUAL("multilingual"),
-		DONT_MAINTAIN_UNREAD("maintainunread"), REPLICATE_UNREAD("replicateunread"), OPTIMIZE_DOC_MAP("optimizetablebitmap"),
-		DONT_OVERWRITE_FREE_SPACE("overwritefreespace"), MAINTAIN_LAST_ACCESSED("savelastaccessed"),
-		DISABLE_TRANSACTION_LOGGING("logtransactions"), NO_SPECIAL_RESPONSE_HIERARCHY("allowspecialhierarchy"), USE_LZ1("uselz1"),
-		NO_HEADLINE_MONITORING("allowheadlinemonitoring"), ALLOW_MORE_FIELDS("increasemaxfields"),
-		SUPPORT_RESPONSE_THREADS("supportrespthread"), NO_SIMPLE_SEARCH("nosimplesearch"), COMPRESS_DESIGN("compressdesign"),
-		COMPRESS_DATA("compressdata"), NO_AUTO_VIEW_UPDATE("noautoviewupdate"), NO_EXPORT_VIEW("$DisableExport"),
-		ALLOW_SOFT_DELETE("allowsoftdeletion"), SOFT_DELETE_EXPIRY("softdeletionsexpirein"), MAX_UPDATED_BY("maxupdatedbyentries"),
-		MAX_REVISIONS("maxrevisionentries"), ALLOW_DAS("$AllowRESTDbAPI"), DAOS_ENABLED("$Daos"),
-		LAUNCH_XPAGE_ON_SERVER("$LaunchXPageRunOnServer"), DOCUMENT_SUMMARY_16MB("$LargeSummary");
+		USE_JS("usejavascriptinpages"), REQUIRE_SSL("requiressl"), NO_URL_OPEN("nourlopen"), ENHANCED_HTML("$AllowPost8HTML"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		BLOCK_ICAA("$DisallowOpenInNBP"), DISABLE_BACKGROUND_AGENTS("allowbackgroundagents"), ALLOW_STORED_FORMS("allowstoredforms"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		DEFER_IMAGE_LOADING("imageloadsdeferred"), ALLOW_DOC_LOCKING("allowdocumentlocking"), INHERIT_OS_THEME("inheritostheme"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		ALLOW_DESIGN_LOCKING("allowdesignlocking"), SHOW_IN_OPEN_DIALOG("showinopendialog"), MULTI_DB_INDEXING("multidbindexed"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		MODIFIED_NOT_UNREAD("markmodifiedunread"), MARK_PARENT_REPLY_FORWARD("trackreplyforward"), INHERIT_FROM_TEMPLATE("fromtemplate"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		DB_IS_TEMPLATE("templatename"), ADVANCED_TEMPLATE("advancedtemplate"), MULTILINGUAL("multilingual"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		DONT_MAINTAIN_UNREAD("maintainunread"), REPLICATE_UNREAD("replicateunread"), OPTIMIZE_DOC_MAP("optimizetablebitmap"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		DONT_OVERWRITE_FREE_SPACE("overwritefreespace"), MAINTAIN_LAST_ACCESSED("savelastaccessed"), //$NON-NLS-1$ //$NON-NLS-2$
+		DISABLE_TRANSACTION_LOGGING("logtransactions"), NO_SPECIAL_RESPONSE_HIERARCHY("allowspecialhierarchy"), USE_LZ1("uselz1"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		NO_HEADLINE_MONITORING("allowheadlinemonitoring"), ALLOW_MORE_FIELDS("increasemaxfields"), //$NON-NLS-1$ //$NON-NLS-2$
+		SUPPORT_RESPONSE_THREADS("supportrespthread"), NO_SIMPLE_SEARCH("nosimplesearch"), COMPRESS_DESIGN("compressdesign"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		COMPRESS_DATA("compressdata"), NO_AUTO_VIEW_UPDATE("noautoviewupdate"), NO_EXPORT_VIEW("$DisableExport"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		ALLOW_SOFT_DELETE("allowsoftdeletion"), SOFT_DELETE_EXPIRY("softdeletionsexpirein"), MAX_UPDATED_BY("maxupdatedbyentries"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		MAX_REVISIONS("maxrevisionentries"), ALLOW_DAS("$AllowRESTDbAPI"), DAOS_ENABLED("$Daos"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		LAUNCH_XPAGE_ON_SERVER("$LaunchXPageRunOnServer"), DOCUMENT_SUMMARY_16MB("$LargeSummary"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String propName;
 

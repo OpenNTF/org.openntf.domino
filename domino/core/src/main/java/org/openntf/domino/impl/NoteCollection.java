@@ -202,6 +202,7 @@ public class NoteCollection extends BaseThreadSafe<org.openntf.domino.NoteCollec
 	 * @see org.openntf.domino.NoteCollection#buildCollection()
 	 */
 	@Override
+	@SuppressWarnings("nls")
 	public void buildCollection() {
 		try {
 			lotus.domino.NoteCollection nc = getDelegate();

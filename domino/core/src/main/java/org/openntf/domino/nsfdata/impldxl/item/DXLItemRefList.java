@@ -25,6 +25,7 @@ import org.openntf.domino.nsfdata.structs.LIST;
 import org.openntf.domino.nsfdata.structs.UNIVERSALNOTEID;
 import org.openntf.domino.utils.xml.XMLNode;
 
+@SuppressWarnings("nls")
 public class DXLItemRefList extends DXLItemRaw {
 	private static final long serialVersionUID = 1L;
 
@@ -76,6 +77,6 @@ public class DXLItemRefList extends DXLItemRaw {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": value=" + Arrays.asList(getValue()) + "]";
+		return "[" + getClass().getSimpleName() + ": value=" + Arrays.asList(getValue()) + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

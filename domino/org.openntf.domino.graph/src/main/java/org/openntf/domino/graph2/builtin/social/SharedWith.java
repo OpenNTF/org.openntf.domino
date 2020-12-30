@@ -23,7 +23,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(SharedWith.LABEL)
 public interface SharedWith extends DEdgeFrame {
-	public static final String LABEL = "sharedWith";
+	public static final String LABEL = "sharedWith"; //$NON-NLS-1$
 
 	@InVertex
 	public Sharer getSharer();

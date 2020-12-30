@@ -42,6 +42,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeField("$FormulaClass")
 @TypeValue("1")
 @JavaHandlerClass(ViewVertex.ViewVertexImpl.class)
+@SuppressWarnings("nls")
 public interface ViewVertex extends VertexFrame {
 
 	@JavaHandler

@@ -49,7 +49,7 @@ import org.openntf.domino.types.CaseInsensitiveString;
  * @author Nathan T. Freeman
  *
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 public class IndexDatabase implements IScannerStateManager, org.openntf.domino.big.IndexDatabase {
 	private static final Logger log_ = Logger.getLogger(IndexDatabase.class.getName());
 

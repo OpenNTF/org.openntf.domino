@@ -60,10 +60,10 @@ public final class ImageResource extends AbstractDesignFileResource implements o
 	public byte[] getFileData() {
 		switch (getDxlFormat(true)) {
 		case DXL:
-			String rawData = getDxl().selectSingleNode("//jpeg|//gif|//png").getText();
+			String rawData = getDxl().selectSingleNode("//jpeg|//gif|//png").getText(); //$NON-NLS-1$
 			return parseBase64Binary(rawData);
 		default:
-			return getFileDataRaw("$ImageData");
+			return getFileDataRaw("$ImageData"); //$NON-NLS-1$
 
 		}
 	}

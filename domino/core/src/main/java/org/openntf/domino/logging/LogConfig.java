@@ -36,12 +36,13 @@ import org.openntf.formula.Formulas;
 /**
  * Representation of the logging configuration file.
  */
+@SuppressWarnings("nls")
 public class LogConfig {
 
-	public static final String cUserName = "$USER$";
-	public static final String cDBPath = "$DBPATH$";
-	public static final String cLoggerName = "$LOGGER$";
-	public static final String cLogMessage = "$MESSAGE$";
+	public static final String cUserName = "$USER$"; //$NON-NLS-1$
+	public static final String cDBPath = "$DBPATH$"; //$NON-NLS-1$
+	public static final String cLoggerName = "$LOGGER$"; //$NON-NLS-1$
+	public static final String cLogMessage = "$MESSAGE$"; //$NON-NLS-1$
 
 	static class L_LogHandler {
 		String _handlerName;
@@ -72,11 +73,11 @@ public class LogConfig {
 		boolean checkYourself() {
 			try {
 				_handlerClass = Class.forName(_handlerClassName);
-				_handlerConfigFromProps = _handlerClass.getMethod("configFromProps", String.class);
-				_handlerGetInstance = _handlerClass.getMethod("getInstance", LogHandlerConfigIF.class, boolean.class);
+				_handlerConfigFromProps = _handlerClass.getMethod("configFromProps", String.class); //$NON-NLS-1$
+				_handlerGetInstance = _handlerClass.getMethod("getInstance", LogHandlerConfigIF.class, boolean.class); //$NON-NLS-1$
 				if (_formatterClassName != null) {
 					_formatterClass = Class.forName(_formatterClassName);
-					_formatterGetInstance = _formatterClass.getMethod("getInstance");
+					_formatterGetInstance = _formatterClass.getMethod("getInstance"); //$NON-NLS-1$
 				}
 				Object o = _handlerConfigFromProps.invoke(null, _props);
 				if (!(o instanceof LogHandlerConfigIF)) {
@@ -160,7 +161,7 @@ public class LogConfig {
 					_condContDBPath = _formulaCondition.contains(cDBPath);
 				}
 				if (_validUntilStr != null) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); //$NON-NLS-1$
 					sdf.setLenient(false);
 					ParsePosition pos = new ParsePosition(0);
 					if ((_validUntil = sdf.parse(_validUntilStr, pos)) == null) {
@@ -288,7 +289,7 @@ public class LogConfig {
 
 	private boolean initFromProperties(final Properties props) {
 		String[] propList;
-		if ((propList = readAndCheckPropAsList(props, "Handlers", true)) == null) {
+		if ((propList = readAndCheckPropAsList(props, "Handlers", true)) == null) { //$NON-NLS-1$
 			return false;
 		}
 		for (int i = 0; i < propList.length; i++) {
@@ -296,7 +297,7 @@ public class LogConfig {
 				return false;
 			}
 		}
-		if ((propList = readAndCheckPropAsList(props, "FilterHandlers", true)) == null) {
+		if ((propList = readAndCheckPropAsList(props, "FilterHandlers", true)) == null) { //$NON-NLS-1$
 			return false;
 		}
 		for (int i = 0; i < propList.length; i++) {
@@ -313,31 +314,31 @@ public class LogConfig {
 	}
 
 	private boolean initOneLogHandler(final Properties props, final String handlerName) {
-		String keyPref = "Handler." + handlerName;
-		String className = readProp(props, keyPref + ".Class", true);
+		String keyPref = "Handler." + handlerName; //$NON-NLS-1$
+		String className = readProp(props, keyPref + ".Class", true); //$NON-NLS-1$
 		if (className == null) {
 			return false;
 		}
-		String formatterClassName = readProp(props, keyPref + ".Formatter", false);
-		String minLevelName = readProp(props, keyPref + ".MinimalLevel", false);
-		String props4Handler = readProp(props, keyPref + ".Props", false);
+		String formatterClassName = readProp(props, keyPref + ".Formatter", false); //$NON-NLS-1$
+		String minLevelName = readProp(props, keyPref + ".MinimalLevel", false); //$NON-NLS-1$
+		String props4Handler = readProp(props, keyPref + ".Props", false); //$NON-NLS-1$
 		L_LogHandler handler = new L_LogHandler(handlerName, className, formatterClassName, minLevelName, props4Handler);
 		_logHandlers.put(handlerName, handler);
 		return handler.checkYourself();
 	}
 
 	private boolean initOneFilterHandler(final Properties props, final String filterHandlerName) {
-		String keyPref = "FilterHandler." + filterHandlerName;
-		String[] loggerNames = readAndCheckPropAsList(props, keyPref + ".LoggerPrefices", true);
-		String defaultLevelName = readProp(props, keyPref + ".DefaultLevel", true);
-		String[] defaultHandlerNames = readAndCheckPropAsList(props, keyPref + ".DefaultHandlers", true);
+		String keyPref = "FilterHandler." + filterHandlerName; //$NON-NLS-1$
+		String[] loggerNames = readAndCheckPropAsList(props, keyPref + ".LoggerPrefices", true); //$NON-NLS-1$
+		String defaultLevelName = readProp(props, keyPref + ".DefaultLevel", true); //$NON-NLS-1$
+		String[] defaultHandlerNames = readAndCheckPropAsList(props, keyPref + ".DefaultHandlers", true); //$NON-NLS-1$
 		if (loggerNames == null || defaultLevelName == null || defaultHandlerNames == null) {
 			return false;
 		}
 		L_LogFilterHandler lfh = new L_LogFilterHandler(filterHandlerName, loggerNames, defaultLevelName, defaultHandlerNames);
 		_logFilterHandlers.put(filterHandlerName, lfh);
 		for (int i = 1;; i++) {
-			String keyPrefI = keyPref + ".FCE" + i;
+			String keyPrefI = keyPref + ".FCE" + i; //$NON-NLS-1$
 			String prefix = readProp(props, keyPrefI, false);
 			if (prefix == null) {
 				break;
@@ -350,13 +351,13 @@ public class LogConfig {
 	}
 
 	private boolean initOneFCE(final Properties props, final String prefix, final String keyPrefI, final L_LogFilterHandler lfh) {
-		String levelName = readProp(props, keyPrefI + ".Level", true);
-		String[] handlerNames = readAndCheckPropAsList(props, keyPrefI + ".Handlers", true);
+		String levelName = readProp(props, keyPrefI + ".Level", true); //$NON-NLS-1$
+		String[] handlerNames = readAndCheckPropAsList(props, keyPrefI + ".Handlers", true); //$NON-NLS-1$
 		if (levelName == null || handlerNames == null) {
 			return false;
 		}
-		String formulaCond = readProp(props, keyPrefI + ".FormulaCondition", false);
-		String validUntil = readProp(props, keyPrefI + ".ValidUntil", false);
+		String formulaCond = readProp(props, keyPrefI + ".FormulaCondition", false); //$NON-NLS-1$
+		String validUntil = readProp(props, keyPrefI + ".ValidUntil", false); //$NON-NLS-1$
 		lfh.addFCE(prefix, levelName, handlerNames, formulaCond, validUntil);
 		return true;
 	}
@@ -404,7 +405,7 @@ public class LogConfig {
 	}
 
 	public static String[] splitAlongComma(final String prop) {
-		String[] ret = prop.split(",");
+		String[] ret = prop.split(","); //$NON-NLS-1$
 		for (int i = 0; i < ret.length; i++) {
 			ret[i] = ret[i].trim();
 		}

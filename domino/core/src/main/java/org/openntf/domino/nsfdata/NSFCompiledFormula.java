@@ -49,7 +49,7 @@ public class NSFCompiledFormula implements Externalizable {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + "]";
+		return "[" + getClass().getSimpleName() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override

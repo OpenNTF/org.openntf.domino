@@ -43,7 +43,7 @@ public class RichTextType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "RichText";
+		return "RichText"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

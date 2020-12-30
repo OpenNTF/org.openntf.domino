@@ -42,7 +42,7 @@ public final class ScriptLibrarySSJS extends AbstractDesignFileResource implemen
 
 	@Override
 	public byte[] getFileData() {
-		return getFileDataRaw("$ServerJavaScriptLibrary");
+		return getFileDataRaw("$ServerJavaScriptLibrary"); //$NON-NLS-1$
 	}
 
 }

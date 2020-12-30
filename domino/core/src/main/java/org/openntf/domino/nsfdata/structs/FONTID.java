@@ -52,7 +52,7 @@ public class FONTID extends AbstractStruct {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Face=" + Face.get() + ", Attrib=" + Attrib.get() + ", Color=" + Color.get()
-				+ ", PointSize=" + PointSize.get() + "]";
+		return "[" + getClass().getSimpleName() + ": Face=" + Face.get() + ", Attrib=" + Attrib.get() + ", Color=" + Color.get() //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				+ ", PointSize=" + PointSize.get() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

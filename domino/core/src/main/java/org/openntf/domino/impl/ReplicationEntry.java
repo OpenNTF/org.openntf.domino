@@ -324,7 +324,7 @@ implements org.openntf.domino.ReplicationEntry {
 		boolean first = true;
 		for (String view : views) {
 			if (!first) {	//removed cleverness attempt on advice from FindBugs
-				result.append(";");
+				result.append(";"); //$NON-NLS-1$
 			} else {
 				first = false;
 			}

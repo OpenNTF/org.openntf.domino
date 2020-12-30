@@ -60,6 +60,7 @@ import com.ibm.domino.xsp.module.nsf.RuntimeFileSystem.NSFXspClassResource;
  * @author Nathan T. Freeman
  * @author Roland Praml, FOCONIS AG
  */
+@SuppressWarnings("nls")
 public class XotsNsfScanner extends AbstractDominoRunnable implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static final Logger log_ = Logger.getLogger(XotsNsfScanner.class.getName());

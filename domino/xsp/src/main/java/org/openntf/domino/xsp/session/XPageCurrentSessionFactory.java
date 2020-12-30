@@ -38,6 +38,7 @@ import com.ibm.domino.xsp.module.nsf.NotesContext;
  * @author Roland Praml, FOCONIS AG
  * 
  */
+@SuppressWarnings("nls")
 public class XPageCurrentSessionFactory extends AbstractXPageSessionFactory {
 
 	private static final long serialVersionUID = 1L;
@@ -53,7 +54,7 @@ public class XPageCurrentSessionFactory extends AbstractXPageSessionFactory {
 				if (StringUtil.isEmpty(rawDb.getServer())) {
 					currentApiPath_ = rawDb.getFilePath();
 				} else {
-					currentApiPath_ = rawDb.getServer() + "!!" + rawDb.getFilePath();
+					currentApiPath_ = rawDb.getServer() + "!!" + rawDb.getFilePath(); //$NON-NLS-1$
 				}
 			}
 		} catch (NotesException e) {

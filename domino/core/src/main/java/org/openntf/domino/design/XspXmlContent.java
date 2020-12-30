@@ -65,7 +65,7 @@ public class XspXmlContent {
 		 */
 		@Override
 		public E get(final int index) {
-			List<XMLNode> nodes = xml_.selectNodes(parentNodePath_ + "/" + nodeName_);
+			List<XMLNode> nodes = xml_.selectNodes(parentNodePath_ + "/" + nodeName_); //$NON-NLS-1$
 			try {
 				return clazz_.getConstructor(context_.getClass(), XMLNode.class).newInstance(context_, nodes.get(index));
 			} catch (IllegalArgumentException e) {
@@ -94,7 +94,7 @@ public class XspXmlContent {
 		 */
 		@Override
 		public int size() {
-			return xml_.selectNodes(parentNodePath_ + "/" + nodeName_).size();
+			return xml_.selectNodes(parentNodePath_ + "/" + nodeName_).size(); //$NON-NLS-1$
 		}
 
 		/* (non-Javadoc)
@@ -103,7 +103,7 @@ public class XspXmlContent {
 		@Override
 		public E remove(final int index) {
 			E current = get(index);
-			xml_.selectNodes(parentNodePath_ + "/" + nodeName_).remove(index);
+			xml_.selectNodes(parentNodePath_ + "/" + nodeName_).remove(index); //$NON-NLS-1$
 			return current;
 		}
 	}
@@ -113,7 +113,7 @@ public class XspXmlContent {
 			xml_ = new XMLDocument();
 
 			String fileData = new String(container_.getFileData());
-			if (fileData.startsWith("<?xml")) {
+			if (fileData.startsWith("<?xml")) { //$NON-NLS-1$
 				try {
 					xml_.loadString(fileData);
 				} catch (SAXException e) {
@@ -132,7 +132,7 @@ public class XspXmlContent {
 		// TODO Auto-generated method stub
 		if (xml_ != null) {
 			try {
-				container_.setFileData(xml_.getXml(null).getBytes("UTF-8"));
+				container_.setFileData(xml_.getXml(null).getBytes("UTF-8")); //$NON-NLS-1$
 			} catch (UnsupportedEncodingException e) {
 				DominoUtils.handleException(e);
 			} catch (IOException e) {

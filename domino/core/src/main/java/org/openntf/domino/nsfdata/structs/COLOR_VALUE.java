@@ -65,6 +65,6 @@ public class COLOR_VALUE extends AbstractStruct {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Red=" + getRed() + ", Green=" + getGreen() + ", Blue=" + getBlue() + "]";
+		return "[" + getClass().getSimpleName() + ", Red=" + getRed() + ", Green=" + getGreen() + ", Blue=" + getBlue() + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 }

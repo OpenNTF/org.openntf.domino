@@ -51,7 +51,7 @@ public class CollectionValuePickerData extends MapValuePickerData {
 	 * @return Collection<String> of values to use in the picker
 	 * @since org.openntf.domino.xsp 4.5.0
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "nls" })
 	public Collection<String> getCollection() {
 		if (collection != null) {
 			return collection;

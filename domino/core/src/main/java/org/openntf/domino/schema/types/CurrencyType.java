@@ -41,7 +41,7 @@ public class CurrencyType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "Currency";
+		return "Currency"; //$NON-NLS-1$
 	}
 
 	/*

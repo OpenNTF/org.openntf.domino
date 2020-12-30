@@ -40,8 +40,8 @@ public enum DesignFlag {
 			'<'), DIRECTORY('/'), PRINTFORM('?'), HIDEFROMDESIGNLIST('~'), HIDEONLYFROMDESIGNLIST('}'), COMPOSITE_APP('|'), COMPOSITE_DEF(
 			':'), XSP_CC(';'), JS_SERVER('.'), STYLEKIT('`'), WIDGET('_'), JAVAFILE('[');
 
-	public static final Set<DesignFlag> FLAGS_SUBCLASS = Collections.unmodifiableSet(valuesOf("UW#yi@GFXstmzk=K;g%[]{^,"));
-	public static final Set<DesignFlag> FLAGS_DISTINGUISH = Collections.unmodifiableSet(valuesOf("nw123456789"));
+	public static final Set<DesignFlag> FLAGS_SUBCLASS = Collections.unmodifiableSet(valuesOf("UW#yi@GFXstmzk=K;g%[]{^,")); //$NON-NLS-1$
+	public static final Set<DesignFlag> FLAGS_DISTINGUISH = Collections.unmodifiableSet(valuesOf("nw123456789")); //$NON-NLS-1$
 
 	private final char character_;
 
@@ -53,6 +53,7 @@ public enum DesignFlag {
 		return character_;
 	}
 
+	@SuppressWarnings("nls")
 	public static Set<DesignFlag> valuesOf(final char character) {
 		Set<DesignFlag> result = EnumSet.noneOf(DesignFlag.class);
 		for (DesignFlag flag : values()) {

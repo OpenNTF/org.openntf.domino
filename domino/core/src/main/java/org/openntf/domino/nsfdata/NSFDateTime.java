@@ -24,15 +24,15 @@ public class NSFDateTime implements Serializable, NSFDateTimeValue {
 
 	private static final ThreadLocal<DateFormat> DATE_TIME_FORMAT = new ThreadLocal<DateFormat>() {
 		@Override
-		protected DateFormat initialValue() { return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); };
+		protected DateFormat initialValue() { return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); }; //$NON-NLS-1$
 	};
 	private static final ThreadLocal<DateFormat> DATE_ONLY_FORMAT = new ThreadLocal<DateFormat>() {
 		@Override
-		protected DateFormat initialValue() { return new SimpleDateFormat("yyyy-MM-dd"); };
+		protected DateFormat initialValue() { return new SimpleDateFormat("yyyy-MM-dd"); }; //$NON-NLS-1$
 	};
 	private static final ThreadLocal<DateFormat> TIME_ONLY_FORMAT = new ThreadLocal<DateFormat>() {
 		@Override
-		protected DateFormat initialValue() { return new SimpleDateFormat("HH:mm:ss.SSS"); };
+		protected DateFormat initialValue() { return new SimpleDateFormat("HH:mm:ss.SSS"); }; //$NON-NLS-1$
 	};
 
 	private final java.util.Date dateTime_;
@@ -102,6 +102,6 @@ public class NSFDateTime implements Serializable, NSFDateTimeValue {
 			java.util.Date date = new java.util.Date(dateOnly_.getTime());
 			stringVal = DATE_ONLY_FORMAT.get().format(date);
 		}
-		return "[" + getClass().getSimpleName() + ": " + stringVal + "]";
+		return "[" + getClass().getSimpleName() + ": " + stringVal + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

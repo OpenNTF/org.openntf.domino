@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.nsfdata.structs;
 
+import java.text.MessageFormat;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -119,7 +120,8 @@ public class VIEW_TABLE_FORMAT extends AbstractStruct {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Header=" + Header + ", Columns=" + Columns.get() + ", ItemSequenceNumber="
-				+ ItemSequenceNumber.get() + ", Flags=" + getFlags() + ", Flags2=" + getFlags2() + "]";
+		return MessageFormat.format("[{0}: Header={1}, Columns={2}, ItemSequenceNumber={3}, Flags={4}, Flags2={5}]", //$NON-NLS-1$
+				getClass().getSimpleName(),
+				Header, Columns.get(), ItemSequenceNumber.get(), getFlags(), getFlags2());
 	}
 }

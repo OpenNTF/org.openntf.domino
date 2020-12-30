@@ -46,6 +46,7 @@ public enum EMEventIds {
 
 	private static EMEventIds[] eventArray;
 
+	@SuppressWarnings("nls")
 	public static EMEventIds getEMEventFromId(final int id) {
 		if (id < 1) {
 			return null;

@@ -70,6 +70,7 @@ import lotus.domino.NotesThread;
 /**
  * The Enum Factory. Does the Mapping lotusObject <=> OpenNTF-Object
  */
+@SuppressWarnings("nls")
 public enum Factory {
 	;
 

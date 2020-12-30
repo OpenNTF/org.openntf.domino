@@ -24,6 +24,7 @@ import java.util.logging.LogRecord;
 /**
  * Formats log messages to be written to a file, used in default configuration when no configuration file is specified.
  */
+@SuppressWarnings("nls")
 public class FileFormatter extends Formatter {
 
 	private boolean UTC_Format = false;

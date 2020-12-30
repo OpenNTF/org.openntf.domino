@@ -23,6 +23,7 @@ import org.openntf.domino.graph2.DGraph;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
 
+@SuppressWarnings("nls")
 public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 	private static final long serialVersionUID = 1L;
 

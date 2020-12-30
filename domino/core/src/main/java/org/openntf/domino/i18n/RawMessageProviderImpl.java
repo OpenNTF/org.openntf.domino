@@ -36,7 +36,7 @@ public class RawMessageProviderImpl extends RawMessageProvider {
 		private List<String> _format;
 
 		public MyNoFallbackControl() {
-			(_format = new ArrayList<String>()).add("java.properties");
+			(_format = new ArrayList<String>()).add("java.properties"); //$NON-NLS-1$
 		}
 
 		@Override

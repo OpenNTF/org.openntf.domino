@@ -32,6 +32,7 @@ import org.openntf.domino.Session;
  * @author Nathan T. Freeman
  * 
  */
+@SuppressWarnings("nls")
 public class IndexHit implements Externalizable {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(IndexHit.class.getName());

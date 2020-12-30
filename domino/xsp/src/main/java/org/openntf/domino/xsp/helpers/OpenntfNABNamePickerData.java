@@ -61,6 +61,7 @@ import com.ibm.xsp.model.domino.wrapped.DominoViewEntry;
  *         OpenntfNABNamePickerData, for use with the NamePicker control
  */
 // TODO: Remove before 3.0 - all functionality introduced in ExtLib 14
+@SuppressWarnings("nls")
 public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 
 	private String addressBookSel;

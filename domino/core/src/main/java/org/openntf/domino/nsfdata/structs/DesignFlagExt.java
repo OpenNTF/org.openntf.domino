@@ -18,6 +18,7 @@ package org.openntf.domino.nsfdata.structs;
 import java.util.EnumSet;
 import java.util.Set;
 
+@SuppressWarnings("nls")
 public enum DesignFlagExt {
 	FILE_DEPLOYABLE('D'), DONTREFRESH_ON_REDEPLOY('R'), NOTE_HAS_DAVPROPERTIES('P'), NOTE_HAS_MSPROPERTIES('M'), DAVLOCKNULL('N'), WEBDAV_HIDDEN(
 			'H'), DAVCOMPUTEFORM('C'), DAVATTACH('A'), DAVGMTNORMAL('Z'), JAVADEBUG('D'), PROFILE('F'), JAVA_ERROR('E'), WEBSERVICELIB('W'), WEBCONTENTFILE(

@@ -47,8 +47,8 @@ public enum Parameters {
 				try {
 					for (String value : values) {
 						if (value != null) {
-							if (value.contains(",")) {
-								String[] sepstrs = StringUtils.fastSplit(value, ",");
+							if (value.contains(",")) { //$NON-NLS-1$
+								String[] sepstrs = StringUtils.fastSplit(value, ","); //$NON-NLS-1$
 								for (String sepstr : sepstrs) {
 									newValues.add(sepstr);
 								}

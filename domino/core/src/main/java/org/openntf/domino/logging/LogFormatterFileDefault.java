@@ -28,6 +28,7 @@ import org.openntf.domino.exceptions.OpenNTFNotesException;
  * Default formatter for writing log messages to a file when no formatter is specified in the configuration file. Writes every message on at
  * least two lines (optionally with a stack trace). Date and time is written as 'yyyy-MM-dd HH:mm:ss'.
  */
+@SuppressWarnings("nls")
 public class LogFormatterFileDefault extends Formatter {
 
 	public static LogFormatterFileDefault getInstance() {

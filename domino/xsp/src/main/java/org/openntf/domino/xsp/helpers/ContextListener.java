@@ -24,6 +24,7 @@ import com.ibm.xsp.event.FacesContextListener;
 /**
  * ContextListener
  */
+@SuppressWarnings("nls")
 public class ContextListener extends AbstractListener implements FacesContextListener {
 	public final static boolean ATTACH_LISTENER = true; // change this to false if you don't want to bother.
 

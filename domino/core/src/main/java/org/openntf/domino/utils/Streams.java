@@ -25,6 +25,7 @@ import lotus.domino.Stream;
  * Utility enum as a carrier for Stream-centric static properties and methods.
  * 
  */
+@SuppressWarnings("nls")
 public enum Streams {
 	;
 

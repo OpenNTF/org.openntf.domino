@@ -25,7 +25,7 @@ public class DXLItemNumber extends AbstractDXLItem {
 	protected DXLItemNumber(final XMLNode node, final int dupItemId) {
 		super(node, dupItemId);
 
-		XMLNode dataNode = node.selectSingleNode("./number");
+		XMLNode dataNode = node.selectSingleNode("./number"); //$NON-NLS-1$
 		value_ = Double.parseDouble(dataNode.getText());
 	}
 

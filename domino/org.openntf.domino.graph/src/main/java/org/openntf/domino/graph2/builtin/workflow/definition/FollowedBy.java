@@ -22,7 +22,7 @@ import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 
 public interface FollowedBy extends DEdgeFrame {
-	public final static String LABEL_FLOWFOLLOWEDBY = "FlowFollowedBy";
+	public final static String LABEL_FLOWFOLLOWEDBY = "FlowFollowedBy"; //$NON-NLS-1$
 
 	@TypedProperty("NeededOutcome")
 	public String getNeededOutcome();

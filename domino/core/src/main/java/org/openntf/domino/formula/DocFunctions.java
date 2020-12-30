@@ -55,32 +55,32 @@ public enum DocFunctions {
 
 	@ParamCount(0)
 	public static ValueHolder atAllChildren(final FormulaContextNotes ctx) {
-		return ctx.evaluateNative("@allchildren");
+		return ctx.evaluateNative("@allchildren"); //$NON-NLS-1$
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atAllDescendants(final FormulaContextNotes ctx) {
-		return ctx.evaluateNative("@alldescendants");
+		return ctx.evaluateNative("@alldescendants"); //$NON-NLS-1$
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atAttachmentLengths(final FormulaContextNotes ctx) {
-		return ctx.evaluateNative("@attachmentlengths");
+		return ctx.evaluateNative("@attachmentlengths"); //$NON-NLS-1$
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atAttachmentNames(final FormulaContextNotes ctx) {
-		return ctx.evaluateNative("@attachmentnames");
+		return ctx.evaluateNative("@attachmentnames"); //$NON-NLS-1$
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atAttachmentModifiedTimes(final FormulaContextNotes ctx) {
-		return ctx.evaluateNative("@attachmentmodifiedtimes");
+		return ctx.evaluateNative("@attachmentmodifiedtimes"); //$NON-NLS-1$
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atAttachments(final FormulaContextNotes ctx) {
-		return ctx.evaluateNative("@attachments");
+		return ctx.evaluateNative("@attachments"); //$NON-NLS-1$
 	}
 
 	@ParamCount(0)
@@ -124,8 +124,8 @@ public enum DocFunctions {
 	public static ValueHolder atNoteId(final FormulaContextNotes ctx) {
 		String nid = ctx.getDocument().getNoteID();
 
-		if ("0".equals(nid))
-			nid = "NT00000000";
+		if ("0".equals(nid)) //$NON-NLS-1$
+			nid = "NT00000000"; //$NON-NLS-1$
 		return ValueHolder.valueOf(nid);
 
 	}
@@ -147,7 +147,7 @@ public enum DocFunctions {
 
 	@ParamCount(0)
 	public static ValueHolder atResponses(final FormulaContextNotes ctx) {
-		return ctx.evaluateNative("@responses");
+		return ctx.evaluateNative("@responses"); //$NON-NLS-1$
 	}
 
 	@ParamCount(0)

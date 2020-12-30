@@ -47,8 +47,8 @@ public class ODAFacesContext extends DominoFacesContext {
 				Map<String, Object> ecMap = TypedUtil.getRequestMap(getExternalContext());
 
 				// overwrite the DominoImplicitObjects objects
-				ecMap.put("session", session);
-				ecMap.put("database", db);
+				ecMap.put("session", session); //$NON-NLS-1$
+				ecMap.put("database", db); //$NON-NLS-1$
 			}
 			implicitsDone_ = true;
 		}
@@ -57,9 +57,9 @@ public class ODAFacesContext extends DominoFacesContext {
 	@Override
 	public Object getDynamicImplicitObject(final String objectName) {
 		if (ODAPlatform.isAppGodMode(null)) {
-			if ("sessionAsSignerWithFullAccess".equals(objectName)) {
+			if ("sessionAsSignerWithFullAccess".equals(objectName)) { //$NON-NLS-1$
 				return Factory.getSession(SessionType.SIGNER_FULL_ACCESS);
-			} else if ("sessionAsSigner".equals(objectName)) {
+			} else if ("sessionAsSigner".equals(objectName)) { //$NON-NLS-1$
 				return Factory.getSession(SessionType.SIGNER);
 			}
 		}

@@ -22,10 +22,10 @@ import java.util.logging.Logger;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.utils.DominoUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DocumentIterator.
  */
+@SuppressWarnings("nls")
 public class NoteIterator implements Iterator<String> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(NoteIterator.class.getName());

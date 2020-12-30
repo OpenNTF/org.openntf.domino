@@ -82,10 +82,10 @@ import org.openntf.domino.utils.enums.DominoEnumUtil;
 
 import com.ibm.commons.util.StringUtil;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Database.
  */
+@SuppressWarnings("nls")
 public class Database extends BaseResurrectable<org.openntf.domino.Database, lotus.domino.Database, Session>
 		implements org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
@@ -196,7 +196,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			return fromLotus(getDelegate().FTDomainSearch(query, maxDocs, sortOpt, otherOpt, start, count, entryForm), Document.SCHEMA,
 					this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e, this, "Query=" + query);
+			DominoUtils.handleException(e, this, "Query=" + query); //$NON-NLS-1$
 			return null;
 
 		}
@@ -495,7 +495,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			if (!db.isOpen()) {
 				db.open();
 			}
-			lotus.domino.DocumentCollection rawColl = getDelegate().search("@False", db.getLastModified(), 1);
+			lotus.domino.DocumentCollection rawColl = getDelegate().search("@False", db.getLastModified(), 1); //$NON-NLS-1$
 			if (rawColl.getCount() > 0) {
 				int[] nids = CollectionUtils.getNoteIDs(rawColl);
 				for (int nid : nids) {
@@ -764,7 +764,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			}
 			return fromLotus(getDelegate().createView(viewName, selectionFormula), View.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e, this, "View=" + viewName);
+			DominoUtils.handleException(e, this, "View=" + viewName); //$NON-NLS-1$
 			return null;
 
 		}
@@ -777,7 +777,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	 */
 	@Override
 	public View createView(final String viewName) {
-		return createView(viewName, "SELECT @All");
+		return createView(viewName, "SELECT @All"); //$NON-NLS-1$
 	}
 
 	/*
@@ -1090,8 +1090,8 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			return null;
 		}
 		Document iconDoc = icon.getDocument();
-		if ("1".equals(iconDoc.getItemValueString("$XpageSharedDesign"))) {
-			String templatePath = iconDoc.getItemValueString("$XpageSharedDesignTemplate");
+		if ("1".equals(iconDoc.getItemValueString("$XpageSharedDesign"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			String templatePath = iconDoc.getItemValueString("$XpageSharedDesignTemplate"); //$NON-NLS-1$
 			org.openntf.domino.Database template = getAncestorSession().getDatabase(templatePath);
 			if (template == null || !template.isOpen()) {
 				throw new FileNotFoundException("Could not open the XPage shared Design Template: " + templatePath);
@@ -1133,13 +1133,13 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			}
 			return fromLotus(getDelegate().getDocumentByID(noteid), Document.SCHEMA, this);
 		} catch (Exception e) {
-			DominoUtils.handleException(e, this, "NoteId=" + noteid);
+			DominoUtils.handleException(e, this, "NoteId=" + noteid); //$NON-NLS-1$
 			return null;
 
 		}
 	}
 
-	public static final String NOTEID_ICONNOTE = "FFFF0010";
+	public static final String NOTEID_ICONNOTE = "FFFF0010"; //$NON-NLS-1$
 
 	@Override
 	public Document getIconNote() {
@@ -1163,7 +1163,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	@Override
 	public Document getACLNote() {
 		NoteCollection nc = createNoteCollection(false);
-		nc.setSelectionFormula("@all");
+		nc.setSelectionFormula("@all"); //$NON-NLS-1$
 		nc.setSelectAcl(true);
 		nc.buildCollection();
 		String nid = nc.getFirstNoteID();
@@ -1181,7 +1181,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		try {
 			if (key != null) {
 				if (key instanceof String && ((String) key).length() == 32) {
-					if ("000000000000000000000000000000000000".equals(key)) {
+					if ("000000000000000000000000000000000000".equals(key)) { //$NON-NLS-1$
 						Document result = getIconNote();
 						if (result == null) {
 							result = getACLNote();
@@ -1197,8 +1197,8 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 					if (checksum != null) {
 						doc.setUniversalID(checksum, true);
 					}
-					doc.replaceItemValue("$$Key", key);
-					doc.replaceItemValue("$Created", new Date());
+					doc.replaceItemValue("$$Key", key); //$NON-NLS-1$
+					doc.replaceItemValue("$Created", new Date()); //$NON-NLS-1$
 				}
 				return doc;
 
@@ -1207,7 +1207,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 				//						"Document by key requested with null key. This is probably not what you meant to do...");
 				//NTF No, its exactly what we meant to do in the case of graph elements
 				Document doc = this.createDocument();
-				doc.replaceItemValue("$Created", new Date());
+				doc.replaceItemValue("$Created", new Date()); //$NON-NLS-1$
 				//				doc.replaceItemValue("$$Key", "");
 				return doc;
 			}
@@ -1249,7 +1249,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		} catch (NotesException e) {
 			if (getAncestorSession().isFixEnabled(Fixes.DOC_UNID_NULLS) && "Invalid universal id".equals(e.text)) {
 			} else {
-				DominoUtils.handleException(e, this, "UNId=" + unid);
+				DominoUtils.handleException(e, this, "UNId=" + unid); //$NON-NLS-1$
 			}
 			return null;
 		}
@@ -1272,8 +1272,6 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 				URL urlObj = new URL(url);
 				HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
 				conn.connect();
-				System.out.println("Headers: " + conn.getHeaderFields());
-				System.out.println("Content-type: " + conn.getContentType());
 				conn.disconnect();
 			} catch (MalformedURLException e) {
 				DominoUtils.handleException(e, this);
@@ -1455,10 +1453,10 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 				return null;
 			}
 			String result = url.getProtocol();
-			result += "://";
+			result += "://"; //$NON-NLS-1$
 			result += url.getHost();
-			result += url.getPort() > -1 ? ":" + url.getPort() : "";
-			result += "/" + getFilePath().replace('\\', '/');
+			result += url.getPort() > -1 ? ":" + url.getPort() : ""; //$NON-NLS-1$ //$NON-NLS-2$
+			result += "/" + getFilePath().replace('\\', '/'); //$NON-NLS-1$
 			return result;
 		} else {
 			return getHttpURL();
@@ -1838,7 +1836,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	@Override
 	public String getMetaReplicaID() {
 		if (server_.length() > 0) {
-			return server_ + "!!" + replid_;
+			return server_ + "!!" + replid_; //$NON-NLS-1$
 		}
 		return replid_;
 	}
@@ -2113,7 +2111,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			String calledFrom3 = elem.getClassName() + "." + elem.getMethodName() + "(" + elem.getFileName() + ":" + elem.getLineNumber()
 					+ ")";
 			System.err.println("TEMP DEBUG View Document " + viewDocument.getMetaversalID() + " does not have a $Index item!  "
-					+ viewDocument.getItemValueString("$Title") + " called from " + calledFrom1 + ", " + calledFrom2 + ", " + calledFrom3);
+					+ viewDocument.getItemValueString("$Title") + " called from " + calledFrom1 + ", " + calledFrom2 + ", " + calledFrom3); //$NON-NLS-1$
 		}
 		return result;
 	}
@@ -3193,14 +3191,14 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			txnHolder_.set(txn);
 		} else {
 			if (!current.equals(txn)) {
-				throw new TransactionAlreadySetException(getServer().length() == 0 ? getFilePath() : (getServer() + "!!" + getFilePath()));
+				throw new TransactionAlreadySetException(getServer().length() == 0 ? getFilePath() : (getServer() + "!!" + getFilePath())); //$NON-NLS-1$
 			}
 		}
 	}
 
 	@Override
 	public String toString() {
-		return (server_.length() < 1 ? "" : server_ + "!!") + path_;
+		return (server_.length() < 1 ? "" : server_ + "!!") + path_; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
@@ -3699,7 +3697,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		localPath = localPath.replace('\\', '/');
 		if (apiPath_ == null) {
 			if (server_.length() > 0) {
-				apiPath_ = server_ + "!!" + path_;
+				apiPath_ = server_ + "!!" + path_; //$NON-NLS-1$
 			} else {
 				apiPath_ = path_;
 			}
@@ -3777,7 +3775,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		if (doc == null) {
 			return null;
 		}
-		String lStr = doc.getItemValueString("$DefaultLanguage");
+		String lStr = doc.getItemValueString("$DefaultLanguage"); //$NON-NLS-1$
 		if (lStr == null || lStr.length() < 2) {
 			return null;
 		}

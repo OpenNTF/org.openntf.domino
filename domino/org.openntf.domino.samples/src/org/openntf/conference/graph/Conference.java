@@ -34,7 +34,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface Conference extends Commentable, Likeable, Rateable {
 	@TypeValue(PartOf.LABEL)
 	public static interface PartOf extends DEdgeFrame {
-		public static final String LABEL = "PartOf";
+		public static final String LABEL = "PartOf"; //$NON-NLS-1$
 
 		@InVertex
 		public Conference getConference();
@@ -45,7 +45,7 @@ public interface Conference extends Commentable, Likeable, Rateable {
 
 	@TypeValue(HasPlace.LABEL)
 	public static interface HasPlace extends DEdgeFrame {
-		public static final String LABEL = "HasPlace";
+		public static final String LABEL = "HasPlace"; //$NON-NLS-1$
 
 		@InVertex
 		public Conference getConference();
@@ -56,7 +56,7 @@ public interface Conference extends Commentable, Likeable, Rateable {
 
 	@TypeValue(HasTime.LABEL)
 	public static interface HasTime extends DEdgeFrame {
-		public static final String LABEL = "HasTime";
+		public static final String LABEL = "HasTime"; //$NON-NLS-1$
 
 		@InVertex
 		public Conference getConference();
@@ -67,7 +67,7 @@ public interface Conference extends Commentable, Likeable, Rateable {
 
 	@TypeValue(HasRegistrant.LABEL)
 	public static interface HasRegistrant extends DEdgeFrame {
-		public static final String LABEL = "HasRegistrant";
+		public static final String LABEL = "HasRegistrant"; //$NON-NLS-1$
 
 		@InVertex
 		public Conference getConference();

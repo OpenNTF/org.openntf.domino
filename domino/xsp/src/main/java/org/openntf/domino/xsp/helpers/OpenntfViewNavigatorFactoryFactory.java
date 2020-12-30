@@ -34,6 +34,7 @@ import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9;
  * 
  *         OpenntfViewNavigatorFactoryFactory class
  */
+@SuppressWarnings("nls")
 public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.Factory {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(OpenntfViewNavigatorFactoryFactory.class.getName());

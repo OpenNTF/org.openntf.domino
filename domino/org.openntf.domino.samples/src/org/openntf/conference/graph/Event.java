@@ -33,6 +33,7 @@ import com.tinkerpop.frames.OutVertex;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Event")
+@SuppressWarnings("nls")
 public abstract interface Event extends Commentable, Likeable, Rateable {
 	@TypeValue(HappeningOn.LABEL)
 	public static interface HappeningOn extends DEdgeFrame {

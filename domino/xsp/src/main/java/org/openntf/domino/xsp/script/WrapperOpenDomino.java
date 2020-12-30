@@ -39,6 +39,7 @@ import com.ibm.jscript.types.GeneratedWrapperObject.MethodMap;
 import com.ibm.jscript.types.IWrapperFactory;
 import com.ibm.jscript.types.Registry;
 
+@SuppressWarnings("nls")
 public class WrapperOpenDomino implements WrapperRegistry {
 
 	/*
@@ -83,124 +84,124 @@ public class WrapperOpenDomino implements WrapperRegistry {
 					if (clazz.isArray()) {
 						Class<?> cClazz = clazz.getComponentType();
 						if (cClazz.equals(void.class)) {
-							sb.append("voids:[V");
+							sb.append("voids:[V"); //$NON-NLS-1$
 						} else if (cClazz.equals(String.class)) {
-							sb.append("strings:[T");
+							sb.append("strings:[T"); //$NON-NLS-1$
 						} else if (cClazz.equals(Character.class) || cClazz.equals(Character.TYPE)) {
-							sb.append("chars:[C");
+							sb.append("chars:[C"); //$NON-NLS-1$
 						} else if (cClazz.equals(Integer.class) || cClazz.equals(Integer.TYPE)) {
-							sb.append("ints:[I");
+							sb.append("ints:[I"); //$NON-NLS-1$
 						} else if (cClazz.equals(Double.class) || cClazz.equals(Double.TYPE)) {
-							sb.append("doubles:[D");
+							sb.append("doubles:[D"); //$NON-NLS-1$
 						} else if (cClazz.equals(Short.class) || cClazz.equals(Short.TYPE)) {
-							sb.append("shorts:[S");
+							sb.append("shorts:[S"); //$NON-NLS-1$
 						} else if (cClazz.equals(Float.class) || cClazz.equals(Float.TYPE)) {
-							sb.append("floats:[F");
+							sb.append("floats:[F"); //$NON-NLS-1$
 						} else if (cClazz.equals(Byte.class) || cClazz.equals(Byte.TYPE)) {
-							sb.append("bytes:[B");
+							sb.append("bytes:[B"); //$NON-NLS-1$
 						} else if (cClazz.equals(Long.class) || cClazz.equals(Long.TYPE)) {
-							sb.append("longs:[J");
+							sb.append("longs:[J"); //$NON-NLS-1$
 						} else if (cClazz.equals(DateTime.class)) {
-							sb.append("DateTimes:[Y");
+							sb.append("DateTimes:[Y"); //$NON-NLS-1$
 						} else if (cClazz.equals(Object.class)) {
-							sb.append("Objects:[W");
+							sb.append("Objects:[W"); //$NON-NLS-1$
 						} else if (cClazz.equals(Boolean.class) || cClazz.equals(Boolean.TYPE)) {
-							sb.append("booleans:[Z");
+							sb.append("booleans:[Z"); //$NON-NLS-1$
 						} else {
-							sb.append(cClazz.getSimpleName() + "s:[L" + cClazz.getCanonicalName());
+							sb.append(cClazz.getSimpleName() + "s:[L" + cClazz.getCanonicalName()); //$NON-NLS-1$
 						}
 					} else if (clazz.equals(void.class)) {
-						sb.append("void:V");
+						sb.append("void:V"); //$NON-NLS-1$
 					} else if (clazz.equals(String.class)) {
-						sb.append("str:T");
+						sb.append("str:T"); //$NON-NLS-1$
 					} else if (clazz.equals(Character.class) || clazz.equals(Character.TYPE)) {
-						sb.append("char:C");
+						sb.append("char:C"); //$NON-NLS-1$
 					} else if (clazz.equals(Integer.class) || clazz.equals(Integer.TYPE)) {
-						sb.append("int:I");
+						sb.append("int:I"); //$NON-NLS-1$
 					} else if (clazz.equals(Double.class) || clazz.equals(Double.TYPE)) {
-						sb.append("double:D");
+						sb.append("double:D"); //$NON-NLS-1$
 					} else if (clazz.equals(Short.class) || clazz.equals(Short.TYPE)) {
-						sb.append("short:S");
+						sb.append("short:S"); //$NON-NLS-1$
 					} else if (clazz.equals(Float.class) || clazz.equals(Float.TYPE)) {
-						sb.append("float:F");
+						sb.append("float:F"); //$NON-NLS-1$
 					} else if (clazz.equals(Byte.class) || clazz.equals(Byte.TYPE)) {
-						sb.append("byte:B");
+						sb.append("byte:B"); //$NON-NLS-1$
 					} else if (clazz.equals(Long.class) || clazz.equals(Long.TYPE)) {
-						sb.append("long:J");
+						sb.append("long:J"); //$NON-NLS-1$
 					} else if (clazz.equals(DateTime.class)) {
-						sb.append("DateTime:Y");
+						sb.append("DateTime:Y"); //$NON-NLS-1$
 					} else if (clazz.equals(Object.class)) {
-						sb.append("Object:W");
+						sb.append("Object:W"); //$NON-NLS-1$
 					} else if (clazz.equals(Boolean.class) || clazz.equals(Boolean.TYPE)) {
-						sb.append("boolean:Z");
+						sb.append("boolean:Z"); //$NON-NLS-1$
 					} else {
-						sb.append(clazz.getSimpleName() + ":L" + clazz.getCanonicalName());
+						sb.append(clazz.getSimpleName() + ":L" + clazz.getCanonicalName()); //$NON-NLS-1$
 					}
 					sb.append(';');
 				}
 				if (crystal.isVarArgs()) {
-					sb.append("args:N;");
+					sb.append("args:N;"); //$NON-NLS-1$
 				}
 				sb.append(')');
 			} else {
-				sb.append("()");
+				sb.append("()"); //$NON-NLS-1$
 			}
 			Class<?> ret = crystal.getReturnType();
 			if (ret.isArray()) {
 				Class<?> cClazz = ret.getComponentType();
 				if (cClazz.equals(void.class)) {
-					sb.append(":[V");
+					sb.append(":[V"); //$NON-NLS-1$
 				} else if (cClazz.equals(String.class)) {
-					sb.append(":[T");
+					sb.append(":[T"); //$NON-NLS-1$
 				} else if (cClazz.equals(Character.class) || cClazz.equals(Character.TYPE)) {
-					sb.append(":[C");
+					sb.append(":[C"); //$NON-NLS-1$
 				} else if (cClazz.equals(Integer.class) || cClazz.equals(Integer.TYPE)) {
-					sb.append(":[I");
+					sb.append(":[I"); //$NON-NLS-1$
 				} else if (cClazz.equals(Double.class) || cClazz.equals(Double.TYPE)) {
-					sb.append(":[D");
+					sb.append(":[D"); //$NON-NLS-1$
 				} else if (cClazz.equals(Short.class) || cClazz.equals(Short.TYPE)) {
-					sb.append(":[S");
+					sb.append(":[S"); //$NON-NLS-1$
 				} else if (cClazz.equals(Float.class) || cClazz.equals(Float.TYPE)) {
-					sb.append(":[F");
+					sb.append(":[F"); //$NON-NLS-1$
 				} else if (cClazz.equals(Byte.class) || cClazz.equals(Byte.TYPE)) {
-					sb.append(":[B");
+					sb.append(":[B"); //$NON-NLS-1$
 				} else if (cClazz.equals(Long.class) || cClazz.equals(Long.TYPE)) {
-					sb.append(":[J");
+					sb.append(":[J"); //$NON-NLS-1$
 				} else if (cClazz.equals(DateTime.class)) {
-					sb.append(":[Y");
+					sb.append(":[Y"); //$NON-NLS-1$
 				} else if (cClazz.equals(Object.class)) {
-					sb.append(":[W");
+					sb.append(":[W"); //$NON-NLS-1$
 				} else if (cClazz.equals(Boolean.class) || cClazz.equals(Boolean.TYPE)) {
-					sb.append(":[Z");
+					sb.append(":[Z"); //$NON-NLS-1$
 				} else {
-					sb.append(":[L" + ret.getCanonicalName());
+					sb.append(":[L" + ret.getCanonicalName()); //$NON-NLS-1$
 				}
 			} else if (ret.equals(void.class)) {
-				sb.append(":V");
+				sb.append(":V"); //$NON-NLS-1$
 			} else if (ret.equals(String.class)) {
-				sb.append(":T");
+				sb.append(":T"); //$NON-NLS-1$
 			} else if (ret.equals(Character.class) || ret.equals(Character.TYPE)) {
-				sb.append(":C");
+				sb.append(":C"); //$NON-NLS-1$
 			} else if (ret.equals(Integer.class) || ret.equals(Integer.TYPE)) {
-				sb.append(":I");
+				sb.append(":I"); //$NON-NLS-1$
 			} else if (ret.equals(Double.class) || ret.equals(Double.TYPE)) {
-				sb.append(":D");
+				sb.append(":D"); //$NON-NLS-1$
 			} else if (ret.equals(Short.class) || ret.equals(Short.TYPE)) {
-				sb.append(":S");
+				sb.append(":S"); //$NON-NLS-1$
 			} else if (ret.equals(Float.class) || ret.equals(Float.TYPE)) {
-				sb.append(":F");
+				sb.append(":F"); //$NON-NLS-1$
 			} else if (ret.equals(Byte.class) || ret.equals(Byte.TYPE)) {
-				sb.append(":B");
+				sb.append(":B"); //$NON-NLS-1$
 			} else if (ret.equals(Long.class) || ret.equals(Long.TYPE)) {
-				sb.append(":J");
+				sb.append(":J"); //$NON-NLS-1$
 			} else if (ret.equals(DateTime.class)) {
-				sb.append(":Y");
+				sb.append(":Y"); //$NON-NLS-1$
 			} else if (ret.equals(Object.class)) {
-				sb.append(":W");
+				sb.append(":W"); //$NON-NLS-1$
 			} else if (ret.equals(Boolean.class) || ret.equals(Boolean.TYPE)) {
-				sb.append(":Z");
+				sb.append(":Z"); //$NON-NLS-1$
 			} else {
-				sb.append(":L" + ret.getCanonicalName());
+				sb.append(":L" + ret.getCanonicalName()); //$NON-NLS-1$
 			}
 
 			return sb.toString();
@@ -396,7 +397,7 @@ public class WrapperOpenDomino implements WrapperRegistry {
 		@Override
 		protected String[] getCallParameters() {
 			if (crystals_ == null || crystals_.isEmpty()) {
-				return new String[] { "" };
+				return new String[] { "" }; //$NON-NLS-1$
 			}
 			return crystals_.keySet().toArray(new String[0]);
 		}
@@ -452,8 +453,8 @@ public class WrapperOpenDomino implements WrapperRegistry {
 		 * @since org.openntf.domino.xsp 2.5.0
 		 */
 		protected OpenObject(final JSContext paramJSContext, final Object paramObject, final Class<?> clazz) {
-			super(paramJSContext, paramObject, "Open" + clazz.getSimpleName());
-			uiName_ = "Open" + clazz.getSimpleName();
+			super(paramJSContext, paramObject, "Open" + clazz.getSimpleName()); //$NON-NLS-1$
+			uiName_ = "Open" + clazz.getSimpleName(); //$NON-NLS-1$
 			clazz_ = clazz;
 		}
 
@@ -565,7 +566,7 @@ public class WrapperOpenDomino implements WrapperRegistry {
 				} else {
 					// We get here if we add a method that's the same as an existing lotus.domino one
 					try {
-						if ("function:IBMJS built-in function".equals(cur.toString())) {
+						if ("function:IBMJS built-in function".equals(cur.toString())) { //$NON-NLS-1$
 							methodMap.put(crystal.getName(), new OpenFunction(context, crystal));
 						} else {
 							System.out.println("Something's gone wrong! " + name + ": " + cur.toString() + ">" + cur.getClass().getName());
@@ -621,8 +622,8 @@ public class WrapperOpenDomino implements WrapperRegistry {
 		 * @since org.openntf.domino 2.5.0
 		 */
 		private OpenConstructor(final JSContext context, final Class<?> clazz) {
-			super(context, "Open" + clazz.getSimpleName());
-			uiName_ = "Open" + clazz.getSimpleName();
+			super(context, "Open" + clazz.getSimpleName()); //$NON-NLS-1$
+			uiName_ = "Open" + clazz.getSimpleName(); //$NON-NLS-1$
 			clazz_ = clazz;
 		}
 
@@ -705,7 +706,7 @@ public class WrapperOpenDomino implements WrapperRegistry {
 
 		try {
 			Registry registry = context.getRegistry();
-			registry.registerPackage("OpenNTFDomino", 1337);
+			registry.registerPackage("OpenNTFDomino", 1337); //$NON-NLS-1$
 			FBSDefaultObject defaultObject = registry.getRegistryObject();
 
 			List<Object> wregs = ExtensionManager.findServices(null, WrapperOpenDomino.class, WrapperRegistry.class.getName());
@@ -713,7 +714,7 @@ public class WrapperOpenDomino implements WrapperRegistry {
 			for (Object wreg : wregs) {
 				for (Class<?> clazz : ((WrapperRegistry) wreg).getWrapperClasses()) {
 					registry.registerWrapper(clazz, new OpenWrapperFactory(clazz));
-					defaultObject.createProperty("Open" + clazz.getSimpleName(), 1338, new OpenConstructor(context, clazz));
+					defaultObject.createProperty("Open" + clazz.getSimpleName(), 1338, new OpenConstructor(context, clazz)); //$NON-NLS-1$
 				}
 			}
 
