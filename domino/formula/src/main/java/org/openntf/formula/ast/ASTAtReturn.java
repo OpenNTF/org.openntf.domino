@@ -52,7 +52,7 @@ public class ASTAtReturn extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@return");
+		functions.add("@return"); //$NON-NLS-1$
 	}
 }
 /* JavaCC - OriginalChecksum=5168aab1704c82b602ede3bcf029d247 (do not edit this line) */

@@ -57,9 +57,9 @@ public class Activator extends Plugin {
 		CommandProvider cp = new OsgiCommandProvider();
 		Bundle bundle = bundleContext.getBundle();
 		Dictionary<String, Object> cpDictionary = new Hashtable<String, Object>(7);
-		cpDictionary.put("service.vendor", bundle.getHeaders().get("Bundle-Vendor"));
-		cpDictionary.put("service.ranking", new Integer(Integer.MIN_VALUE));
-		cpDictionary.put("service.pid", bundle.getBundleId() + "." + cp.getClass().getName());
+		cpDictionary.put("service.vendor", bundle.getHeaders().get("Bundle-Vendor")); //$NON-NLS-1$ //$NON-NLS-2$
+		cpDictionary.put("service.ranking", new Integer(Integer.MIN_VALUE)); //$NON-NLS-1$
+		cpDictionary.put("service.pid", bundle.getBundleId() + "." + cp.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 
 		consoleCommandService = bundleContext.registerService(CommandProvider.class, cp, cpDictionary);
 	}
@@ -82,7 +82,7 @@ public class Activator extends Plugin {
 	 */
 	public static String getVersion() {
 		if (version == null) {
-			version = AccessController.doPrivileged((PrivilegedAction<String>)() -> instance.getBundle().getHeaders().get("Bundle-Version"));
+			version = AccessController.doPrivileged((PrivilegedAction<String>)() -> instance.getBundle().getHeaders().get("Bundle-Version")); //$NON-NLS-1$
 		}
 		return version;
 	}

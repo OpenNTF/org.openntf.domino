@@ -32,6 +32,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * data. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDPATTERNTABLE extends CDRecord {
 
 	public final LSIG Header = inner(new LSIG());

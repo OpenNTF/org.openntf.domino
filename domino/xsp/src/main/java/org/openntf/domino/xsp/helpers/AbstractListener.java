@@ -20,6 +20,7 @@ import org.openntf.domino.xsp.ODAPlatform;
 /**
  * AbstractListener class
  */
+@SuppressWarnings("nls")
 public abstract class AbstractListener {
 	private final static boolean _debug = ODAPlatform.isDebug();
 

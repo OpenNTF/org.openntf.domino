@@ -35,7 +35,7 @@ public class ASTAtWhile extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@while");
+		functions.add("@while"); //$NON-NLS-1$
 	}
 
 }

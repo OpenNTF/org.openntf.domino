@@ -58,7 +58,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBase.class.getName());
 
-	private static Transformer ODP_META_TRANSFORMER = createTransformer("dxl_metafilter.xslt");
+	private static Transformer ODP_META_TRANSFORMER = createTransformer("dxl_metafilter.xslt"); //$NON-NLS-1$
 
 	private static final char DESIGN_FLAG_PRESERVE = 'P';
 	private static final char DESIGN_FLAG_PROPAGATE_NOCHANGE = 'r';
@@ -66,9 +66,9 @@ public abstract class AbstractDesignBase implements DesignBase {
 	private static final char DESIGN_FLAG_HIDE_FROM_WEB = 'w';
 	private static final char DESIGN_FLAG_HIDE_FROM_NOTES = 'n';
 
-	protected static final String FLAGS_ITEM = "$Flags";
-	protected static final String FLAGS_EXT_ITEM = "$FlagsExt";
-	protected static final String TITLE_ITEM = "$TITLE";
+	protected static final String FLAGS_ITEM = "$Flags"; //$NON-NLS-1$
+	protected static final String FLAGS_EXT_ITEM = "$FlagsExt"; //$NON-NLS-1$
+	protected static final String TITLE_ITEM = "$TITLE"; //$NON-NLS-1$
 
 	private transient Database database_;
 	private transient Document document_;
@@ -106,7 +106,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 		try {
 
 			if (null == is) {
-				is = getClass().getResourceAsStream(getClass().getSimpleName() + ".xml");
+				is = getClass().getResourceAsStream(getClass().getSimpleName() + ".xml"); //$NON-NLS-1$
 			}
 
 			loadDxl(is);
@@ -156,7 +156,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	public final boolean isHideFromNotes() {
 		switch (getDxlFormat(false)) {
 		case DXL:
-			return getDocumentElement().getAttribute("hide").contains("notes");
+			return getDocumentElement().getAttribute("hide").contains("notes"); //$NON-NLS-1$ //$NON-NLS-2$
 		default:
 			return hasFlag(DESIGN_FLAG_HIDE_FROM_NOTES);
 		}
@@ -171,7 +171,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	public final boolean isHideFromWeb() {
 		switch (getDxlFormat(false)) {
 		case DXL:
-			return getDocumentElement().getAttribute("hide").contains("web");
+			return getDocumentElement().getAttribute("hide").contains("web"); //$NON-NLS-1$ //$NON-NLS-2$
 		default:
 			return hasFlag(DESIGN_FLAG_HIDE_FROM_WEB);
 		}
@@ -186,7 +186,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	public final boolean isNeedsRefresh() {
 		switch (getDxlFormat(false)) {
 		case DXL:
-			return getDocumentElement().getAttribute("refresh").equals("true");
+			return getDocumentElement().getAttribute("refresh").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 		default:
 			return hasFlag(DESIGN_FLAG_NEEDSREFRESH);
 		}
@@ -201,7 +201,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	public final boolean isPreventChanges() {
 		switch (getDxlFormat(false)) {
 		case DXL:
-			return getDocumentElement().getAttribute("noreplace").equals("true");
+			return getDocumentElement().getAttribute("noreplace").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 		default:
 			return hasFlag(DESIGN_FLAG_PRESERVE);
 		}
@@ -216,7 +216,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	public final boolean isPropagatePreventChanges() {
 		switch (getDxlFormat(false)) {
 		case DXL:
-			return getDocumentElement().getAttribute("propagatenoreplace").equals("true");
+			return getDocumentElement().getAttribute("propagatenoreplace").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 		default:
 			return hasFlag(DESIGN_FLAG_PROPAGATE_NOCHANGE);
 		}
@@ -227,21 +227,21 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	protected void setHide(final String platform, final boolean hide) {
 		if (getDxlFormat(false) != DxlFormat.DXL) {
-			throw new IllegalStateException("Not in DXL Format");
+			throw new IllegalStateException("Not in DXL Format"); //$NON-NLS-1$
 		}
-		String platforms = getDxl().getFirstChild().getAttribute("hide");
+		String platforms = getDxl().getFirstChild().getAttribute("hide"); //$NON-NLS-1$
 		if (hide) {
 			if (platforms.contains(platform)) {
 				return;
 			}
-			platforms += " " + platform;
+			platforms += " " + platform; //$NON-NLS-1$
 		} else {
 			if (!platforms.contains(platform)) {
 				return;
 			}
-			platforms = platforms.replace(platform, "");
+			platforms = platforms.replace(platform, ""); //$NON-NLS-1$
 		}
-		getDocumentElement().setAttribute("hide", platforms.trim());
+		getDocumentElement().setAttribute("hide", platforms.trim()); //$NON-NLS-1$
 	}
 
 	/*
@@ -253,7 +253,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	public final void setHideFromNotes(final boolean hideFromNotes) {
 		switch (getDxlFormat(true)) {
 		case DXL:
-			setHide("notes", hideFromNotes);
+			setHide("notes", hideFromNotes); //$NON-NLS-1$
 		default:
 			setFlag(DESIGN_FLAG_HIDE_FROM_NOTES, hideFromNotes);
 		}
@@ -268,7 +268,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	public void setHideFromWeb(final boolean hideFromWeb) {
 		switch (getDxlFormat(true)) {
 		case DXL:
-			setHide("web", hideFromWeb);
+			setHide("web", hideFromWeb); //$NON-NLS-1$
 		default:
 			setFlag(DESIGN_FLAG_HIDE_FROM_WEB, hideFromWeb);
 		}
@@ -283,7 +283,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	public void setNeedsRefresh(final boolean needsRefresh) {
 		switch (getDxlFormat(true)) {
 		case DXL:
-			getDocumentElement().setAttribute("refresh", String.valueOf(needsRefresh));
+			getDocumentElement().setAttribute("refresh", String.valueOf(needsRefresh)); //$NON-NLS-1$
 		default:
 			setFlag(DESIGN_FLAG_NEEDSREFRESH, needsRefresh);
 		}
@@ -298,7 +298,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	public void setPreventChanges(final boolean preventChanges) {
 		switch (getDxlFormat(true)) {
 		case DXL:
-			getDocumentElement().setAttribute("noreplace", String.valueOf(preventChanges));
+			getDocumentElement().setAttribute("noreplace", String.valueOf(preventChanges)); //$NON-NLS-1$
 		default:
 			setFlag(DESIGN_FLAG_PRESERVE, preventChanges);
 		}
@@ -313,7 +313,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	public void setPropagatePreventChanges(final boolean propagatePreventChanges) {
 		switch (getDxlFormat(true)) {
 		case DXL:
-			getDocumentElement().setAttribute("propagatenoreplace", String.valueOf(propagatePreventChanges));
+			getDocumentElement().setAttribute("propagatenoreplace", String.valueOf(propagatePreventChanges)); //$NON-NLS-1$
 		default:
 			setFlag(DESIGN_FLAG_PROPAGATE_NOCHANGE, propagatePreventChanges);
 		}
@@ -327,7 +327,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 			if (null != doc) {
 				return doc.getItemValueString(FLAGS_ITEM);
 			}
-			throw new IllegalStateException("Flags are available only in DxlFormat.RAWNOTE");
+			throw new IllegalStateException("Flags are available only in DxlFormat.RAWNOTE"); //$NON-NLS-1$
 		}
 		return getItemValueString(FLAGS_ITEM);
 	}
@@ -341,7 +341,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 		} else {
 			if (flags.indexOf(flag) >= 0) {
 				// Assume this works for now
-				setItemValue(FLAGS_ITEM, flags.replace(flag + "", ""), FLAG_SUMMARY);
+				setItemValue(FLAGS_ITEM, flags.replace(flag + "", ""), FLAG_SUMMARY); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -357,7 +357,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 			if (null != doc) {
 				return doc.getItemValueString(FLAGS_EXT_ITEM);
 			}
-			throw new IllegalStateException("Flags are available only in DxlFormat.RAWNOTE");
+			throw new IllegalStateException("Flags are available only in DxlFormat.RAWNOTE"); //$NON-NLS-1$
 		}
 		return getItemValueString(FLAGS_EXT_ITEM);
 	}
@@ -371,7 +371,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 		} else {
 			if (flags.indexOf(flag) >= 0) {
 				// Assume this works for now
-				setItemValue(FLAGS_EXT_ITEM, flags.replace(flag + "", ""), FLAG_SIGN_SUMMARY);
+				setItemValue(FLAGS_EXT_ITEM, flags.replace(flag + "", ""), FLAG_SIGN_SUMMARY); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -474,7 +474,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	protected String getOnDiskName() {
 		String odpName = getOdpMapping().getFileName();
 
-		String extension = "";
+		String extension = ""; //$NON-NLS-1$
 		String ret;
 		if (odpName == null) { // no name specified
 			if (this instanceof DesignBaseNamed) {
@@ -482,9 +482,9 @@ public abstract class AbstractDesignBase implements DesignBase {
 			} else {
 				ret = getUniversalID();
 			}
-		} else if (odpName.startsWith("*")) {
+		} else if (odpName.startsWith("*")) { //$NON-NLS-1$
 			ret = ((DesignBaseNamed) this).getName();
-		} else if (!odpName.startsWith(".")) {
+		} else if (!odpName.startsWith(".")) { //$NON-NLS-1$
 			ret = odpName;
 		} else {
 			if (this instanceof DesignBaseNamed) {
@@ -527,7 +527,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 			return null;
 		}
 		if (path.length() > 0) {
-			path = path + "/" + getOnDiskName();
+			path = path + "/" + getOnDiskName(); //$NON-NLS-1$
 		} else {
 			path = getOnDiskName();
 		}
@@ -642,11 +642,11 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public final String getNoteID() {
-		XMLNode node = getDxl().selectSingleNode("//noteinfo");
+		XMLNode node = getDxl().selectSingleNode("//noteinfo"); //$NON-NLS-1$
 		if (node != null) {
-			return node.getAttribute("noteid");
+			return node.getAttribute("noteid"); //$NON-NLS-1$
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	protected final XMLDocument getDxl() {
@@ -659,20 +659,20 @@ public abstract class AbstractDesignBase implements DesignBase {
 			String xml = doExport(exporter);
 			loadDxl(xml);
 			if (dxl_ == null) {
-				throw new IllegalStateException(getClass().getSimpleName() + ": Could not load DXL");
+				throw new IllegalStateException(getClass().getSimpleName() + ": Could not load DXL"); //$NON-NLS-1$
 			}
 			XMLNode docRoot = getDocumentElement();
-			if (docRoot.getNodeName() == "note") {
+			if (docRoot.getNodeName() == "note") { //$NON-NLS-1$
 				if (!enforceRawFormat()) {
 					throw new UnsupportedOperationException(
-							getClass().getSimpleName() + ": got note in RAW format. this was not expected. NoteID "
-									+ (document_ == null ? "" : document_.getNoteID()));
+							getClass().getSimpleName() + ": got note in RAW format. this was not expected. NoteID " //$NON-NLS-1$
+									+ (document_ == null ? "" : document_.getNoteID())); //$NON-NLS-1$
 				}
 				dxlFormat_ = DxlFormat.RAWNOTE;
 			} else {
 				if (enforceRawFormat()) {
 					throw new UnsupportedOperationException(
-							getClass().getSimpleName() + ": Raw format was enforced, but we got a " + docRoot.getNodeName());
+							getClass().getSimpleName() + ": Raw format was enforced, but we got a " + docRoot.getNodeName()); //$NON-NLS-1$
 				}
 				dxlFormat_ = DxlFormat.DXL;
 			}
@@ -738,11 +738,11 @@ public abstract class AbstractDesignBase implements DesignBase {
 	}
 
 	public final String getDesignTemplateName() {
-		return getItemValueString("$Class");
+		return getItemValueString("$Class"); //$NON-NLS-1$
 	}
 
 	public final void setDesignTemplateName(final String designTemplateName) {
-		setItemValue("$Class", designTemplateName, FLAG_SUMMARY); // Summary, don't sign
+		setItemValue("$Class", designTemplateName, FLAG_SUMMARY); // Summary, don't sign //$NON-NLS-1$
 	}
 
 	/**
@@ -755,27 +755,27 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	public final void setItemValue(final String itemName, final Object value, final Set<ItemFlag> flags) {
 		getDxlFormat(true); // load DXL before modification
-		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
+		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (node == null) {
-			node = getDxl().selectSingleNode("/*").addChildElement("item");
-			node.setAttribute("name", itemName);
+			node = getDxl().selectSingleNode("/*").addChildElement("item"); //$NON-NLS-1$ //$NON-NLS-2$
+			node.setAttribute("name", itemName); //$NON-NLS-1$
 		} else {
 			node.removeChildren();
 		}
 
 		if (flags.contains(ItemFlag._SIGN)) {
-			node.setAttribute("sign", "true");
+			node.setAttribute("sign", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			node.removeAttribute("sign");
+			node.removeAttribute("sign"); //$NON-NLS-1$
 		}
 		if (flags.contains(ItemFlag._SUMMARY)) {
-			node.removeAttribute("summary");
+			node.removeAttribute("summary"); //$NON-NLS-1$
 		} else {
-			node.setAttribute("summary", "false");
+			node.setAttribute("summary", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (value instanceof Iterable) {
 			Object first = ((Iterable<?>) value).iterator().next();
-			XMLNode list = node.addChildElement(first instanceof Number ? "numberlist" : "textlist");
+			XMLNode list = node.addChildElement(first instanceof Number ? "numberlist" : "textlist"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			for (Object val : (Iterable<?>) value) {
 				appendItemValueNode(list, val);
@@ -791,9 +791,9 @@ public abstract class AbstractDesignBase implements DesignBase {
 	private final void appendItemValueNode(final XMLNode node, final Object value) {
 		XMLNode child;
 		if (value instanceof Number) {
-			child = node.addChildElement("number");
+			child = node.addChildElement("number"); //$NON-NLS-1$
 		} else {
-			child = node.addChildElement("text");
+			child = node.addChildElement("text"); //$NON-NLS-1$
 		}
 		child.setText(String.valueOf(value));
 	}
@@ -809,14 +809,14 @@ public abstract class AbstractDesignBase implements DesignBase {
 		if (dxlFormat_ == DxlFormat.NONE) {
 			return document_.getItemValueString(itemName);
 		}
-		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
+		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (node != null) {
-			node = node.selectSingleNode(".//number | .//text");
+			node = node.selectSingleNode(".//number | .//text"); //$NON-NLS-1$
 			if (node != null) {
 				return node.getText();
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -839,9 +839,9 @@ public abstract class AbstractDesignBase implements DesignBase {
 				sb.append(value);
 			}
 		} else {
-			XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
+			XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (node != null) {
-				List<XMLNode> nodes = node.selectNodes(".//number | .//text");
+				List<XMLNode> nodes = node.selectNodes(".//number | .//text"); //$NON-NLS-1$
 				for (XMLNode child : nodes) {
 					if (sb.length() > 0) {
 						sb.append(delimiter);
@@ -862,8 +862,8 @@ public abstract class AbstractDesignBase implements DesignBase {
 	public Collection<String> getItemNames() {
 		Collection<String> result = new TreeSet<String>();
 
-		for (XMLNode node : getDxl().selectNodes("//item")) {
-			String itemName = node.getAttribute("name");
+		for (XMLNode node : getDxl().selectNodes("//item")) { //$NON-NLS-1$
+			String itemName = node.getAttribute("name"); //$NON-NLS-1$
 			if (!itemName.isEmpty()) {
 				result.add(itemName);
 			}
@@ -884,11 +884,11 @@ public abstract class AbstractDesignBase implements DesignBase {
 			return document_.getItemValue(itemName);
 		}
 		List<Object> result = new ArrayList<Object>();
-		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
+		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (node != null) {
-			List<XMLNode> nodes = node.selectNodes(".//number | .//text");
+			List<XMLNode> nodes = node.selectNodes(".//number | .//text"); //$NON-NLS-1$
 			for (XMLNode child : nodes) {
-				if (child.getNodeName().equals("number")) {
+				if (child.getNodeName().equals("number")) { //$NON-NLS-1$
 					result.add(Double.parseDouble(child.getText()));
 				} else {
 					result.add(child.getText());
@@ -910,9 +910,9 @@ public abstract class AbstractDesignBase implements DesignBase {
 			return document_.getItemValues(itemName, String.class);
 		}
 		List<String> result = new ArrayList<String>();
-		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
+		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (node != null) {
-			List<XMLNode> nodes = node.selectNodes(".//number | .//text");
+			List<XMLNode> nodes = node.selectNodes(".//number | .//text"); //$NON-NLS-1$
 			for (XMLNode child : nodes) {
 				result.add(child.getText());
 			}
@@ -962,9 +962,9 @@ public abstract class AbstractDesignBase implements DesignBase {
 	@Override
 	public String getDesignerVersion() {
 		if (null == getDocument()) {
-			return "";
+			return ""; //$NON-NLS-1$
 		} else {
-			return getDocument().getItemValueString("$DesignerVersioN");
+			return getDocument().getItemValueString("$DesignerVersion"); //$NON-NLS-1$
 		}
 	}
 

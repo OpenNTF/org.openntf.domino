@@ -28,6 +28,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * @since forever
  *
  */
+@SuppressWarnings("nls")
 public class CDDDEBEGIN extends CDRecord {
 	public static enum Flag {
 		AUTOLINK(0x01), MANUALLINK(0x02), EMBEDDED(0x04), INITIATE(0x08), CDP(0x10), NOTES_LAUNCHED(0x20), CONV_ACTIVE(0x40),

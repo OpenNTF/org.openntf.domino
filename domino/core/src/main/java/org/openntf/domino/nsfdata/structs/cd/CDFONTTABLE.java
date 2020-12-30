@@ -27,6 +27,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * displayed using fonts other than those defined in FONT_FACE_xxx. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDFONTTABLE extends CDRecord {
 	/**
 	 * This defines part of the structure of a font table item in a note. A font table item in a note allows rich text in the note to be

@@ -40,7 +40,7 @@ public abstract class AtFunction implements org.openntf.formula.Function {
 
 	@Override
 	public String toString() {
-		return getPrefix() + ": '" + getImage() + "'";
+		return getPrefix() + ": '" + getImage() + "'"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

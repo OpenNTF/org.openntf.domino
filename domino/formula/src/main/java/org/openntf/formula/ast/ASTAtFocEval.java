@@ -75,7 +75,7 @@ public class ASTAtFocEval extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@foceval");
+		functions.add("@foceval"); //$NON-NLS-1$
 	}
 }
 /* JavaCC - OriginalChecksum=5fefeb9d8f5f65f21bd54ddbf22000c8 (do not edit this line) */

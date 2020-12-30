@@ -25,6 +25,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * @since Lotus Notes/Domino 6.0
  *
  */
+@SuppressWarnings("nls")
 public class CDFILESEGMENT extends CDRecord {
 
 	public final LSIG Header = inner(new LSIG());

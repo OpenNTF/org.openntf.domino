@@ -45,7 +45,7 @@ public class FluentUtility {
             if (asPipe.getName().equals(namedStep))
                 return asPipe;
         }
-        throw new RuntimeException("No AsPipe with provided name: " + namedStep);
+        throw new RuntimeException("No AsPipe with provided name: " + namedStep); //$NON-NLS-1$
     }
 
     /**

@@ -28,6 +28,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * @since Lotus Notes/Domino 4.5
  *
  */
+@SuppressWarnings("nls")
 public class CDOLEOBJ_INFO extends CDRecord {
 
 	/**

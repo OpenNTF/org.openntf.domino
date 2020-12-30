@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 
 import com.tinkerpop.blueprints.Edge;
 
+@SuppressWarnings("nls")
 public enum AnnotationUtilities {
 	;
 

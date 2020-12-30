@@ -26,6 +26,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * @since forever
  *
  */
+@SuppressWarnings("nls")
 public class CDMACMETASEG extends CDRecord {
 
 	public final LSIG Header = inner(new LSIG());

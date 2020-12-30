@@ -182,6 +182,7 @@ class JavaHandlerContextImpl<C extends Element> implements JavaHandlerContext<C>
 		return g().frameEdges(edges, direction, kind);
 	}
 
+    @SuppressWarnings("nls")
 	private Type getIterableType() {
 
 		if (method.getReturnType() != Iterable.class) {

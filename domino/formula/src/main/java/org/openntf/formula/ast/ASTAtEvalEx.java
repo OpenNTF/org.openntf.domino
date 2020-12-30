@@ -31,8 +31,8 @@ public class ASTAtEvalEx extends SimpleNode {
 		if (vhEval.dataType == DataType.ERROR)
 			return vhEval;
 		if (vhEval.size != children.length) {
-			IllegalArgumentException ia = new IllegalArgumentException("Wrong number of parameters: Expected " + (vhEval.size - 1)
-					+ ", got " + (children.length - 1));
+			IllegalArgumentException ia = new IllegalArgumentException("Wrong number of parameters: Expected " + (vhEval.size - 1) //$NON-NLS-1$
+					+ ", got " + (children.length - 1)); //$NON-NLS-1$
 			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, ia));
 		}
 		oldVHs = new ValueHolder[vhEval.size - 1];
@@ -54,7 +54,7 @@ public class ASTAtEvalEx extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@evalex");
+		functions.add("@evalex"); //$NON-NLS-1$
 	}
 }
 /* JavaCC - OriginalChecksum=4422466a21b7e75ad1c114b91cc29745 (do not edit this line) */

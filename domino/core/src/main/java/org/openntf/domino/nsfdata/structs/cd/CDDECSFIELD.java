@@ -26,6 +26,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * 
  * @since Lotus Notes/Domino 6.0
  */
+@SuppressWarnings("nls")
 public class CDDECSFIELD extends CDRecord {
 	public static enum Flag {
 		KEY_FIELD((short) 0x001), STORE_LOCALLY((short) 0x002);

@@ -39,8 +39,8 @@ public class ASTUserDefinedInclude extends SimpleNode {
 		Node inc = (Node) ctx.getParser().getInclude(key);
 
 		if (inc == null) {
-			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, new IllegalArgumentException("'" + key
-					+ "' could not be included")));
+			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, new IllegalArgumentException("'" + key //$NON-NLS-1$
+					+ "' could not be included"))); //$NON-NLS-1$
 		}
 		return inc.evaluate(ctx);
 	}

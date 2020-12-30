@@ -25,6 +25,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * many segments. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDBITMAPSEGMENT extends CDRecord {
 	public final LSIG Header = inner(new LSIG());
 	public final Unsigned32[] Reserved = array(new Unsigned32[2]);

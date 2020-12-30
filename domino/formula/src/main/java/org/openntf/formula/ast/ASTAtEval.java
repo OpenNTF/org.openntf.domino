@@ -66,7 +66,7 @@ public class ASTAtEval extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@eval");
+		functions.add("@eval"); //$NON-NLS-1$
 	}
 
 }

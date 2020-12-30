@@ -33,7 +33,7 @@ public class ASTSelect extends SimpleNode {
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) {
 		try {
-			throw new UnsupportedOperationException("SELECT keyword not yet supported. (What should it do?)");
+			throw new UnsupportedOperationException("SELECT keyword not yet supported. (What should it do?)"); //$NON-NLS-1$
 		} catch (RuntimeException cause) {
 			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, cause));
 		}
@@ -42,7 +42,7 @@ public class ASTSelect extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("SELECT");
+		functions.add("SELECT"); //$NON-NLS-1$
 	}
 }
 /* JavaCC - OriginalChecksum=3cb38fd681e06c11e6004b6246dce786 (do not edit this line) */

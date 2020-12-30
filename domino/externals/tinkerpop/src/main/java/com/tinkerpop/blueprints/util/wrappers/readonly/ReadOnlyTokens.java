@@ -5,5 +5,5 @@ package com.tinkerpop.blueprints.util.wrappers.readonly;
  */
 public class ReadOnlyTokens {
 
-    public final static String MUTATE_ERROR_MESSAGE = "It is not possible to mutate a ReadOnlyGraph";
+    public final static String MUTATE_ERROR_MESSAGE = "It is not possible to mutate a ReadOnlyGraph"; //$NON-NLS-1$
 }

@@ -21,7 +21,7 @@ import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 
 public interface AssignedTo extends DEdgeFrame {
-	public static final String LABEL_ASSIGNEDTO = "assignedTo";
+	public static final String LABEL_ASSIGNEDTO = "assignedTo"; //$NON-NLS-1$
 
 	@OutVertex
 	public Task getTask();

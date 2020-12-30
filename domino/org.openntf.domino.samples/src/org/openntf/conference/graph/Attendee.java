@@ -30,6 +30,7 @@ import com.tinkerpop.frames.OutVertex;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Attendee")
+@SuppressWarnings("nls")
 public interface Attendee extends Socializer {
 	public static enum Status {
 		REGISTERED, CANCELLED, PAID, CHECKEDIN, DEPARTED

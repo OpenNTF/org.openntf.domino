@@ -27,6 +27,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * @since Lotus Notes/Domino 5.0
  *
  */
+@SuppressWarnings("nls")
 public class CDCAPTION extends CDRecord {
 	public static enum CaptionPosition {
 		BELOW_CENTER, MIDDLE_CENTER

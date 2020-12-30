@@ -19,6 +19,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
+@SuppressWarnings("nls")
 public abstract class AbstractDatabaseEvent extends AbstractEMBridgeEvent implements IEMBridgeEvent {
 
 	public AbstractDatabaseEvent(final int eventId) {

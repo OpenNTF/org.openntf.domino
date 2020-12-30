@@ -31,6 +31,7 @@ import java.util.NoSuchElementException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.nsfdata.structs.SIG;
 
+@SuppressWarnings("nls")
 public class CData extends AbstractSequentialList<CDRecord> implements Externalizable {
 	private static final long serialVersionUID = 1L;
 

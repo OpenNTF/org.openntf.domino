@@ -28,6 +28,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * @since Lotus Notes/Domino 5.0
  *
  */
+@SuppressWarnings("nls")
 public class CDPRETABLEBEGIN extends CDRecord {
 	public static enum Viewer {
 		UNUSED0, ONCLICK, ONLOADTIMER, ONLOADCYCLEONCE, TABS, FILEDRIVEN, CYCLEONCE, CAPTIONS, LAST

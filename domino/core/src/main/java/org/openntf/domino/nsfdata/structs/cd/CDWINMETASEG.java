@@ -24,6 +24,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * each segment must be preceded by a CDWINMETASEG record. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDWINMETASEG extends CDRecord {
 
 	public final LSIG Header = inner(new LSIG());

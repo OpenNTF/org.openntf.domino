@@ -69,7 +69,7 @@ public class ASTAtIf extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@if");
+		functions.add("@if"); //$NON-NLS-1$
 	}
 }
 /* JavaCC - OriginalChecksum=bfde8d6612dc75ddc7c7b037fbeccfff (do not edit this line) */

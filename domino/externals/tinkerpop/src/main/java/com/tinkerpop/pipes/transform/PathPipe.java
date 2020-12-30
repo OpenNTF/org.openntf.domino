@@ -51,7 +51,7 @@ public class PathPipe<S> extends AbstractPipe<S, List> implements TransformPipe<
                 return closedPath;
             }
         } else {
-            throw new NoSuchElementException("The start of this pipe was not a pipe");
+            throw new NoSuchElementException("The start of this pipe was not a pipe"); //$NON-NLS-1$
         }
     }
 

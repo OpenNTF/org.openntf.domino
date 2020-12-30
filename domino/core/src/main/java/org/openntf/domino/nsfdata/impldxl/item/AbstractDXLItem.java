@@ -23,7 +23,7 @@ import java.util.Set;
 import org.openntf.domino.nsfdata.NSFItem;
 import org.openntf.domino.utils.xml.XMLNode;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "nls" })
 public abstract class AbstractDXLItem implements NSFItem, Serializable {
 	private final String name_;
 	private final Set<Flag> flags_;

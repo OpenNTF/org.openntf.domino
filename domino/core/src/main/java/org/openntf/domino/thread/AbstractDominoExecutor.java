@@ -105,9 +105,9 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 				for (int i = 5; i > 0; i--) {
 					if (!awaitTermination(10, TimeUnit.SECONDS)) {
 						if (i > 0) {
-							Factory.println("Could not terminate java threads... Still waiting " + (i * 10) + " seconds");
+							Factory.println("Could not terminate java threads... Still waiting " + (i * 10) + " seconds"); //$NON-NLS-1$ //$NON-NLS-2$
 						} else {
-							Factory.println("Could not terminate java threads... giving up. Server may crash now.");
+							Factory.println("Could not terminate java threads... giving up. Server may crash now."); //$NON-NLS-1$
 						}
 					}
 				}
@@ -129,7 +129,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			return Executors.privilegedThreadFactory();
 		} catch (Throwable t) {
 			log_.log(Level.WARNING,
-					"cannot create a privilegedThreadFactory - this is the case if you run as java app or in an unsupported operation: "
+					"cannot create a privilegedThreadFactory - this is the case if you run as java app or in an unsupported operation: " //$NON-NLS-1$
 							+ t.toString(),
 					t);
 			return Executors.defaultThreadFactory();
@@ -223,9 +223,9 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			super.setException(t);
 			if (t instanceof ExecutionException) {
 				t = ((ExecutionException) t).getCause();
-				log_.log(Level.WARNING, "Task '" + getWrappedTask().getDescription() + "' failed: " + t.toString(), t);
+				log_.log(Level.WARNING, "Task '" + getWrappedTask().getDescription() + "' failed: " + t.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				log_.log(Level.SEVERE, "Task '" + getWrappedTask().getDescription() + "' failed: " + t.toString(), t);
+				log_.log(Level.SEVERE, "Task '" + getWrappedTask().getDescription() + "' failed: " + t.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -309,6 +309,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			return 0;
 		}
 
+		@SuppressWarnings("nls")
 		@Override
 		public String toString() {
 			// TODO increment Period/Time 
@@ -375,10 +376,10 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		super.beforeExecute(thread, runnable);
 		if (runnable instanceof DominoFutureTask) {
 			DominoFutureTask<?> task = (DominoFutureTask<?>) runnable;
-			thread.setName(executorName_ + ": " + task.getWrappedTask().getDescription() + " - " + new Date());
+			thread.setName(executorName_ + ": " + task.getWrappedTask().getDescription() + " - " + new Date()); //$NON-NLS-1$ //$NON-NLS-2$
 			task.setState(TaskState.RUNNING);
 		} else {
-			thread.setName(executorName_ + ": #" + thread.getId());
+			thread.setName(executorName_ + ": #" + thread.getId()); //$NON-NLS-1$
 		}
 	}
 
@@ -464,7 +465,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	@Override
 	public ScheduledFuture<?> scheduleAtFixedRate(final Runnable runnable, final long delay, final long period, final TimeUnit timeUnit) {
 		if (period <= 0) {
-			throw new IllegalStateException("period must be > 0");
+			throw new IllegalStateException("period must be > 0"); //$NON-NLS-1$
 		}
 		return queue(new DominoFutureTask(wrap(runnable), null, new PeriodicScheduler(delay, period, timeUnit)));
 	}
@@ -474,7 +475,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	public ScheduledFuture<?> scheduleWithFixedDelay(final Runnable runnable, final long delay, final long period,
 			final TimeUnit timeUnit) {
 		if (period <= 0) {
-			throw new IllegalStateException("period must be > 0");
+			throw new IllegalStateException("period must be > 0"); //$NON-NLS-1$
 		}
 		return queue(new DominoFutureTask(wrap(runnable), null, new PeriodicScheduler(delay, -period, timeUnit)));
 	}

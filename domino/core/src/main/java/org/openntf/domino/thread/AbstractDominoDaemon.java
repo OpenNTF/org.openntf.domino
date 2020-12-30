@@ -87,7 +87,7 @@ public abstract class AbstractDominoDaemon<T> extends AbstractDominoRunnable {
 					stop();
 				} catch (PrivilegedActionException e) {
 					stop();
-					log_.log(Level.SEVERE, "Error in " + this.getClass().getName(), e);
+					log_.log(Level.SEVERE, "Error in " + this.getClass().getName(), e); //$NON-NLS-1$
 				}
 			}
 			setChanged();

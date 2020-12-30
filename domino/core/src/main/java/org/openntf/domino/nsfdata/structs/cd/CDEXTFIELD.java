@@ -25,6 +25,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * 
  * @since Lotus Notes 4.0
  */
+@SuppressWarnings("nls")
 public class CDEXTFIELD extends CDRecord {
 	/**
 	 * These identifiers indicate the type of helper in use by the Keyword and the Name helper/pickers.

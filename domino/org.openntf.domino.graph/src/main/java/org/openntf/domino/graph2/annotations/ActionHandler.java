@@ -29,7 +29,7 @@ public class ActionHandler implements MethodHandler<Action> {
 
 		public NoDefaultHandlerException(final String name) {
 			super();
-			message_ = "No JavaHandler is defined for Action annotation " + name;
+			message_ = "No JavaHandler is defined for Action annotation " + name; //$NON-NLS-1$
 		}
 
 		@Override

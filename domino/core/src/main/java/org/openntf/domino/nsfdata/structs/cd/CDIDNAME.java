@@ -25,6 +25,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * @since Lotus Notes/Domino 5.0
  *
  */
+@SuppressWarnings("nls")
 public class CDIDNAME extends CDRecord {
 
 	public final WSIG Header = inner(new WSIG());

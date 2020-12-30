@@ -80,7 +80,7 @@ public class ASTAtConCat extends SimpleNode {
 				}
 				break;
 			default:
-				throw new UnsupportedOperationException("Concat on " + res[0].dataType + " is not supported");
+				throw new UnsupportedOperationException("Concat on " + res[0].dataType + " is not supported"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			}
 		} catch (RuntimeException cause) {

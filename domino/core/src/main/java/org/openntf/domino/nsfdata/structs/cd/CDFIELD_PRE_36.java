@@ -31,6 +31,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * @since prehistory
  *
  */
+@SuppressWarnings("nls")
 public class CDFIELD_PRE_36 extends CDRecord {
 
 	public final WSIG Header = inner(new WSIG());

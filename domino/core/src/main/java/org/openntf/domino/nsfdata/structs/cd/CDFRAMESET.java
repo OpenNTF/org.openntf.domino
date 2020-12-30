@@ -27,6 +27,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * @since Lotus Notes/Domino 5.0.1
  *
  */
+@SuppressWarnings("nls")
 public class CDFRAMESET extends CDRecord {
 
 	public static final int fFSBorderEnable = 0x00000001;

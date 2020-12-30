@@ -25,6 +25,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * This structure specifies the start of an OLE Object. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDOLEBEGIN extends CDRecord {
 
 	/**

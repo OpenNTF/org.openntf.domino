@@ -35,6 +35,6 @@ public class BasicCDRecord extends CDRecord {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Signature=" + getHeader() + "]";
+		return "[" + getClass().getSimpleName() + ": Signature=" + getHeader() + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

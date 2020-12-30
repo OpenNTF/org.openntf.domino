@@ -23,6 +23,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * This structure defines the start of a run of text in a rich-text field. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDTEXT extends CDRecord {
 
 	public final WSIG Header = inner(new WSIG());

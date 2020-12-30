@@ -26,6 +26,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * @since forever
  *
  */
+@SuppressWarnings("nls")
 public class CDHEADER extends CDRecord {
 
 	public static final int MAXFACESIZE = 32;

@@ -62,6 +62,6 @@ public abstract class AbstractDominoType implements IDominoType {
 
 	@Override
 	public void setItemToDefault(final org.openntf.domino.Item item) {
-		item.setValueString("");
+		item.setValueString(""); //$NON-NLS-1$
 	}
 }

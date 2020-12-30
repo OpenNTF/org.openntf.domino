@@ -26,6 +26,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * This structure defines the appearance of a button in a rich text field. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDBUTTON extends CDRecord {
 	/**
 	 * Possible values for the Flags member of the CDBUTTON structure.

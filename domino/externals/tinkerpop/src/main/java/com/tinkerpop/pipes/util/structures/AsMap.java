@@ -34,7 +34,7 @@ public class AsMap {
     public Object get(final String name) {
         final AsPipe asPipe = this.map.get(name);
         if (null == asPipe)
-            throw new RuntimeException("Named step does not exist: " + name);
+            throw new RuntimeException("Named step does not exist: " + name); //$NON-NLS-1$
         else
             return asPipe.getCurrentEnd();
     }

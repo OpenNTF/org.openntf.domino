@@ -32,6 +32,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author jgallagher
  * 
  */
+@SuppressWarnings("nls")
 public abstract class AbstractXspResource extends AbstractDesignFileResource implements XspResource {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")

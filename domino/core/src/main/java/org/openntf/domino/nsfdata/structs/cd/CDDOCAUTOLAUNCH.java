@@ -29,6 +29,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * @since Lotus Notes 4.1
  *
  */
+@SuppressWarnings("nls")
 public class CDDOCAUTOLAUNCH extends CDRecord {
 	/**
 	 * Possible values for the ObjectType member of the CDDOCAUTOLAUNCH structure. (oleods.h)

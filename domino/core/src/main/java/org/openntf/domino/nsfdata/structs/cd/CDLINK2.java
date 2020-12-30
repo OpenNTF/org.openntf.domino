@@ -27,6 +27,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * (a NOTELINK structure) contains all the information necessary to open the specified document from any database on any server. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDLINK2 extends CDRecord {
 
 	public final WSIG Header = inner(new WSIG());

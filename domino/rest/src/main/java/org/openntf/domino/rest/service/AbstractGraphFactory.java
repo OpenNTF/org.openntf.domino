@@ -28,7 +28,7 @@ import org.openntf.domino.rest.resources.info.IInfoProvider;
 
 import com.tinkerpop.frames.FramedGraph;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings({ "rawtypes", "nls" })
 public abstract class AbstractGraphFactory implements IGraphFactory {
 	protected final Map<String, ICommandProcessor> processorMap_ = new HashMap<String, ICommandProcessor>();
 	protected final Map<String, IInfoProvider> providerMap_ = new HashMap<String, IInfoProvider>();

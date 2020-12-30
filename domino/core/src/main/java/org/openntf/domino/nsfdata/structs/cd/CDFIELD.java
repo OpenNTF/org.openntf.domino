@@ -35,6 +35,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * in the form. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDFIELD extends CDRecord {
 	public final WSIG Header = inner(new WSIG());
 	/**

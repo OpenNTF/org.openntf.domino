@@ -17,6 +17,7 @@
 package org.openntf.formula.parse;
 
 /** Token Manager. */
+@SuppressWarnings("nls")
 public class AtFormulaParserImplTokenManager implements AtFormulaParserImplConstants {
 
 	/** Debug output. */

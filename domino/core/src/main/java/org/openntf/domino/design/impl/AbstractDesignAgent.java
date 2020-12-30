@@ -45,37 +45,37 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 	public boolean isScheduled() {
 		switch (getDxlFormat(false)) {
 		case DXL:
-			XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule");
+			XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule"); //$NON-NLS-1$
 			if (null == scheduleNode) {
 				return false;
 			} else {
 				return true;
 			}
 		default:
-			return getFlags().contains("S");
+			return getFlags().contains("S"); //$NON-NLS-1$
 		}
 	}
 
 	@Override
 	public ScheduleType getScheduleType() {
-		XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule");
+		XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule"); //$NON-NLS-1$
 		if (null == scheduleNode) {
 			return ScheduleType.NONE;
 		} else {
-			switch (scheduleNode.getAttribute("type")) {
-			case "byminutes":
+			switch (scheduleNode.getAttribute("type")) { //$NON-NLS-1$
+			case "byminutes": //$NON-NLS-1$
 				return ScheduleType.MORE_THAN_DAILY;
-			case "daily":
+			case "daily": //$NON-NLS-1$
 				return ScheduleType.DAILY;
-			case "weekly":
+			case "weekly": //$NON-NLS-1$
 				return ScheduleType.WEEKLY;
-			case "monthly":
+			case "monthly": //$NON-NLS-1$
 				return ScheduleType.MONTHLY;
-			case "never":
+			case "never": //$NON-NLS-1$
 				return ScheduleType.NEVER;
 			default:
 				DominoUtils
-						.handleException(new OpenNTFNotesException("Invalid Agent Schedule Type - " + scheduleNode.getAttribute("type")));
+						.handleException(new OpenNTFNotesException("Invalid Agent Schedule Type - " + scheduleNode.getAttribute("type"))); //$NON-NLS-1$ //$NON-NLS-2$
 				return ScheduleType.NONE;
 			}
 		}
@@ -83,23 +83,23 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 
 	@Override
 	public String getRunLocation() {
-		XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule");
+		XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule"); //$NON-NLS-1$
 		if (null == scheduleNode) {
 			return null;
 		} else {
-			if ("choose".equals(scheduleNode.getAttribute("runlocation"))) {
-				return "choose";
+			if ("choose".equals(scheduleNode.getAttribute("runlocation"))) { //$NON-NLS-1$ //$NON-NLS-2$
+				return "choose"; //$NON-NLS-1$
 			} else {
-				return scheduleNode.getAttribute("runserver");
+				return scheduleNode.getAttribute("runserver"); //$NON-NLS-1$
 			}
 		}
 	}
 
 	@Override
 	public String getStartDate() {
-		XMLNode dateNode = getDxl().selectSingleNode("/agent/trigger/schedule/startdate/datetime");
+		XMLNode dateNode = getDxl().selectSingleNode("/agent/trigger/schedule/startdate/datetime"); //$NON-NLS-1$
 		if (null == dateNode) {
-			return "";
+			return ""; //$NON-NLS-1$
 		} else {
 			return dateNode.getText();
 		}
@@ -107,9 +107,9 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 
 	@Override
 	public String getEndDate() {
-		XMLNode dateNode = getDxl().selectSingleNode("/agent/trigger/schedule/enddate/datetime");
+		XMLNode dateNode = getDxl().selectSingleNode("/agent/trigger/schedule/enddate/datetime"); //$NON-NLS-1$
 		if (null == dateNode) {
-			return "";
+			return ""; //$NON-NLS-1$
 		} else {
 			return dateNode.getText();
 		}
@@ -117,12 +117,12 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 
 	@Override
 	public String getStartTime() {
-		XMLNode timeNode = getDxl().selectSingleNode("/agent/trigger/schedule/starttime/datetime");
+		XMLNode timeNode = getDxl().selectSingleNode("/agent/trigger/schedule/starttime/datetime"); //$NON-NLS-1$
 		if (null == timeNode) {
 			if (ScheduleType.MORE_THAN_DAILY.equals(getScheduleType())) {
-				return "T000000,00";
+				return "T000000,00"; //$NON-NLS-1$
 			} else {
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 		} else {
 			return timeNode.getText();
@@ -131,12 +131,12 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 
 	@Override
 	public String getEndTime() {
-		XMLNode timeNode = getDxl().selectSingleNode("/agent/trigger/schedule/endtime/datetime");
+		XMLNode timeNode = getDxl().selectSingleNode("/agent/trigger/schedule/endtime/datetime"); //$NON-NLS-1$
 		if (null == timeNode) {
 			if (ScheduleType.MORE_THAN_DAILY.equals(getScheduleType())) {
-				return "T000000,00";
+				return "T000000,00"; //$NON-NLS-1$
 			} else {
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 		} else {
 			return timeNode.getText();
@@ -145,10 +145,10 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 
 	@Override
 	public boolean getRunOnWeekends() {
-		XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule");
+		XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule"); //$NON-NLS-1$
 		if (null != scheduleNode) {
-			String onWeekends = scheduleNode.getAttribute("onweekends");
-			if (StringUtil.equals("false", onWeekends)) {
+			String onWeekends = scheduleNode.getAttribute("onweekends"); //$NON-NLS-1$
+			if (StringUtil.equals("false", onWeekends)) { //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -157,24 +157,24 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 
 	@Override
 	public int getDayOfWeek() {
-		XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule");
+		XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule"); //$NON-NLS-1$
 		if (null != scheduleNode) {
-			String dateInMonth = scheduleNode.getAttribute("dayofweek");
+			String dateInMonth = scheduleNode.getAttribute("dayofweek"); //$NON-NLS-1$
 			if (null != dateInMonth) {
 				switch (dateInMonth) {
-				case "sunday":
+				case "sunday": //$NON-NLS-1$
 					return 1;
-				case "monday":
+				case "monday": //$NON-NLS-1$
 					return 2;
-				case "tuesday":
+				case "tuesday": //$NON-NLS-1$
 					return 3;
-				case "wednesday":
+				case "wednesday": //$NON-NLS-1$
 					return 4;
-				case "thursday":
+				case "thursday": //$NON-NLS-1$
 					return 5;
-				case "friday":
+				case "friday": //$NON-NLS-1$
 					return 6;
-				case "saturday":
+				case "saturday": //$NON-NLS-1$
 					return 7;
 				}
 			}
@@ -184,9 +184,9 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 
 	@Override
 	public int getDayOfMonth() {
-		XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule");
+		XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule"); //$NON-NLS-1$
 		if (null != scheduleNode) {
-			String dateInMonth = scheduleNode.getAttribute("dateinmonth");
+			String dateInMonth = scheduleNode.getAttribute("dateinmonth"); //$NON-NLS-1$
 			if (null != dateInMonth) {
 				return Integer.parseInt(dateInMonth);
 			}
@@ -196,9 +196,9 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 
 	@Override
 	public int getIntervalHours() {
-		XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule");
+		XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule"); //$NON-NLS-1$
 		if (null != scheduleNode) {
-			String hours = scheduleNode.getAttribute("hours");
+			String hours = scheduleNode.getAttribute("hours"); //$NON-NLS-1$
 			if (null != hours) {
 				return Integer.parseInt(hours);
 			}
@@ -208,9 +208,9 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 
 	@Override
 	public int getIntervalMinutes() {
-		XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule");
+		XMLNode scheduleNode = getDxl().selectSingleNode("/agent/trigger/schedule"); //$NON-NLS-1$
 		if (null != scheduleNode) {
-			String minutes = scheduleNode.getAttribute("minutes");
+			String minutes = scheduleNode.getAttribute("minutes"); //$NON-NLS-1$
 			if (null != minutes) {
 				return Integer.parseInt(minutes);
 			}
@@ -223,11 +223,11 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 	 */
 	@Override
 	public String getRunLog() {
-		XMLNode runLogNode = getDxl().selectSingleNode("/agent/rundata/runlog");
+		XMLNode runLogNode = getDxl().selectSingleNode("/agent/rundata/runlog"); //$NON-NLS-1$
 		if (null != runLogNode) {
 			return runLogNode.getText();
 		} else {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 
@@ -237,7 +237,7 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 	@Override
 	public List<String> getRunLogAsList() {
 		String log = getRunLog();
-		if ("".equals(log)) {
+		if ("".equals(log)) { //$NON-NLS-1$
 			return new ArrayList<String>();
 		} else {
 			return CollectionUtils.getListStrings(log.split(Strings.REGEX_NEWLINE));
@@ -248,30 +248,30 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 	public Long getLastRunDuration() {
 		List<String> lastRunLog = getRunLogAsList();
 		if (!lastRunLog.isEmpty()) {
-			String strStart = "";
-			String strEnd = "";
+			String strStart = ""; //$NON-NLS-1$
+			String strEnd = ""; //$NON-NLS-1$
 			try {
 				for (String str : lastRunLog) {
-					if (Strings.startsWithIgnoreCase(str, "Started running agent")) {
+					if (Strings.startsWithIgnoreCase(str, "Started running agent")) { //$NON-NLS-1$
 						strStart = str.substring(str.length() - 19, str.length());
-						if (strStart.contains("AM") || strStart.contains("PM")) {
+						if (strStart.contains("AM") || strStart.contains("PM")) { //$NON-NLS-1$ //$NON-NLS-2$
 							strStart = str.substring(str.length() - 22, str.length() - 3);
 						}
-					} else if (Strings.startsWithIgnoreCase(str, "Done running agent")) {
+					} else if (Strings.startsWithIgnoreCase(str, "Done running agent")) { //$NON-NLS-1$
 						strEnd = str.substring(str.length() - 19, str.length());
-						if (strEnd.contains("AM") || strEnd.contains("PM")) {
+						if (strEnd.contains("AM") || strEnd.contains("PM")) { //$NON-NLS-1$ //$NON-NLS-2$
 							strEnd = str.substring(str.length() - 22, str.length() - 3);
 						}
 					}
 				}
-				if (strStart == "" || strEnd == "") {
+				if (strStart == "" || strEnd == "") { //$NON-NLS-1$ //$NON-NLS-2$
 					return Long.MIN_VALUE;
 				}
 				// Adjust for pre-2000 dates, which don't have four-digit year
-				if ("/9".equals(strStart.substring(7, 9))) {
+				if ("/9".equals(strStart.substring(7, 9))) { //$NON-NLS-1$
 					strStart = strStart.substring(2);
 				}
-				if ("/9".equals(strEnd.substring(7, 9))) {
+				if ("/9".equals(strEnd.substring(7, 9))) { //$NON-NLS-1$
 					strEnd = strEnd.substring(2);
 				}
 				DateTime start = Factory.getSession(SessionType.CURRENT).createDateTime(strStart);
@@ -280,7 +280,7 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 				Calendar thatCal = end.toJavaCal();
 				return (thatCal.getTimeInMillis() - thisCal.getTimeInMillis()) / 1000;
 			} catch (Exception e) {
-				DominoUtils.handleException(e, "Error on " + getName() + " - start: " + strStart + ", end: " + strEnd);
+				DominoUtils.handleException(e, "Error on " + getName() + " - start: " + strStart + ", end: " + strEnd); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 		return Long.MIN_VALUE;
@@ -292,7 +292,7 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 		List<String> lastRunLog = getRunLogAsList();
 		if (!lastRunLog.isEmpty()) {
 			for (String str : lastRunLog) {
-				if (str.contains("ERROR: Agent execution time limit exceeded")) {
+				if (str.contains("ERROR: Agent execution time limit exceeded")) { //$NON-NLS-1$
 					retVal = true;
 				}
 			}

@@ -28,6 +28,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * @since Lotus Notes/Domino 5.0
  *
  */
+@SuppressWarnings("nls")
 public class CDTABLELABEL extends CDRecord {
 	public static enum Flag {
 		ROWLABEL((short) 0x0001), TABLABEL((short) 0x002);

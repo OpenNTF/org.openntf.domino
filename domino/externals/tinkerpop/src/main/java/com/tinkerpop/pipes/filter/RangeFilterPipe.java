@@ -11,6 +11,7 @@ import com.tinkerpop.pipes.util.PipeHelper;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings("nls")
 public class RangeFilterPipe<S> extends AbstractPipe<S, S> implements FilterPipe<S> {
 
     private final int low;

@@ -29,7 +29,7 @@ public class ASTFocParam extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("#" + paramName + "#");
+		functions.add("#" + paramName + "#"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
 /* JavaCC - OriginalChecksum=7e31041c5fbbe0cb629c28e308d8594c (do not edit this line) */

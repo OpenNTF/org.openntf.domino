@@ -28,17 +28,17 @@ public class Row<T> extends ArrayList<T> {
 
     public String toString() {
 
-        final StringBuilder buffer = new StringBuilder("[");
+        final StringBuilder buffer = new StringBuilder("["); //$NON-NLS-1$
         for (int i = 0; i < this.size(); i++) {
             if (columnNames.size() > 0) {
                 buffer.append(columnNames.get(i));
-                buffer.append(":");
+                buffer.append(":"); //$NON-NLS-1$
             }
             buffer.append(this.get(i));
             if (i < this.size() - 1)
-                buffer.append(", ");
+                buffer.append(", "); //$NON-NLS-1$
         }
-        buffer.append("]");
+        buffer.append("]"); //$NON-NLS-1$
         return buffer.toString();
 
     }

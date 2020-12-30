@@ -28,6 +28,7 @@ import org.openntf.domino.nsfdata.structs.ODSConstants.RecordLength;
 import org.openntf.domino.nsfdata.structs.SIG;
 import org.openntf.domino.nsfdata.structs.WSIG;
 
+@SuppressWarnings("nls")
 public enum CDSignature {
 	PDEF_MAIN(WORD, 83, CDPDEF_MAIN.class),
 	PDEF_TYPE(WORD, 84, CDPDEF_TYPE.class),

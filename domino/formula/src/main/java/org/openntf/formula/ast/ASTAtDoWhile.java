@@ -61,7 +61,7 @@ public class ASTAtDoWhile extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@dowhile");
+		functions.add("@dowhile"); //$NON-NLS-1$
 	}
 }
 /* JavaCC - OriginalChecksum=3d9a997fad4a26e001d6dec704a9797f (do not edit this line) */

@@ -53,6 +53,7 @@ public abstract class AbstractWrappedTask implements IWrappedTask {
 	 * @param task
 	 *            the runnable to determine the DominoSessionType
 	 */
+	@SuppressWarnings("nls")
 	protected synchronized void setWrappedTask(final Object task) {
 		wrappedTask = task;
 		if (task == null)

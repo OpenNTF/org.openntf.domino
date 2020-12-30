@@ -27,7 +27,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author jgallagher
  *
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "nls" })
 public abstract class AbstractFolder extends AbstractDesignBaseNamed implements Folder {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractFolder.class.getName());
@@ -40,7 +40,7 @@ public abstract class AbstractFolder extends AbstractDesignBaseNamed implements 
 	}
 
 	protected AbstractFolder(final Database database) {
-		super(database, AbstractFolder.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_folder.xml"));
+		super(database, AbstractFolder.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_folder.xml")); //$NON-NLS-1$
 	}
 
 	protected AbstractFolder(final Database database, final InputStream is) {

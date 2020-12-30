@@ -42,6 +42,7 @@ import com.ibm.commons.util.StringUtil;
  * @author withersp
  *
  */
+@SuppressWarnings("nls")
 public class BaseOpenLogItem implements IOpenLogItem {
 	/*
 	 * ======================================================= <HEADER> NAME: OpenLogClass script library VERSION: 20070321a AUTHOR(S):

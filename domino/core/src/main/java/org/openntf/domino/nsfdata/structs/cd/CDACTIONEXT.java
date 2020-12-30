@@ -32,6 +32,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * @since Lotus Notes/Domino 6.0
  *
  */
+@SuppressWarnings("nls")
 public class CDACTIONEXT extends CDRecord {
 	public static enum Type {
 		BUTTON, CHECKBOX, MENU_SEPARATOR;

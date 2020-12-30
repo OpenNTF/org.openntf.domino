@@ -29,6 +29,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * @since Lotus Notes/Domino 4.5
  *
  */
+@SuppressWarnings("nls")
 public class CDACTION extends CDRecord {
 	/**
 	 * The action type based on the API documentation (ACTION_xxx (type)).

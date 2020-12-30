@@ -160,14 +160,14 @@ org.openntf.domino.AgentContext {
 		Map<String, List<String>> result = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
 
 		Document doc = getDocumentContext();
-		String queryString = doc.getItemValueString("QUERY_STRING");
+		String queryString = doc.getItemValueString("QUERY_STRING"); //$NON-NLS-1$
 
-		for (String pair : queryString.split("&")) {
+		for (String pair : queryString.split("&")) { //$NON-NLS-1$
 			if (!pair.isEmpty()) {
-				String[] bits = pair.split("=");
+				String[] bits = pair.split("="); //$NON-NLS-1$
 				try {
-					String left = java.net.URLDecoder.decode(bits[0], "UTF-8");
-					String right = bits.length > 1 ? java.net.URLDecoder.decode(bits[1], "UTF-8") : "";
+					String left = java.net.URLDecoder.decode(bits[0], "UTF-8"); //$NON-NLS-1$
+					String right = bits.length > 1 ? java.net.URLDecoder.decode(bits[1], "UTF-8") : ""; //$NON-NLS-1$ //$NON-NLS-2$
 
 					if (!result.containsKey(left)) {
 						result.put(left, new ArrayList<String>());

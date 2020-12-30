@@ -30,6 +30,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * @since Lotus Notes 4.1
  *
  */
+@SuppressWarnings("nls")
 public class CDLAYOUTTEXT extends CDRecord {
 	/**
 	 * These flags are set in the "Flags" field of a CDLAYOUTTEXT record, and control operation of the field in the layout region.

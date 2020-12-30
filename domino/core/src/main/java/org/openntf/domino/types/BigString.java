@@ -29,6 +29,7 @@ import java.util.logging.Logger;
  * 
  */
 
+@SuppressWarnings("nls")
 public class BigString implements CharSequence, Serializable, Comparable<BigString> {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(BigString.class.getName());

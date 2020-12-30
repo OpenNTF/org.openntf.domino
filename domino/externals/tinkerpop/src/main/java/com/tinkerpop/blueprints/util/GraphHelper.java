@@ -8,6 +8,7 @@ import com.tinkerpop.blueprints.Vertex;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings("nls")
 public class GraphHelper {
 
     /**

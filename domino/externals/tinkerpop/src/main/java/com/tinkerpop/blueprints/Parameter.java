@@ -65,6 +65,7 @@ public class Parameter<K, V> implements Map.Entry<K, V> {
         return result;
     }
 
+    @SuppressWarnings("nls")
     public String toString() {
         return "parameter[" + key + "," + value + "]";
     }

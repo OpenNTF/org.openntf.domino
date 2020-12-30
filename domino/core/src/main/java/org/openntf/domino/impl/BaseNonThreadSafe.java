@@ -85,6 +85,7 @@ extends Base<T, D, P> {
 	 *            the delegate
 	 */
 	@Override
+	@SuppressWarnings("nls")
 	protected final void setDelegate(final D delegate, final boolean fromResurrect) {
 		delegate_ = delegate;
 
@@ -152,6 +153,7 @@ extends Base<T, D, P> {
 	 * @return the delegate
 	 */
 	@Override
+	@SuppressWarnings("nls")
 	protected D getDelegate_unchecked() {
 		if (_myThread != Thread.currentThread() && !isAllowAccessAcrossThreads(_myThread) && !allowAccessAcrossThreads()) {
 			throw new IllegalStateException("Notes-Object of type " + this.getClass().getName() + " is used across threads! This Thread: "

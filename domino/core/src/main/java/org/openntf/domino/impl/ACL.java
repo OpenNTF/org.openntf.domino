@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.impl;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -441,8 +442,10 @@ public class ACL extends BaseResurrectable<org.openntf.domino.ACL, lotus.domino.
 			setDelegate(d, true);
 			if (log_.isLoggable(java.util.logging.Level.FINE)) {
 				Throwable t = new Throwable();
-				log_.log(java.util.logging.Level.FINE, "ACL of Database " + parent
-						+ "had been recycled and was auto-restored. Changes may have been lost.", t);
+				log_.log(java.util.logging.Level.FINE, MessageFormat.format(
+						"ACL of Database {0} had been recycled and was auto-restored. Changes may have been lost.", //$NON-NLS-1$
+						parent
+				), t);
 			}
 			// Recaching is done in setDelegate now
 			//getFactory().recacheLotusObject(d, this, parent_);

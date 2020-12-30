@@ -28,6 +28,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDDOCUMENT extends CDRecord {
 	public static enum FormFlag1 {
 		REFERENCE(0x0001), MAIL(0x0002), NOTEREF(0x0004), NOTEREF_MAIN(0x0008), RECALC(0x0010), BOILERPLATE(0x0020), FGCOLOR(0x0040),

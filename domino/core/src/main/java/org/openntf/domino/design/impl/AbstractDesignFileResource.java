@@ -52,8 +52,8 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	private static final char DESIGN_FLAGEXT_FILE_DEPLOYABLE = 'D';
 	private static final char DESIGN_FLAG_READONLY = '&';
 
-	private static final String DEFAULT_FILEDATA_FIELD = "$FileData";
-	private static final String MIMETYPE_FIELD = "$MimeType";
+	private static final String DEFAULT_FILEDATA_FIELD = "$FileData"; //$NON-NLS-1$
+	private static final String MIMETYPE_FIELD = "$MimeType"; //$NON-NLS-1$
 
 	protected AbstractDesignFileResource(final Document document) {
 		super(document);
@@ -63,7 +63,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		super(database);
 		// TODO What is this?
 		try {
-			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_fileresource.xml");
+			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_fileresource.xml"); //$NON-NLS-1$
 			loadDxl(is);
 			is.close();
 		} catch (IOException e) {
@@ -92,7 +92,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	public byte[] getFileData() {
 		switch (getDxlFormat(true)) {
 		case DXL:
-			String rawData = getDxl().selectSingleNode("//filedata").getText();
+			String rawData = getDxl().selectSingleNode("//filedata").getText(); //$NON-NLS-1$
 			return parseBase64Binary(rawData);
 		default:
 			return getFileDataRaw(DEFAULT_FILEDATA_FIELD);
@@ -110,7 +110,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		try {
 			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 			for (XMLNode rawitemdata : getDxl().selectNodes(//
-					"//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']/rawitemdata")) {
+					"//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']/rawitemdata")) { //$NON-NLS-1$ //$NON-NLS-2$
 
 				String rawData = rawitemdata.getText();
 				byte[] thisData = parseBase64Binary(rawData);
@@ -126,11 +126,11 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 					return ((CDResourceFile) obj).getFileData();
 				if (obj instanceof CDResourceEvent)
 					return ((CDResourceEvent) obj).getFileData();
-				throw new IllegalStateException("Cannot decode " + obj.getClass().getName());
+				throw new IllegalStateException("Cannot decode " + obj.getClass().getName()); //$NON-NLS-1$
 			} else {
 				byteStream = new ByteArrayOutputStream();
 				for (XMLNode rawitemdata : getDxl().selectNodes(//
-						"//file[@name='" + XMLDocument.escapeXPathValue(itemName) + "']/filedata")) {
+						"//file[@name='" + XMLDocument.escapeXPathValue(itemName) + "']/filedata")) { //$NON-NLS-1$ //$NON-NLS-2$
 
 					String rawData = rawitemdata.getText();
 					byte[] thisData = parseBase64Binary(rawData);
@@ -149,9 +149,9 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	public void setFileData(final byte[] data) {
 		switch (getDxlFormat(true)) {
 		case DXL:
-			XMLNode filedata = getDxl().selectSingleNode("//filedata");
+			XMLNode filedata = getDxl().selectSingleNode("//filedata"); //$NON-NLS-1$
 			if (filedata == null) {
-				filedata = getDxl().selectSingleNode("/*").addChildElement("filedata");
+				filedata = getDxl().selectSingleNode("/*").addChildElement("filedata"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			filedata.setText(printBase64Binary(data));
 		default:
@@ -161,7 +161,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 
 	protected void setFileDataRaw(final String itemName, final byte[] fileData) {
 		// To set the file content, first clear out existing content
-		List<XMLNode> fileDataNodes = getDxl().selectNodes("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
+		List<XMLNode> fileDataNodes = getDxl().selectNodes("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = fileDataNodes.size() - 1; i >= 0; i--) {
 			fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
 		}
@@ -169,18 +169,18 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		// Now create a CD record for the file data
 		//			CDResourceFile record = CDResourceFile.fromFileData(fileData, "");
 		//			byte[] reconData = record.getBytes();
-		CDResourceFile record = new CDResourceFile("");
+		CDResourceFile record = new CDResourceFile(""); //$NON-NLS-1$
 		record.setFileData(fileData);
 		byte[] reconData = record.getData().array();
 
 		// Write out the first chunk
 		int firstChunk = reconData.length > 20544 ? 20544 : reconData.length;
 		String firstChunkData = printBase64Binary(Arrays.copyOfRange(reconData, 0, firstChunk));
-		XMLNode documentNode = getDxl().selectSingleNode("//note");
-		XMLNode fileDataNode = documentNode.addChildElement("item");
-		fileDataNode.setAttribute("name", itemName);
-		fileDataNode = fileDataNode.addChildElement("rawitemdata");
-		fileDataNode.setAttribute("type", "1");
+		XMLNode documentNode = getDxl().selectSingleNode("//note"); //$NON-NLS-1$
+		XMLNode fileDataNode = documentNode.addChildElement("item"); //$NON-NLS-1$
+		fileDataNode.setAttribute("name", itemName); //$NON-NLS-1$
+		fileDataNode = fileDataNode.addChildElement("rawitemdata"); //$NON-NLS-1$
+		fileDataNode.setAttribute("type", "1"); //$NON-NLS-1$ //$NON-NLS-2$
 		fileDataNode.setText(firstChunkData);
 
 		// Write out any remaining chunks
@@ -194,10 +194,10 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 			int chunkSize = remaining > 20516 ? 20516 : remaining;
 			String chunkData = printBase64Binary(Arrays.copyOfRange(reconData, offset, offset + chunkSize));
 
-			fileDataNode = documentNode.addChildElement("item");
-			fileDataNode.setAttribute("name", itemName);
-			fileDataNode = fileDataNode.addChildElement("rawitemdata");
-			fileDataNode.setAttribute("type", "1");
+			fileDataNode = documentNode.addChildElement("item"); //$NON-NLS-1$
+			fileDataNode.setAttribute("name", itemName); //$NON-NLS-1$
+			fileDataNode = fileDataNode.addChildElement("rawitemdata"); //$NON-NLS-1$
+			fileDataNode.setAttribute("type", "1"); //$NON-NLS-1$ //$NON-NLS-2$
 			fileDataNode.setText(chunkData);
 
 			remaining -= 20516;
@@ -206,7 +206,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 
 		// Also set the file size if we're setting the main field
 		if (DEFAULT_FILEDATA_FIELD.equals(itemName)) {
-			setItemValue("$FileSize", String.valueOf(fileData.length), FLAG_SIGN_SUMMARY);
+			setItemValue("$FileSize", String.valueOf(fileData.length), FLAG_SIGN_SUMMARY); //$NON-NLS-1$
 		}
 	}
 
@@ -214,7 +214,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	public String getMimeType() {
 		switch (getDxlFormat(false)) {
 		case DXL:
-			return getDocumentElement().getAttribute("mimetype");
+			return getDocumentElement().getAttribute("mimetype"); //$NON-NLS-1$
 		default:
 			return getItemValueString(MIMETYPE_FIELD);
 		}
@@ -224,7 +224,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	public void setMimeType(final String mimeType) {
 		switch (getDxlFormat(true)) {
 		case DXL:
-			getDocumentElement().setAttribute("mimetype", mimeType);
+			getDocumentElement().setAttribute("mimetype", mimeType); //$NON-NLS-1$
 		default:
 			setItemValue(MIMETYPE_FIELD, mimeType, FLAG_SUMMARY);
 		}
@@ -234,7 +234,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	public void setName(final String title) {
 		super.setName(title);
 		// Also set the $FileNames field
-		setItemValue("$FileNames", title, FLAG_SIGN_SUMMARY);
+		setItemValue("$FileNames", title, FLAG_SIGN_SUMMARY); //$NON-NLS-1$
 	}
 
 	/**

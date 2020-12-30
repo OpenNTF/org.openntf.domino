@@ -55,7 +55,7 @@ public class ASTAtIfError extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@iferror");
+		functions.add("@iferror"); //$NON-NLS-1$
 	}
 }
 /* JavaCC - OriginalChecksum=776aeb60d75aec0e2d82f5d09d2401a6 (do not edit this line) */

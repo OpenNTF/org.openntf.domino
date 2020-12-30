@@ -44,6 +44,7 @@ import org.openntf.domino.utils.Factory;
  * 
  */
 @Incomplete
+@SuppressWarnings("nls")
 public class BigNoteCollection implements org.openntf.domino.big.BigNoteCollection {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(BigNoteCollection.class.getName());

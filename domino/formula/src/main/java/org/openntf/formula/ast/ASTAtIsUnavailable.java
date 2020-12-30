@@ -26,7 +26,7 @@ public class ASTAtIsUnavailable extends ASTAtIsAvailable {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@isunavailable");
+		functions.add("@isunavailable"); //$NON-NLS-1$
 	}
 
 }

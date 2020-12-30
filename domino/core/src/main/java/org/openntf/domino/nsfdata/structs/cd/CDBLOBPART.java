@@ -24,6 +24,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * loop thorough all of the CDBLOBPART records to read in the complete JavaScript code. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDBLOBPART extends CDRecord {
 	public final WSIG Header = inner(new WSIG());
 	public final Unsigned16 OwnerSig = new Unsigned16();

@@ -11,6 +11,7 @@ import java.util.Map;
  *
  * @author Stephen Mallette
  */
+@SuppressWarnings("nls")
 public class ConsoleGraphChangedListener implements GraphChangedListener {
 
     private final Graph graph;

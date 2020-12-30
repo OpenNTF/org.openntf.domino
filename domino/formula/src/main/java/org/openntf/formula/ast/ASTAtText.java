@@ -18,7 +18,7 @@ public class ASTAtText extends SimpleNode {
 
 	public ASTAtText(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
-		function = p.getFunctionLC("@text");
+		function = p.getFunctionLC("@text"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class ASTAtText extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@text");
+		functions.add("@text"); //$NON-NLS-1$
 	}
 
 }

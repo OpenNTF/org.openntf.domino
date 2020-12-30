@@ -59,6 +59,7 @@ public class ASTAssignment extends SimpleNode {
 	 * (non-Javadoc)
 	 * @see org.openntf.formula.ast.SimpleNode#toString()
 	 */
+	@SuppressWarnings("nls")
 	@Override
 	public String toString() {
 		switch (type) {

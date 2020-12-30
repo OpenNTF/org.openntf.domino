@@ -24,6 +24,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * 
  * @since Lotus Notes/Domino 6.0
  */
+@SuppressWarnings("nls")
 public class CDDATAFLAGS extends CDRecord {
 	public static enum ElemType {
 		SECTION((short) 128), FIELDLIMIT((short) 129), BUTTONEX((short) 130), TABLECELL((short) 131);

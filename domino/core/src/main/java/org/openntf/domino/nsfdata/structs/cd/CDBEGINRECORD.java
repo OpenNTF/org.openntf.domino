@@ -25,6 +25,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * @since Lotus Notes/Domino 5.0
  *
  */
+@SuppressWarnings("nls")
 public class CDBEGINRECORD extends CDRecord {
 	public final BSIG Header = inner(new BSIG());
 	// TODO map to weird table in docs

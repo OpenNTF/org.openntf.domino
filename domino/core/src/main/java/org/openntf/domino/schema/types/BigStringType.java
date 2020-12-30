@@ -40,7 +40,7 @@ public class BigStringType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		return "Multi-line Text";
+		return "Multi-line Text"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

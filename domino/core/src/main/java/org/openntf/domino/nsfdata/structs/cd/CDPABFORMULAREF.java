@@ -26,6 +26,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * @since Lotus Notes 4.0
  *
  */
+@SuppressWarnings("nls")
 public class CDPABFORMULAREF extends CDRecord {
 
 	public final BSIG Header = inner(new BSIG());

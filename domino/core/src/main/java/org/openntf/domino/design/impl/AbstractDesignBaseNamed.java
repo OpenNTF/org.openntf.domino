@@ -52,8 +52,8 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	}
 
 	protected List<String> getTitlesRaw() {
-		String titles = getItemValueStrings(TITLE_ITEM, "|");
-		return Arrays.asList(titles.split("\\|"));
+		String titles = getItemValueStrings(TITLE_ITEM, "|"); //$NON-NLS-1$
+		return Arrays.asList(titles.split("\\|")); //$NON-NLS-1$
 	}
 
 	/*
@@ -66,12 +66,12 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 		String aliases;
 		switch (getDxlFormat(false)) {
 		case DXL:
-			aliases = getDxl().getAttribute("alias");
+			aliases = getDxl().getAttribute("alias"); //$NON-NLS-1$
 			break;
 		default:
 			// Aliases are all the $TITLE values after the first
-			aliases = getItemValueStrings(TITLE_ITEM, "|");
-			aliases = TextFunctions.atRight(aliases, "|");
+			aliases = getItemValueStrings(TITLE_ITEM, "|"); //$NON-NLS-1$
+			aliases = TextFunctions.atRight(aliases, "|"); //$NON-NLS-1$
 			break;
 
 		}
@@ -79,7 +79,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 		if (StringUtil.isEmpty(aliases)) {
 			return new ArrayList<String>();
 		} else {
-			return Arrays.asList(aliases.split("\\|"));
+			return Arrays.asList(aliases.split("\\|")); //$NON-NLS-1$
 		}
 	}
 
@@ -92,7 +92,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	public String getAlias() {
 		switch (getDxlFormat(false)) {
 		case DXL:
-			return getDxl().getAttribute("alias");
+			return getDxl().getAttribute("alias"); //$NON-NLS-1$
 		default:
 			String[] aliases = getAliases().toArray(new String[] {});
 			return StringUtil.concatStrings(aliases, '|', false);
@@ -108,7 +108,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	public String getName() {
 		switch (getDxlFormat(false)) {
 		case DXL:
-			return getDocumentElement().getAttribute("name");
+			return getDocumentElement().getAttribute("name"); //$NON-NLS-1$
 		default:
 			String title = getItemValueString(TITLE_ITEM);
 			int pos = title.indexOf('|');
@@ -128,7 +128,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	public void setAlias(final String alias) {
 		switch (getDxlFormat(true)) {
 		case DXL:
-			getDocumentElement().setAttribute("alias", alias);
+			getDocumentElement().setAttribute("alias", alias); //$NON-NLS-1$
 			break;
 		default:
 			List<String> result = new ArrayList<String>(2);
@@ -155,12 +155,12 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 				}
 				sb.append(alias);
 			}
-			getDocumentElement().setAttribute("alias", sb.toString());
+			getDocumentElement().setAttribute("alias", sb.toString()); //$NON-NLS-1$
 			break;
 		default:
 			List<String> titles = getItemValueStrings(TITLE_ITEM);
 			List<String> result = new ArrayList<String>(2);
-			result.add(titles.size() > 0 ? titles.get(0) : "");
+			result.add(titles.size() > 0 ? titles.get(0) : ""); //$NON-NLS-1$
 			for (String alias : aliases) {
 				result.add(alias);
 			}
@@ -178,7 +178,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	public void setName(final String name) {
 		switch (getDxlFormat(true)) {
 		case DXL:
-			getDocumentElement().setAttribute("name", name);
+			getDocumentElement().setAttribute("name", name); //$NON-NLS-1$
 			break;
 		default:
 			List<String> result = getItemValueStrings(TITLE_ITEM);

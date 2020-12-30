@@ -30,6 +30,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * @since Lotus Notes/Domino 5.0
  *
  */
+@SuppressWarnings("nls")
 public class CDEMBEDDEDVIEW extends CDRecord {
 	/**
 	 * (editods.h)

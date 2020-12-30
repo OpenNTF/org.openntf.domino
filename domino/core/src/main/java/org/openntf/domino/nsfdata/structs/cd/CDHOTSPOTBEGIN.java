@@ -23,6 +23,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * For instance, clicking on a popup will cause a block of text associated with that popup to be displayed. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDHOTSPOTBEGIN extends CDRecord {
 	/**
 	 * These flags are used to define what type of hotspot is being defined by a CDHOTSPOTBEGIN data structure. (editods.h)

@@ -56,6 +56,7 @@ import org.openntf.formula.ast.AtFormulaParserImplTreeConstants;
 import org.openntf.formula.ast.JJTAtFormulaParserImplState;
 import org.openntf.formula.ast.SimpleNode;
 
+@SuppressWarnings("nls")
 public class AtFormulaParserImpl extends FormulaParser/*@bgen(jjtree)*/implements AtFormulaParserImplTreeConstants,
 AtFormulaParserImplConstants {/*@bgen(jjtree)*/
 	protected JJTAtFormulaParserImplState jjtree = new JJTAtFormulaParserImplState();
