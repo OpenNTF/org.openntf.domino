@@ -273,4 +273,9 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 		}
 		return null;
 	}
+	
+	@Override
+	public String toString() {
+		return "XOTS NSF Scanner";
+	}
 }
