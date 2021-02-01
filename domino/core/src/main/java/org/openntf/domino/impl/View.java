@@ -685,28 +685,6 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object)
-	 */
-	@Override
-	public ViewNavigator createViewNavFrom(final Object entry) {
-		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
-		try {
-			getDelegate().setAutoUpdate(false);
-			getDelegate().setEnableNoteIDsForCategories(true);
-			ViewNavigator result = fromLotus(getDelegate().createViewNavFrom(toLotus(entry)), ViewNavigator.SCHEMA, this);
-			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.FROM);
-			return result;
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		} finally {
-			s_recycle(recycleThis);
-		}
-		return null;
-	}
-
 	/**
 	 * This method is neccessary to get some Backend-functions working.<br>
 	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
@@ -741,6 +719,28 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		}
 		return null;
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object)
+	 */
+	@Override
+	public ViewNavigator createViewNavFrom(final Object entry) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
+		try {
+			getDelegate().setAutoUpdate(false);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFrom(toLotus(entry)), ViewNavigator.SCHEMA, this);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.FROM);
+			return result;
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
+		}
+		return null;
 	}
 
 	/*
