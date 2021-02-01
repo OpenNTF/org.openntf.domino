@@ -34,7 +34,7 @@ Export-Package: com.tinkerpop.blueprints,
  com.tinkerpop.pipes.util.iterators,
  com.tinkerpop.pipes.util.structures
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: com.google.common.cache,
- com.google.common.collect,
+Import-Package: com.google.common.cache;resolution:=optional,
+ com.google.common.collect;resolution:=optional,
  javassist.util.proxy
 

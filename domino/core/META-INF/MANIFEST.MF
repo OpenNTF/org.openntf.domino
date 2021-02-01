@@ -55,12 +55,12 @@ Require-Bundle: javolution;bundle-version="6.1.1",
  org.openntf.junit.libraries;bundle-version="1.1.0";resolution:=optional,
  org.openntf.formula;bundle-version="2.0.0";visibility:=reexport
 Bundle-ActivationPolicy: lazy
-Import-Package: com.google.common.base,
- com.google.common.cache,
- com.google.common.collect,
- com.google.common.hash,
- com.google.common.primitives,
- com.google.common.util.concurrent,
+Import-Package: com.google.common.base;resolution:=optional,
+ com.google.common.cache;resolution:=optional,
+ com.google.common.collect;resolution:=optional,
+ com.google.common.hash;resolution:=optional,
+ com.google.common.primitives;resolution:=optional,
+ com.google.common.util.concurrent;resolution:=optional,
  lotus.domino,
  org.osgi.service.log;resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
