@@ -76,7 +76,7 @@ public enum ODAPlatform {
 				Factory.startup();
 				// Setup the named factories 4 XPages
 				Factory.setNamedFactories4XPages(new XPageNamedSessionFactory(false), new XPageNamedSessionFactory(true));
-				//			verifyIGetEntryByKey();
+				verifyIGetEntryByKey();
 				ServerConfiguration cfg = Configuration.getServerConfiguration();
 				int xotsTasks = cfg.getXotsTasks();
 				// We must read the value here, because in the ShutDown, it is not possible to navigate through views and the code will fail.
@@ -170,14 +170,13 @@ public enum ODAPlatform {
 	 * <li>Throwing an exception does not generate a return value that will be forced in a ViewEntry</li>
 	 * </ul>
 	 */
-	@SuppressWarnings("unused")
 	private static void verifyIGetEntryByKey() {
 		@SuppressWarnings("deprecation")
 		View dummyView = new org.openntf.domino.impl.View();
 		try {
 			BackendBridge.getViewEntryByKeyWithOptions(dummyView, null, 42);
 		} catch (BackendBridgeSanityCheckException allGood) {
-			//			Factory.println("Operation of BackendBridge.getViewEntryByKeyWithOptions verified");
+//			Factory.println("Operation of BackendBridge.getViewEntryByKeyWithOptions verified");
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -185,10 +184,11 @@ public enum ODAPlatform {
 			// the view to the position that is listed in the stack trace above "getViewEntryByKeyWithOptions"
 		}
 		// if you do not get an exception, you will have to debug it with "step into"
-		Factory.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		Factory.println("Operation of BackendBridge.getViewEntryByKeyWithOptions FAILED");
-		Factory.println("Please read the comments in " + ODAPlatform.class.getName());
-		Factory.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		Factory.println("---------------------------------------------------------------");
+		Factory.println("Operation of BackendBridge.getViewEntryByKeyWithOptions failed.");
+		Factory.println("Please update to the latest version of ODA or inform the team");
+		Factory.println("and include the above stack trace if present.");
+		Factory.println("---------------------------------------------------------------");
 	}
 
 	/**
