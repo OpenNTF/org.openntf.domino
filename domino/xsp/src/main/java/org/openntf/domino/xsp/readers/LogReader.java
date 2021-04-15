@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,8 +44,6 @@ import org.openntf.domino.xsp.Activator;
 
 import com.ibm.commons.util.io.SharedByteArrayOutputStream;
 import com.ibm.commons.util.io.StreamUtil;
-import com.ibm.icu.text.DecimalFormat;
-import com.ibm.icu.text.SimpleDateFormat;
 
 import lotus.domino.NotesException;
 import lotus.notes.addins.DominoServer;

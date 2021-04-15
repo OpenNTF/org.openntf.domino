@@ -797,11 +797,6 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 		setLocalDate(year, month, day, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.openntf.domino.ext.DateTime#setLocalTime(com.ibm.icu.util.Calendar)
-	 */
 	@Override
 	public void setLocalTime(final Calendar calendar) {
 		date_ = calendar.getTime();

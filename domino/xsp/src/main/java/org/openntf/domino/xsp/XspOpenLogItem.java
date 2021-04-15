@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.xsp;
 
+import java.util.Calendar;
+
 /*
 
  <!--
@@ -106,7 +108,6 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.commons.util.StringUtil;
-import com.ibm.icu.util.Calendar;
 import com.ibm.xsp.extlib.util.ExtLibUtil;
 
 @SuppressWarnings("nls")
