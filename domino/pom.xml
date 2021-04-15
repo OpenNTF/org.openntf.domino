@@ -65,6 +65,15 @@
 		<module>releng/org.openntf.domino.updatesite</module>
 		<module>releng/org.openntf.domino.nonxsp.updatesite</module>
 	</modules>
+	
+	<dependencies>
+		<!-- Deployed with Domino 11+ -->
+		<dependency>
+		    <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		    <version>30.0-jre</version>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
@@ -160,6 +169,7 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
+					<pomDependencies>consider</pomDependencies>
 					<environments>
 						<environment>
 							<os>linux</os>

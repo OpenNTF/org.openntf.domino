@@ -13,5 +13,12 @@ Require-Bundle: com.ibm.commons;bundle-version="9.0.1",
 Bundle-ActivationPolicy: lazy
 Import-Package: com.google.common.collect,
  lotus.domino,
- org.osgi.service.log;resolution:=optional
+ org.osgi.service.log;resolution:=optional,
+ com.google.common.base;resolution:=optional,
+ com.google.common.cache;resolution:=optional,
+ com.google.common.hash;resolution:=optional,
+ com.google.common.primitives;resolution:=optional,
+ com.google.common.util.concurrent;resolution:=optional,
+ org.openntf.domino.graph2.impl,
+ org.openntf.domino.graph2.builtin.social
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

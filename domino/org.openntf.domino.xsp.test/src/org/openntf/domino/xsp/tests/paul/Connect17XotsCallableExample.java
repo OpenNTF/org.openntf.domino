@@ -46,11 +46,11 @@ public class Connect17XotsCallableExample implements Runnable {
 		// Because we're in a TestRunner, Xots is not started, need to start it
 		DominoExecutor executor = new XotsDominoExecutor(10);
 		Xots.start(executor);
-		List<Future<String>> results = new ArrayList<Future<String>>();
+		List<Future<Object>> results = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			results.add(Xots.submit(new DemoXotsCallable("Hello", i)));
 		}
-		for (Future<String> f : results) {
+		for (Future<Object> f : results) {
 			try {
 				System.out.println(f.get());
 			} catch (InterruptedException e) {
@@ -65,7 +65,7 @@ public class Connect17XotsCallableExample implements Runnable {
 	}
 
 	@Tasklet(session = Tasklet.Session.CLONE)
-	public class DemoXotsCallable extends AbstractXotsCallable<String> {
+	public class DemoXotsCallable extends AbstractXotsCallable {
 		String greeting;
 		int xotsThread;
 

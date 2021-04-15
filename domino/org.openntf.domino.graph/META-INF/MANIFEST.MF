@@ -20,3 +20,9 @@ Export-Package: org.openntf.domino.graph,
 Require-Bundle: com.tinkerpop;bundle-version="2.6.1";visibility:=reexport,
  javassist;bundle-version="3.18.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: com.google.common.base;resolution:=optional,
+ com.google.common.cache;resolution:=optional,
+ com.google.common.collect;resolution:=optional,
+ com.google.common.hash;resolution:=optional,
+ com.google.common.primitives;resolution:=optional,
+ com.google.common.util.concurrent;resolution:=optional
