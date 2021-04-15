@@ -235,7 +235,7 @@
 					</excludes>
 					<properties>
 						<owner>The OpenNTF Domino API Team</owner>
-						<copyrightYear>2020</copyrightYear>
+						<copyrightYear>2021</copyrightYear>
 					</properties>
 				</configuration>
 			</plugin>
