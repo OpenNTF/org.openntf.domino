@@ -15,11 +15,11 @@
  */
 package org.openntf.domino.exceptions;
 
-public class Domino32KLimitException extends Exception {
+public class DominoNonSummaryLimitException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
-	public Domino32KLimitException() {
+	public DominoNonSummaryLimitException() {
 		super();
 	}
 
@@ -27,7 +27,7 @@ public class Domino32KLimitException extends Exception {
 	 * @param message
 	 *            the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
 	 */
-	public Domino32KLimitException(final String message) {
+	public DominoNonSummaryLimitException(final String message) {
 		super(message);
 	}
 
@@ -36,7 +36,7 @@ public class Domino32KLimitException extends Exception {
 	 *            the cause (which is saved for later retrieval by the Throwable.getCause() method). (A null value is permitted, and
 	 *            indicates that the cause is nonexistent or unknown.)
 	 */
-	public Domino32KLimitException(final Throwable cause) {
+	public DominoNonSummaryLimitException(final Throwable cause) {
 		super(cause);
 	}
 
@@ -47,7 +47,7 @@ public class Domino32KLimitException extends Exception {
 	 *            the cause (which is saved for later retrieval by the Throwable.getCause() method). (A null value is permitted, and
 	 *            indicates that the cause is nonexistent or unknown.)
 	 */
-	public Domino32KLimitException(final String message, final Throwable cause) {
+	public DominoNonSummaryLimitException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 

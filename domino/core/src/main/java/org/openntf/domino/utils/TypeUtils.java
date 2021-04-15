@@ -51,7 +51,7 @@ import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
-import org.openntf.domino.exceptions.Domino32KLimitException;
+import org.openntf.domino.exceptions.DominoNonSummaryLimitException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.ext.Formula;
@@ -1927,7 +1927,7 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static Item writeToItem(final org.openntf.domino.Document doc, final String itemName, Object value, final Boolean isSummary)
-			throws Domino32KLimitException {
+			throws DominoNonSummaryLimitException {
 		Class<?> fromClass = value.getClass();
 		CustomConverter converter = findCustomConverter(fromClass);
 		if (converter != null) {
@@ -1978,7 +1978,7 @@ public enum TypeUtils {
 				if (lh > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {				// Then skip making dominoFriendly if it's a primitive
 					String cn = value.getClass().getName();
 					if (cn.length() == 2) {				// It is primitive
-						throw new Domino32KLimitException();
+						throw new DominoNonSummaryLimitException();
 					}
 				}
 				dominoFriendlyVec = new Vector<Object>(lh);
@@ -2061,7 +2061,7 @@ public enum TypeUtils {
 
 			if (payload > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {
 				// the datatype is OK, but there's no way to store the data in the Document
-				throw new Domino32KLimitException();
+				throw new DominoNonSummaryLimitException();
 			}
 			if (firstElementClass == String.class) { 	// Strings have to be further inspected, because
 				// each sign may demand up to 3 bytes in LMBCS
@@ -2073,7 +2073,7 @@ public enum TypeUtils {
 						payload = payloadOverhead + LMBCSUtils.getPayload((String) dominoFriendlyObj);
 					}
 					if (payload > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {
-						throw new Domino32KLimitException();
+						throw new DominoNonSummaryLimitException();
 					}
 				}
 			}
