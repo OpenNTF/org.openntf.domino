@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>domino</artifactId>
-		<version>11.0.1-SNAPSHOT</version>
+		<version>11.0.1</version>
 		<relativePath>../..</relativePath>
 	</parent>
 	<artifactId>org.openntf.domino.updatesite</artifactId>
