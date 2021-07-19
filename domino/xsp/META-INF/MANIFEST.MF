@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF XSP Wrapper for org.openntf.domino API
 Bundle-SymbolicName: org.openntf.domino.xsp;singleton:=true
 Automatic-Module-Name: org.openntf.domino.xsp
-Bundle-Version: 11.0.1.qualifier
+Bundle-Version: 12.0.0.qualifier
 Bundle-Activator: org.openntf.domino.xsp.Activator
 Bundle-Vendor: OpenNTF.org
 Bundle-ClassPath: .
