@@ -8,6 +8,7 @@ import java.util.Iterator;
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
+@SuppressWarnings({ "rawtypes" })
 class IdVertexIterable implements CloseableIterable<Vertex> {
     private final Iterable<Vertex> iterable;
     private final IdGraph idGraph;

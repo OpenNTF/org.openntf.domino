@@ -5,7 +5,6 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraph;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +12,7 @@ import java.util.Set;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class FramedVertexMap<T> implements Map<T, Object> {
 
     private final Map<Vertex, Object> map;
@@ -77,7 +77,8 @@ public class FramedVertexMap<T> implements Map<T, Object> {
         this.map.clear();
     }
 
-    private class FramedEntry<T> implements Entry<T, Object> {
+    @SuppressWarnings("hiding")
+	private class FramedEntry<T> implements Entry<T, Object> {
 
         private final Entry<Vertex, Object> entry;
 

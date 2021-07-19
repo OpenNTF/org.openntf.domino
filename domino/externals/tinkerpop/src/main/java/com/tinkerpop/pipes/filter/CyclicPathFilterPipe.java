@@ -14,6 +14,7 @@ import java.util.Set;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class CyclicPathFilterPipe<S> extends AbstractPipe<S, S> implements FilterPipe<S> {
 
     private Set set = new LinkedHashSet();

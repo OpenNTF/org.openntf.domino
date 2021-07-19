@@ -19,6 +19,7 @@ import java.util.NoSuchElementException;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class SideEffectCapPipe<S, T> extends AbstractMetaPipe<S, T> implements MetaPipe, TransformPipe<S, T> {
 
     private final SideEffectPipe<S, T> pipeToCap;

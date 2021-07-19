@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,33 +155,33 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
 				public Object run() throws Exception {
-					checkArgMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckArg", Object.class);
+					checkArgMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckArg", Object.class); //$NON-NLS-1$
 					checkArgMethod.setAccessible(true);
-					checkObjectMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckObject", (Class<?>[]) null);
+					checkObjectMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckObject", (Class<?>[]) null); //$NON-NLS-1$
 					checkObjectMethod.setAccessible(true);
-					checkObjectActiveMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckObjectActive", (Class<?>[]) null);
+					checkObjectActiveMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckObjectActive", (Class<?>[]) null); //$NON-NLS-1$
 					checkObjectActiveMethod.setAccessible(true);
-					clearCppObjMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("ClearCppObj", (Class<?>[]) null);
+					clearCppObjMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("ClearCppObj", (Class<?>[]) null); //$NON-NLS-1$
 					clearCppObjMethod.setAccessible(true);
-					getCppObjMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
+					getCppObjMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null); //$NON-NLS-1$
 					getCppObjMethod.setAccessible(true);
-					getCppSessionMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppSession", (Class<?>[]) null);
+					getCppSessionMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppSession", (Class<?>[]) null); //$NON-NLS-1$
 					getCppSessionMethod.setAccessible(true);
-					getGCParentMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("getGCParent", (Class<?>[]) null);
+					getGCParentMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("getGCParent", (Class<?>[]) null); //$NON-NLS-1$
 					getGCParentMethod.setAccessible(true);
-					getSessionMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("getSession", (Class<?>[]) null);
+					getSessionMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("getSession", (Class<?>[]) null); //$NON-NLS-1$
 					getSessionMethod.setAccessible(true);
-					getWeakMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("getWeak", (Class<?>[]) null);
+					getWeakMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("getWeak", (Class<?>[]) null); //$NON-NLS-1$
 					getWeakMethod.setAccessible(true);
-					isDeadMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isDead", (Class<?>[]) null);
+					isDeadMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isDead", (Class<?>[]) null); //$NON-NLS-1$
 					isDeadMethod.setAccessible(true);
-					isInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isInvalid", (Class<?>[]) null);
+					isInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isInvalid", (Class<?>[]) null); //$NON-NLS-1$
 					isInvalidMethod.setAccessible(true);
-					isEqualMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isEqual", Long.TYPE);
+					isEqualMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isEqual", Long.TYPE); //$NON-NLS-1$
 					isEqualMethod.setAccessible(true);
-					markInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("markInvalid", (Class<?>[]) null);
+					markInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("markInvalid", (Class<?>[]) null); //$NON-NLS-1$
 					markInvalidMethod.setAccessible(true);
-					validateObjArgMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("validateObjArg", Object.class,
+					validateObjArgMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("validateObjArg", Object.class, //$NON-NLS-1$
 							Boolean.TYPE);
 					validateObjArgMethod.setAccessible(true);
 					return null;
@@ -246,7 +246,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return
 	 */
 	protected P findParent(final WrapperFactory wf, final D delegate, final int i) throws NotesException {
-		throw new UnsupportedOperationException("You must specify a valid parent when creating a " + getClass().getName());
+		throw new UnsupportedOperationException("You must specify a valid parent when creating a " + getClass().getName()); //$NON-NLS-1$
 	}
 
 	/**
@@ -336,7 +336,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	protected Base(final D delegate, final P parent, final int classId) {
 		if (parent == null) {
-			throw new NullPointerException("parent must not be null");
+			throw new NullPointerException("parent must not be null"); //$NON-NLS-1$
 		}
 		this.parent = parent;
 		clsid = classId;
@@ -345,7 +345,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			setDelegate(delegate, false);
 		} else if (delegate != null) {
 			// normally you won't get here if you come from fromLotus
-			throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
+			throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName()); //$NON-NLS-1$
 		}
 	}
 
@@ -466,6 +466,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *
 	 * @return the delegate
 	 */
+	@SuppressWarnings("nls")
 	protected D getDelegate() {
 		D ret = getDelegate_unchecked();
 		if (this instanceof Resurrectable && isDead(ret)) {
@@ -568,7 +569,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            adds the delegate to the list, if it has to be recycled.
 	 * @return the delegate
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	protected static <T extends lotus.domino.Base> T toLotus(final T wrapper, final Collection recycleThis) {
 		return TypeUtils.toLotus(wrapper, recycleThis);
 		/*if (wrapper instanceof org.openntf.domino.impl.Base) {
@@ -589,7 +590,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return the delegate
 	 */
 	//
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected static <T extends lotus.domino.Base> T toLotus(final T wrapper) {
 		return TypeUtils.toLotus(wrapper);
 		/*if (wrapper instanceof org.openntf.domino.impl.Base) {
@@ -628,7 +628,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @throws IllegalArgumentException
 	 *             When the object is not convertible.
 	 */
-	@SuppressWarnings("rawtypes")
 	protected static Object toDominoFriendly(final Object value, final Session session, final Collection<lotus.domino.Base> recycleThis)
 			throws IllegalArgumentException {
 		return TypeUtils.toDominoFriendly(value, session, recycleThis);
@@ -683,8 +682,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				lotus.domino.local.DateRange dr = (lotus.domino.local.DateRange) base;
 				if (dr.getStartDateTime() == null || dr.getEndDateTime() == null) {
 					lotus.domino.Session rawsession = toLotus(Base.getSession(base));
-					sdtAux = rawsession.createDateTime("2001/01/01");
-					edtAux = rawsession.createDateTime("2001/02/02");
+					sdtAux = rawsession.createDateTime("2001/01/01"); //$NON-NLS-1$
+					edtAux = rawsession.createDateTime("2001/02/02"); //$NON-NLS-1$
 					dr.setStartDateTime(sdtAux);
 					dr.setEndDateTime(edtAux);
 				}
@@ -881,22 +880,26 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	// Methods that have no meaningful implementation  throw a exception
 
 	@Deprecated
+	@SuppressWarnings("nls")
 	public boolean needsGui() {
 		log_.fine("needsGui called");
 		return false;
 	}
 
 	@Deprecated
+	@SuppressWarnings("nls")
 	public void dontUseGui() {
 		log_.fine("dontUseGui called");
 	}
 
 	@Deprecated
+	@SuppressWarnings("nls")
 	public void okToUseGui() {
 		log_.fine("okToUseGui called");
 	}
 
 	@Deprecated
+	@SuppressWarnings("nls")
 	public boolean avoidingGui() {
 		log_.fine("avoidingGui called");
 
@@ -995,12 +998,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		int version = in.readInt();
 
 		if (version != EXTERNALVERSIONUID) {
-			throw new InvalidClassException("Cannot read dataversion " + version);
+			throw new InvalidClassException("Cannot read dataversion " + version); //$NON-NLS-1$
 		}
 		parent = (P) in.readObject();
 
 	}
 
+	@SuppressWarnings("nls")
 	protected void readResolveCheck(final Object expected, final Object given) {
 		if (expected == null ? given != null : !expected.equals(given)) {
 			log_.warning("Deserializing different " + getClass().getSimpleName() + ". Given: " + given + ", expected: " + expected);

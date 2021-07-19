@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public class DXLItemText extends AbstractDXLItem {
 	protected DXLItemText(final XMLNode node, final int dupItemId) {
 		super(node, dupItemId);
 
-		XMLNode dataNode = node.selectSingleNode("./text");
+		XMLNode dataNode = node.selectSingleNode("./text"); //$NON-NLS-1$
 		value_ = dataNode.getText();
 	}
 

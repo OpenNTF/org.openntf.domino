@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,8 +54,8 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 	@Override
 	public byte[] getFileData() {
 		if (enforceRawFormat())
-			return getFileDataRaw("$JavaScriptLibrary");
-		return getDxl().selectSingleNode("//code/javascript").getText().getBytes();
+			return getFileDataRaw("$JavaScriptLibrary"); //$NON-NLS-1$
+		return getDxl().selectSingleNode("//code/javascript").getText().getBytes(); //$NON-NLS-1$
 	}
 
 	//	@Override

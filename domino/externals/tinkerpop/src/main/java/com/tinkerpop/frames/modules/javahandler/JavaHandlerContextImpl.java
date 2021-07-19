@@ -18,6 +18,7 @@ import java.lang.reflect.Type;
  * @author Bryn Cooke
  * 
  */
+@SuppressWarnings({ "deprecation", "unchecked" })
 class JavaHandlerContextImpl<C extends Element> implements JavaHandlerContext<C> {
 
 	private final FramedGraph<?> graph;
@@ -181,6 +182,7 @@ class JavaHandlerContextImpl<C extends Element> implements JavaHandlerContext<C>
 		return g().frameEdges(edges, direction, kind);
 	}
 
+    @SuppressWarnings("nls")
 	private Type getIterableType() {
 
 		if (method.getReturnType() != Iterable.class) {

@@ -6,6 +6,7 @@ import java.lang.reflect.*;
 import java.util.Map;
 
 
+@SuppressWarnings("nls")
 public class ClassUtilities {
     private static final String SET = "set";
     private static final String GET = "get";

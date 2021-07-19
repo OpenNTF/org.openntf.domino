@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,26 +44,10 @@ public class SECAuthenticationEvent extends AbstractEMBridgeEvent {
 	}
 
 	/**
-	 * @param wEvent
-	 *            the wEvent to set
-	 */
-	private void setwEvent(final int wEvent) {
-		this.wEvent = wEvent;
-	}
-
-	/**
 	 * @return the remoteName
 	 */
 	public String getRemoteName() {
 		return remoteName;
-	}
-
-	/**
-	 * @param remoteName
-	 *            the remoteName to set
-	 */
-	private void setRemoteName(final String remoteName) {
-		this.remoteName = remoteName;
 	}
 
 	/**
@@ -74,14 +58,6 @@ public class SECAuthenticationEvent extends AbstractEMBridgeEvent {
 	}
 
 	/**
-	 * @param flags
-	 *            the flags to set
-	 */
-	private void setFlags(final long flags) {
-		this.flags = flags;
-	}
-
-	/**
 	 * @return the netProtocol
 	 */
 	public int getNetProtocol() {
@@ -89,26 +65,10 @@ public class SECAuthenticationEvent extends AbstractEMBridgeEvent {
 	}
 
 	/**
-	 * @param netProtocol
-	 *            the netProtocol to set
-	 */
-	private void setNetProtocol(final int netProtocol) {
-		this.netProtocol = netProtocol;
-	}
-
-	/**
 	 * @return the netAddress
 	 */
 	public String getNetAddress() {
 		return netAddress;
-	}
-
-	/**
-	 * @param netAddress
-	 *            the netAddress to set
-	 */
-	private void setNetAddress(final String netAddress) {
-		this.netAddress = netAddress;
 	}
 
 }

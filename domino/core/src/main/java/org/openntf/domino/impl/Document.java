@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.DocumentWriteAccessException;
-import org.openntf.domino.exceptions.Domino32KLimitException;
+import org.openntf.domino.exceptions.DominoNonSummaryLimitException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.exceptions.UserAccessException;
@@ -88,10 +88,10 @@ import org.openntf.domino.utils.xml.XMLDocument;
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.util.JsonWriter;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Document.
  */
+@SuppressWarnings("nls")
 public class Document extends BaseResurrectable<org.openntf.domino.Document, lotus.domino.Document, Database>
 implements org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
@@ -112,24 +112,24 @@ implements org.openntf.domino.Document {
 
 		protected ExtendedNoteInfos() {
 			long start = System.nanoTime();
-			if (Document.this.hasItem("$ACLDigest")) {// the DXL of an ACL is empty
+			if (Document.this.hasItem("$ACLDigest")) {// the DXL of an ACL is empty //$NON-NLS-1$
 				noteClass = NoteClass.ACL;
 				isDefault = true;
 			} else {
 				DxlExporter exporter = getAncestorSession().createDxlExporter();
 				try {
 					Vector<String> items = new Vector<String>();
-					items.add("-dummy-");
+					items.add("-dummy-"); //$NON-NLS-1$
 					exporter.setRestrictToItemNames(items);
 					exporter.setForceNoteFormat(true);
 					exporter.setOutputDOCTYPE(false);
 					start = System.nanoTime() - start;
 					XMLDocument dxl = new XMLDocument();
 					dxl.loadString(exporter.exportDxl(Document.this));
-					String cls = dxl.getDocumentElement().getAttribute("class");
+					String cls = dxl.getDocumentElement().getAttribute("class"); //$NON-NLS-1$
 					noteClass = NoteClass.valueOf(cls.toUpperCase());
-					isDefault = "true".equals(dxl.getDocumentElement().getAttribute("default"));
-					isPrivate = "true".equals(dxl.getDocumentElement().getAttribute("private"));
+					isDefault = "true".equals(dxl.getDocumentElement().getAttribute("default")); //$NON-NLS-1$ //$NON-NLS-2$
+					isPrivate = "true".equals(dxl.getDocumentElement().getAttribute("private")); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -607,7 +607,7 @@ implements org.openntf.domino.Document {
 		if (containMimes_ == null) {
 			lotus.domino.Document del = getDelegate();
 			try {
-				containMimes_ = del.hasItem("$MimeTrack") || del.hasItem("$NoteHasNativeMIME");
+				containMimes_ = del.hasItem("$MimeTrack") || del.hasItem("$NoteHasNativeMIME") || del.hasItem("MIME_Version");
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
 			}
@@ -2884,7 +2884,7 @@ implements org.openntf.domino.Document {
 					// AutoMime completely disabled.
 					throw ex2;
 				}
-				if (!boxCompatibleOnly || ex2 instanceof Domino32KLimitException) {
+				if (!boxCompatibleOnly || ex2 instanceof DominoNonSummaryLimitException) {
 					// if the value exceeds 32k or we are called from put() (means boxCompatibleOnly=false) we try to write the object as MIME
 					result = replaceItemValueCustomData(itemName, "mime-bean", value, returnItem);
 				} else if (this.getAutoMime() == AutoMime.WRAP_ALL) {
@@ -2949,11 +2949,11 @@ implements org.openntf.domino.Document {
 	 *
 	 * It throws a DataNotCompatibleException, if the data is not domino compatible
 	 *
-	 * @throws Domino32KLimitException
+	 * @throws DominoNonSummaryLimitException
 	 *             if the item does not fit in a field
 	 */
 	public Item replaceItemValueLotus(final String itemName, Object value, final Boolean isSummary, final boolean returnItem)
-			throws Domino32KLimitException {
+			throws DominoNonSummaryLimitException {
 		checkMimeOpen(itemName);
 		// writing a value of "Null" leads to a remove of the item if configured in SESSION
 		if (value == null || value instanceof Null) {

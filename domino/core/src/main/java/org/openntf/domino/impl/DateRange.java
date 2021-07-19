@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,15 @@
  */
 package org.openntf.domino.impl;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 //import java.util.GregorianCalendar;
 import java.util.List;
-
-import lotus.domino.NotesException;
 
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Session;
@@ -33,10 +32,8 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
-import com.ibm.icu.util.Calendar;
-import com.ibm.icu.util.GregorianCalendar;
+import lotus.domino.NotesException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DateRange.
  */
@@ -183,9 +180,9 @@ public class DateRange extends BaseThreadSafe<org.openntf.domino.DateRange, lotu
 	@Override
 	public String getText() {
 		if (startDateTime_ == null || endDateTime_ == null) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
-		return startDateTime_.getLocalTime() + " - " + endDateTime_.getLocalTime();
+		return startDateTime_.getLocalTime() + " - " + endDateTime_.getLocalTime(); //$NON-NLS-1$
 	}
 
 	/**

@@ -25,6 +25,7 @@ import java.util.NoSuchElementException;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class AbstractPipe<S, E> implements Pipe<S, E> {
 
     protected Iterator<S> starts;
@@ -125,7 +126,7 @@ public abstract class AbstractPipe<S, E> implements Pipe<S, E> {
 
     protected abstract E processNextStart() throws NoSuchElementException;
 
-    protected List getPathToHere() {
+	protected List getPathToHere() {
         if (this.starts instanceof Pipe) {
             return ((Pipe) this.starts).getCurrentPath();
         } else if (this.starts instanceof HistoryIterator) {

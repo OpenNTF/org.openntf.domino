@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ public interface NSFItem {
 	/**
 	 * The item type based on the API documentation (TYPE_xxx).
 	 */
+	@SuppressWarnings("nls")
 	public static enum Type {
 		ERROR(ItemClass.ERROR, 0), UNAVAILABLE(ItemClass.ERROR, 0), TEXT(ItemClass.TEXT, 0), TEXT_LIST(ItemClass.TEXT, 1),
 		NUMBER(ItemClass.NUMBER, 0), NUMBER_RANGE(ItemClass.NUMBER, 1), TIME(ItemClass.TIME, 0), TIME_RANGE(ItemClass.TIME, 1),

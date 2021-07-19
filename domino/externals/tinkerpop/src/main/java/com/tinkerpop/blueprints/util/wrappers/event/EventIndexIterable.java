@@ -10,6 +10,7 @@ import java.util.Iterator;
  *
  * @author Stephen Mallette
  */
+@SuppressWarnings({ "rawtypes" })
 class EventIndexIterable<T extends Element> implements Iterable<Index<T>> {
 
     private final Iterable<Index<T>> iterable;

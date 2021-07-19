@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import lotus.domino.NotesFactory;
  * 
  */
 @Deprecated
+@SuppressWarnings("nls")
 public class LogSetupRunnable implements Runnable {
 
 	/**
@@ -58,13 +59,13 @@ public class LogSetupRunnable implements Runnable {
 					String datadir = null;
 					try {
 						lotus.domino.Session session = NotesFactory.createSession();
-						datadir = session.getEnvironmentString("DIRECTORY", true);
+						datadir = session.getEnvironmentString("DIRECTORY", true); //$NON-NLS-1$
 						session.recycle();
 					} catch (Throwable t) {
 						t.printStackTrace();
 					}
-					String pattern = datadir + "/IBM_TECHNICAL_SUPPORT/org.openntf.%u.%g.log";
-					Logger oodLogger = Logger.getLogger("org.openntf.domino");
+					String pattern = datadir + "/IBM_TECHNICAL_SUPPORT/org.openntf.%u.%g.log"; //$NON-NLS-1$
+					Logger oodLogger = Logger.getLogger("org.openntf.domino"); //$NON-NLS-1$
 					oodLogger.setLevel(Level.WARNING);
 
 					DefaultFileHandler dfh = new DefaultFileHandler(pattern, 50000, 100, true);
@@ -78,7 +79,7 @@ public class LogSetupRunnable implements Runnable {
 					oodLogger.addHandler(dch);
 
 					OpenLogHandler olh = new OpenLogHandler();
-					olh.setLogDbPath("OpenLog.nsf");
+					olh.setLogDbPath("OpenLog.nsf"); //$NON-NLS-1$
 					olh.setLevel(Level.WARNING);
 					oodLogger.addHandler(olh);
 

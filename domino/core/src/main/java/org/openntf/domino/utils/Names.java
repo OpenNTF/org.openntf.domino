@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,23 +40,24 @@ import org.openntf.domino.ext.Name.NamePartKey;
  * @author Devin S. Olson (dolson@czarnowski.com)
  *
  */
+@SuppressWarnings("nls")
 public enum Names {
 	;
 
-	public static Pattern IS_HIERARCHICAL_MATCH = Pattern.compile("^((CN=)|(O=)|(OU=)|(C=))[^/]+", Pattern.CASE_INSENSITIVE);
+	public static Pattern IS_HIERARCHICAL_MATCH = Pattern.compile("^((CN=)|(O=)|(OU=)|(C=))[^/]+", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
-	public static Pattern CN_MATCH = Pattern.compile("^(CN=)[^/]+", Pattern.CASE_INSENSITIVE);
+	public static Pattern CN_MATCH = Pattern.compile("^(CN=)[^/]+", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
-	public static Pattern OU_MATCH = Pattern.compile("\\b(OU=)[^/]+", Pattern.CASE_INSENSITIVE);
+	public static Pattern OU_MATCH = Pattern.compile("\\b(OU=)[^/]+", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
-	public static Pattern O_MATCH = Pattern.compile("\\b(O=)[^/]+", Pattern.CASE_INSENSITIVE);
+	public static Pattern O_MATCH = Pattern.compile("\\b(O=)[^/]+", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
-	public static Pattern C_MATCH = Pattern.compile("\\b(C=)[^/]+", Pattern.CASE_INSENSITIVE);
+	public static Pattern C_MATCH = Pattern.compile("\\b(C=)[^/]+", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
-	public static Pattern DC_MATCH = Pattern.compile("\\b(DC=)[^/]+", Pattern.CASE_INSENSITIVE);
+	public static Pattern DC_MATCH = Pattern.compile("\\b(DC=)[^/]+", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
 	public static enum LookupType {
-		Person("P"), Group("G"), Unknown("U");
+		Person("P"), Group("G"), Unknown("U"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		private String _code;
 
@@ -72,7 +73,7 @@ public enum Names {
 
 		@Override
 		public String toString() {
-			return LookupType.class.getName() + ": " + this.name() + "{\"" + this.getCode() + "\"}";
+			return LookupType.class.getName() + ": " + this.name() + "{\"" + this.getCode() + "\"}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		/**

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ public class XMLDocument extends XMLNode {
 	}
 
 	public void loadString(final String s) throws SAXException, IOException, ParserConfigurationException {
-		loadInputStream(new ByteArrayInputStream(s.getBytes("UTF-8")));
+		loadInputStream(new ByteArrayInputStream(s.getBytes("UTF-8"))); //$NON-NLS-1$
 	}
 
 	private DocumentBuilder getBuilder() throws ParserConfigurationException {
@@ -77,7 +77,7 @@ public class XMLDocument extends XMLNode {
 	}
 
 	public static String escapeXPathValue(final String input) {
-		return input.replace("'", "\\'");
+		return input.replace("'", "\\'"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override

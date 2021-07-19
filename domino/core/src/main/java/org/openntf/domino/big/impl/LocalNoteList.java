@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ import com.google.common.primitives.Longs;
 import javolution.util.FastSortedTable;
 import javolution.util.function.Equality;
 
+@SuppressWarnings("nls")
 public class LocalNoteList implements org.openntf.domino.big.LocalNoteList {
 	private final static int BUFFER_SIZE = 16;
 
@@ -140,10 +141,6 @@ public class LocalNoteList implements org.openntf.domino.big.LocalNoteList {
 			result = prime * result + (int) (x ^ (x >>> 32));
 			result = prime * result + (int) (y ^ (y >>> 32));
 			return result;
-		}
-
-		private long getRid() {
-			return parent_.replid_;
 		}
 
 		@Override
@@ -301,7 +298,6 @@ public class LocalNoteList implements org.openntf.domino.big.LocalNoteList {
 	}
 
 	protected boolean validateNoteCoordinate(final org.openntf.domino.big.NoteCoordinate e) {
-		boolean result = true;
 		if (replid_ == Long.MIN_VALUE) {
 			replid_ = e.getReplicaLong();
 			return true;

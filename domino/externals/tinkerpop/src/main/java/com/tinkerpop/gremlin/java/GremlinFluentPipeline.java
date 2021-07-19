@@ -22,6 +22,7 @@ import java.util.Map;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public interface GremlinFluentPipeline<S, E> {
 
     /**
@@ -380,7 +381,7 @@ public interface GremlinFluentPipeline<S, E> {
      *
      * @return the extended Pipeline
      */
-    public GremlinFluentPipeline<S, E> _();
+    public GremlinFluentPipeline<S, E> identity();
 
     /**
      * Add a MemoizePipe to the end of the Pipeline.
@@ -1173,5 +1174,6 @@ public interface GremlinFluentPipeline<S, E> {
      *
      * @return returns the current pipeline with the new end type.
      */
-    public <E> GremlinFluentPipeline<S, E> cast(Class<E> end);
+    @SuppressWarnings("hiding")
+	public <E> GremlinFluentPipeline<S, E> cast(Class<E> end);
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,19 @@
 package org.openntf.domino.utils;
 
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
-import com.ibm.icu.util.ULocale;
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class DominoFormatter.
  */
+@SuppressWarnings("nls")
 public class DominoFormatter extends ThreadLocal<Object> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -101,21 +100,21 @@ public class DominoFormatter extends ThreadLocal<Object> implements Serializable
 
 	private DateFormat getTimeOnlyFormat() {
 		if (tdf_ == null) {
-			tdf_ = new SimpleDateFormat(timeOnlyFormat_, ULocale.getDefault());
+			tdf_ = new SimpleDateFormat(timeOnlyFormat_, Locale.getDefault());
 		}
 		return tdf_;
 	}
 
 	private DateFormat getDateOnlyFormat() {
 		if (ddf_ == null) {
-			ddf_ = new SimpleDateFormat(dateOnlyFormat_, ULocale.getDefault());
+			ddf_ = new SimpleDateFormat(dateOnlyFormat_, Locale.getDefault());
 		}
 		return ddf_;
 	}
 
 	private DateFormat getDateTimeFormat() {
 		if (dtdf_ == null) {
-			dtdf_ = new SimpleDateFormat(dateTimeFormat_, ULocale.getDefault());
+			dtdf_ = new SimpleDateFormat(dateTimeFormat_, Locale.getDefault());
 		}
 		return dtdf_;
 	}

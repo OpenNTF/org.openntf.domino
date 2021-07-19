@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.openntf.domino.iterators.DocumentList;
  * 
  * @author Devin S. Olson (dolson@czarnowski.com)
  */
+@SuppressWarnings("nls")
 public enum CollectionUtils {
 	;
 
@@ -88,7 +89,7 @@ public enum CollectionUtils {
 			}
 		}
 
-		public ChainedIterable(final Iterable<T>... iterables) {
+		public ChainedIterable(@SuppressWarnings("unchecked") final Iterable<T>... iterables) {
 			if (iterables != null && iterables.length > 0) {
 				iterables_ = new ArrayList<Iterable<T>>(iterables.length);
 				for (Iterable<T> iterable : iterables) {
@@ -153,7 +154,7 @@ public enum CollectionUtils {
 	 * 
 	 * @return List of Strings retrieved or generated from the input. Returns null on error.
 	 */
-	@SuppressWarnings({ "rawtypes", "cast" })
+	@SuppressWarnings({ "rawtypes" })
 	public static List<String> getListStrings(final AbstractCollection collection) {
 		if ((null != collection) && (collection.size() > 0)) {
 			final List<String> result = new ArrayList<String>();
@@ -261,10 +262,10 @@ public enum CollectionUtils {
 				if (object instanceof String[]) {
 					return CollectionUtils.getListStrings((String[]) object);
 				}
-				if (classname.equalsIgnoreCase("java.lang.String[]") || classname.equalsIgnoreCase("[Ljava.lang.String;")) {
+				if (classname.equalsIgnoreCase("java.lang.String[]") || classname.equalsIgnoreCase("[Ljava.lang.String;")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return CollectionUtils.getListStrings((String[]) object);
 				}
-				if (classname.equalsIgnoreCase("java.lang.String")) {
+				if (classname.equalsIgnoreCase("java.lang.String")) { //$NON-NLS-1$
 					return CollectionUtils.getListStrings((String) object);
 				}
 
@@ -441,7 +442,7 @@ public enum CollectionUtils {
 		return null;
 	}
 
-	public static <T> Iterable<T> chain(final Iterable<T>... iterables) {
+	public static <T> Iterable<T> chain(@SuppressWarnings("unchecked") final Iterable<T>... iterables) {
 		return new ChainedIterable<T>(iterables);
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1663,6 +1663,33 @@ public class Registration extends BaseThreadSafe<org.openntf.domino.Registration
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getFactory();
+	}
+
+	/**
+	 * @since Notes/Domino 11.0.1
+	 * @since 11.0.1
+	 */
+	@Override
+	public String getContactNoteID() {
+		try {
+			return getDelegate().getContactNoteID();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	/**
+	 * @since Notes/Domino 11.0.1
+	 * @since 11.0.1
+	 */
+	@Override
+	public void setContactNoteID(String noteId) {
+		try {
+			getDelegate().setContactNoteID(noteId);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 }

@@ -7,6 +7,7 @@ package com.tinkerpop.blueprints;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public interface IndexableGraph extends Graph {
 
     /**

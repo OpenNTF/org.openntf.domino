@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,15 +51,15 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 	 */
 	public FacesConfig(final DatabaseDesign databaseDesign) {
 		FileResourceWebContent facesConfig = databaseDesign
-				.getDesignElementByName(FileResourceWebContent.class, "WEB-INF/faces-config.xml");
+				.getDesignElementByName(FileResourceWebContent.class, "WEB-INF/faces-config.xml"); //$NON-NLS-1$
 		if (facesConfig != null) {
 			setContainer(facesConfig);
 		} else {
 			facesConfig = new org.openntf.domino.design.impl.FileResourceWebContent(databaseDesign.getAncestorDatabase());
-			facesConfig.setName("WEB-INF/faces-config.xml");
+			facesConfig.setName("WEB-INF/faces-config.xml"); //$NON-NLS-1$
 			setContainer(facesConfig);
 			try {
-				getXml().loadString("<faces-config/>");
+				getXml().loadString("<faces-config/>"); //$NON-NLS-1$
 			} catch (SAXException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -93,7 +93,7 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 	 */
 	@Override
 	public List<String> getActionListeners() {
-		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "action-listener");
+		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "action-listener"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
@@ -101,7 +101,7 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 	 */
 	@Override
 	public org.openntf.domino.design.FacesConfig.Converter addConverter() {
-		return new Converter(getXml().selectSingleNode("/faces-config").addChildElement("converter"));
+		return new Converter(getXml().selectSingleNode("/faces-config").addChildElement("converter")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
@@ -109,7 +109,7 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 	 */
 	@Override
 	public List<org.openntf.domino.design.FacesConfig.Converter> getConverters() {
-		return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.Converter>(this, getXml(), "/faces-config", "converter",
+		return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.Converter>(this, getXml(), "/faces-config", "converter", //$NON-NLS-1$ //$NON-NLS-2$
 				Converter.class);
 	}
 
@@ -118,7 +118,7 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 	 */
 	@Override
 	public org.openntf.domino.design.FacesConfig.ManagedBean addManagedBean() {
-		return new ManagedBean(getXml().selectSingleNode("/faces-config").addChildElement("managed-bean"));
+		return new ManagedBean(getXml().selectSingleNode("/faces-config").addChildElement("managed-bean")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
@@ -126,8 +126,8 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 	 */
 	@Override
 	public List<org.openntf.domino.design.FacesConfig.ManagedBean> getManagedBeans() {
-		return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.ManagedBean>(this, getXml(), "/faces-config",
-				"managed-bean", ManagedBean.class);
+		return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.ManagedBean>(this, getXml(), "/faces-config", //$NON-NLS-1$
+				"managed-bean", ManagedBean.class); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -135,7 +135,7 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 	 */
 	@Override
 	public List<String> getMessageBundles() {
-		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "message-bundle");
+		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "message-bundle"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
@@ -143,7 +143,7 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 	 */
 	@Override
 	public List<String> getNavigationHandlers() {
-		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "navigation-handler");
+		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "navigation-handler"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
@@ -151,7 +151,7 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 	 */
 	@Override
 	public List<String> getPhaseListeners() {
-		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "phase-listener");
+		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "phase-listener"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
@@ -159,7 +159,7 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 	 */
 	@Override
 	public List<String> getPropertyResolvers() {
-		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "property-resolver");
+		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "property-resolver"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
@@ -167,7 +167,7 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 	 */
 	@Override
 	public List<String> getVariableResolvers() {
-		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "variable-resolver");
+		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "variable-resolver"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
@@ -175,7 +175,7 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 	 */
 	@Override
 	public List<String> getViewHandlers() {
-		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "view-handler");
+		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "view-handler"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public class ManagedBean implements org.openntf.domino.design.FacesConfig.ManagedBean {
@@ -190,9 +190,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public String getName() {
-			XMLNode valueNode = node_.selectSingleNode("managed-bean-name");
+			XMLNode valueNode = node_.selectSingleNode("managed-bean-name"); //$NON-NLS-1$
 			if (valueNode == null) {
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			return valueNode.getText();
 		}
@@ -202,9 +202,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public void setName(final String name) {
-			XMLNode valueNode = node_.selectSingleNode("managed-bean-name");
+			XMLNode valueNode = node_.selectSingleNode("managed-bean-name"); //$NON-NLS-1$
 			if (valueNode == null) {
-				valueNode = node_.addChildElement("managed-bean-name");
+				valueNode = node_.addChildElement("managed-bean-name"); //$NON-NLS-1$
 			}
 			valueNode.setText(name);
 		}
@@ -214,9 +214,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public String getClassName() {
-			XMLNode valueNode = node_.selectSingleNode("managed-bean-class");
+			XMLNode valueNode = node_.selectSingleNode("managed-bean-class"); //$NON-NLS-1$
 			if (valueNode == null) {
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			return valueNode.getText();
 		}
@@ -226,9 +226,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public void setClassName(final String className) {
-			XMLNode valueNode = node_.selectSingleNode("managed-bean-class");
+			XMLNode valueNode = node_.selectSingleNode("managed-bean-class"); //$NON-NLS-1$
 			if (valueNode == null) {
-				valueNode = node_.addChildElement("managed-bean-class");
+				valueNode = node_.addChildElement("managed-bean-class"); //$NON-NLS-1$
 			}
 			valueNode.setText(className);
 		}
@@ -238,7 +238,7 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public Scope getScope() {
-			XMLNode valueNode = node_.selectSingleNode("managed-bean-scope");
+			XMLNode valueNode = node_.selectSingleNode("managed-bean-scope"); //$NON-NLS-1$
 			if (valueNode == null) {
 				return Scope.NONE;
 			}
@@ -255,9 +255,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public void setScope(final Scope scope) {
-			XMLNode valueNode = node_.selectSingleNode("managed-bean-scope");
+			XMLNode valueNode = node_.selectSingleNode("managed-bean-scope"); //$NON-NLS-1$
 			if (valueNode == null) {
-				valueNode = node_.addChildElement("managed-bean-scope");
+				valueNode = node_.addChildElement("managed-bean-scope"); //$NON-NLS-1$
 			}
 			valueNode.setText(scope.toString().toLowerCase());
 		}
@@ -267,7 +267,7 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public org.openntf.domino.design.FacesConfig.ManagedBean.Property addProperty() {
-			XMLNode propertyNode = node_.addChildElement("managed-property");
+			XMLNode propertyNode = node_.addChildElement("managed-property"); //$NON-NLS-1$
 			return new Property(propertyNode);
 		}
 
@@ -276,8 +276,8 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public List<org.openntf.domino.design.FacesConfig.ManagedBean.Property> getProperties() {
-			return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.ManagedBean.Property>(this, node_, "/",
-					"managed-property", Property.class);
+			return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.ManagedBean.Property>(this, node_, "/", //$NON-NLS-1$
+					"managed-property", Property.class); //$NON-NLS-1$
 		}
 
 		/* (non-Javadoc)
@@ -286,9 +286,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		@Override
 		public List<String> getListEntries() {
 			List<String> result = new ArrayList<String>();
-			List<XMLNode> nodes = node_.selectNodes("list-entries/value | list-entries/null-value");
+			List<XMLNode> nodes = node_.selectNodes("list-entries/value | list-entries/null-value"); //$NON-NLS-1$
 			for (XMLNode node : nodes) {
-				if ("value".equals(node.getNodeName())) {
+				if ("value".equals(node.getNodeName())) { //$NON-NLS-1$
 					result.add(node.getText());
 				} else {
 					result.add(null);
@@ -303,25 +303,25 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public void setListEntries(final Collection<?> listEntries) {
-			XMLNode listEntriesNode = node_.selectSingleNode("list-entries");
+			XMLNode listEntriesNode = node_.selectSingleNode("list-entries"); //$NON-NLS-1$
 			String valueClassName = getListValueClassName();
 			if (listEntriesNode != null) {
 				node_.removeChild(listEntriesNode);
 			}
-			listEntriesNode = node_.addChildElement("list-entries");
-			XMLNode valueClassNode = listEntriesNode.addChildElement("value-class");
+			listEntriesNode = node_.addChildElement("list-entries"); //$NON-NLS-1$
+			XMLNode valueClassNode = listEntriesNode.addChildElement("value-class"); //$NON-NLS-1$
 			valueClassNode.setText(valueClassName);
 			for (Object entry : listEntries) {
 				if (entry == null) {
-					listEntriesNode.addChildElement("null-value");
+					listEntriesNode.addChildElement("null-value"); //$NON-NLS-1$
 				} else {
-					XMLNode valueNode = listEntriesNode.addChildElement("value");
+					XMLNode valueNode = listEntriesNode.addChildElement("value"); //$NON-NLS-1$
 					valueNode.setText(String.valueOf(entry));
 				}
 			}
 
 			// Clear out any map-entries, as they're mutually incompatible with list-entries
-			XMLNode mapEntries = node_.selectSingleNode("map-entries");
+			XMLNode mapEntries = node_.selectSingleNode("map-entries"); //$NON-NLS-1$
 			if (mapEntries != null) {
 				node_.removeChild(mapEntries);
 			}
@@ -332,9 +332,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public String getListValueClassName() {
-			XMLNode valueNode = node_.selectSingleNode("list-entries/value-class");
+			XMLNode valueNode = node_.selectSingleNode("list-entries/value-class"); //$NON-NLS-1$
 			if (valueNode == null) {
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			return valueNode.getText();
 		}
@@ -344,18 +344,18 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public void setListValueClassName(final String className) {
-			XMLNode valueNode = node_.selectSingleNode("list-entries/value-class");
+			XMLNode valueNode = node_.selectSingleNode("list-entries/value-class"); //$NON-NLS-1$
 			if (valueNode == null) {
-				XMLNode listEntries = node_.selectSingleNode("list-entries");
+				XMLNode listEntries = node_.selectSingleNode("list-entries"); //$NON-NLS-1$
 				if (listEntries == null) {
-					listEntries = node_.addChildElement("list-entries");
+					listEntries = node_.addChildElement("list-entries"); //$NON-NLS-1$
 				}
-				valueNode = listEntries.addChildElement("value-class");
+				valueNode = listEntries.addChildElement("value-class"); //$NON-NLS-1$
 			}
 			valueNode.setText(className);
 
 			// Clear out any map-entries, as they're mutually incompatible with list-entries
-			XMLNode mapEntries = node_.selectSingleNode("map-entries");
+			XMLNode mapEntries = node_.selectSingleNode("map-entries"); //$NON-NLS-1$
 			if (mapEntries != null) {
 				node_.removeChild(mapEntries);
 			}
@@ -368,13 +368,13 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		public Map<String, String> getMapEntries() {
 			Map<String, String> result = new LinkedHashMap<String, String>();
 
-			List<XMLNode> mapEntries = node_.selectNodes("map-entries/map-entry");
+			List<XMLNode> mapEntries = node_.selectNodes("map-entries/map-entry"); //$NON-NLS-1$
 			for (XMLNode entry : mapEntries) {
-				XMLNode keyNode = entry.selectSingleNode("key");
-				XMLNode valueNode = entry.selectSingleNode("value | null-value");
+				XMLNode keyNode = entry.selectSingleNode("key"); //$NON-NLS-1$
+				XMLNode valueNode = entry.selectSingleNode("value | null-value"); //$NON-NLS-1$
 
 				if (keyNode != null) {
-					if (valueNode == null || "null-value".equals(valueNode.getNodeName())) {
+					if (valueNode == null || "null-value".equals(valueNode.getNodeName())) { //$NON-NLS-1$
 						result.put(keyNode.getText(), null);
 					} else {
 						result.put(keyNode.getText(), valueNode.getText());
@@ -390,25 +390,25 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public void setMapEntries(final Map<?, ?> mapEntries) {
-			XMLNode mapEntriesNode = node_.selectSingleNode("map-entries");
+			XMLNode mapEntriesNode = node_.selectSingleNode("map-entries"); //$NON-NLS-1$
 			if (mapEntriesNode != null) {
 				node_.removeChild(mapEntriesNode);
 			}
-			mapEntriesNode = node_.addChildElement("map-entries");
+			mapEntriesNode = node_.addChildElement("map-entries"); //$NON-NLS-1$
 			for (Map.Entry<?, ?> entry : mapEntries.entrySet()) {
-				XMLNode entryNode = mapEntriesNode.addChildElement("map-entry");
-				XMLNode keyNode = entryNode.addChildElement("key");
+				XMLNode entryNode = mapEntriesNode.addChildElement("map-entry"); //$NON-NLS-1$
+				XMLNode keyNode = entryNode.addChildElement("key"); //$NON-NLS-1$
 				keyNode.setText(String.valueOf(entry.getKey()));
 				if (entry.getValue() == null) {
-					entryNode.addChildElement("null-value");
+					entryNode.addChildElement("null-value"); //$NON-NLS-1$
 				} else {
-					XMLNode valueNode = entryNode.addChildElement("value");
+					XMLNode valueNode = entryNode.addChildElement("value"); //$NON-NLS-1$
 					valueNode.setText(String.valueOf(entry.getValue()));
 				}
 			}
 
 			// Clear out any list-entries, as they're mutually incompatible with map-entries
-			XMLNode listEntries = node_.selectSingleNode("list-entries");
+			XMLNode listEntries = node_.selectSingleNode("list-entries"); //$NON-NLS-1$
 			if (listEntries != null) {
 				node_.removeChild(listEntries);
 			}
@@ -434,9 +434,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 			 */
 			@Override
 			public String getName() {
-				XMLNode valueNode = node_.selectSingleNode("property-name");
+				XMLNode valueNode = node_.selectSingleNode("property-name"); //$NON-NLS-1$
 				if (valueNode == null) {
-					return "";
+					return ""; //$NON-NLS-1$
 				}
 				return valueNode.getText();
 			}
@@ -446,9 +446,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 			 */
 			@Override
 			public void setName(final String name) {
-				XMLNode valueNode = node_.selectSingleNode("property-name");
+				XMLNode valueNode = node_.selectSingleNode("property-name"); //$NON-NLS-1$
 				if (valueNode == null) {
-					valueNode = node_.addChildElement("property-name");
+					valueNode = node_.addChildElement("property-name"); //$NON-NLS-1$
 				}
 				valueNode.setText(name);
 			}
@@ -458,14 +458,14 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 			 */
 			@Override
 			public String getValue() {
-				XMLNode valueNode = node_.selectSingleNode("null-value");
+				XMLNode valueNode = node_.selectSingleNode("null-value"); //$NON-NLS-1$
 				if (valueNode != null) {
 					return null;
 				}
 
-				valueNode = node_.selectSingleNode("value");
+				valueNode = node_.selectSingleNode("value"); //$NON-NLS-1$
 				if (valueNode == null) {
-					return "";
+					return ""; //$NON-NLS-1$
 				}
 				return valueNode.getText();
 			}
@@ -476,30 +476,30 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 			@Override
 			public void setValue(final String value) {
 				if (value == null) {
-					XMLNode valueNode = node_.selectSingleNode("value");
+					XMLNode valueNode = node_.selectSingleNode("value"); //$NON-NLS-1$
 					if (valueNode != null) {
 						node_.removeChild(valueNode);
 					}
-					node_.addChildElement("null-value");
+					node_.addChildElement("null-value"); //$NON-NLS-1$
 				} else {
-					XMLNode nullNode = node_.selectSingleNode("null-value");
+					XMLNode nullNode = node_.selectSingleNode("null-value"); //$NON-NLS-1$
 					if (nullNode != null) {
 						node_.removeChild(nullNode);
 					}
 
-					XMLNode valueNode = node_.selectSingleNode("value");
+					XMLNode valueNode = node_.selectSingleNode("value"); //$NON-NLS-1$
 					if (valueNode == null) {
-						valueNode = node_.addChildElement("value");
+						valueNode = node_.addChildElement("value"); //$NON-NLS-1$
 					}
 					valueNode.setText(value);
 				}
 
 				// Clear out any list-entries and map-entries, as they're mutually incompatible with single values
-				XMLNode listEntries = node_.selectSingleNode("list-entries");
+				XMLNode listEntries = node_.selectSingleNode("list-entries"); //$NON-NLS-1$
 				if (listEntries != null) {
 					node_.removeChild(listEntries);
 				}
-				listEntries = node_.selectSingleNode("map-entries");
+				listEntries = node_.selectSingleNode("map-entries"); //$NON-NLS-1$
 				if (listEntries != null) {
 					node_.removeChild(listEntries);
 				}
@@ -510,9 +510,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 			 */
 			@Override
 			public String getListValueClassName() {
-				XMLNode valueNode = node_.selectSingleNode("list-entries/value-class");
+				XMLNode valueNode = node_.selectSingleNode("list-entries/value-class"); //$NON-NLS-1$
 				if (valueNode == null) {
-					return "";
+					return ""; //$NON-NLS-1$
 				}
 				return valueNode.getText();
 			}
@@ -522,26 +522,26 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 			 */
 			@Override
 			public void setListValueClassName(final String className) {
-				XMLNode valueNode = node_.selectSingleNode("list-entries/value-class");
+				XMLNode valueNode = node_.selectSingleNode("list-entries/value-class"); //$NON-NLS-1$
 				if (valueNode == null) {
-					XMLNode listEntries = node_.selectSingleNode("list-entries");
+					XMLNode listEntries = node_.selectSingleNode("list-entries"); //$NON-NLS-1$
 					if (listEntries == null) {
-						listEntries = node_.addChildElement("list-entries");
+						listEntries = node_.addChildElement("list-entries"); //$NON-NLS-1$
 					}
-					valueNode = listEntries.addChildElement("value-class");
+					valueNode = listEntries.addChildElement("value-class"); //$NON-NLS-1$
 				}
 				valueNode.setText(className);
 
 				// Clear out any value and map-entries, as they're mutually incompatible with list-entries
-				XMLNode value = node_.selectSingleNode("value");
+				XMLNode value = node_.selectSingleNode("value"); //$NON-NLS-1$
 				if (value != null) {
 					node_.removeChild(value);
 				}
-				value = node_.selectSingleNode("null-value");
+				value = node_.selectSingleNode("null-value"); //$NON-NLS-1$
 				if (value != null) {
 					node_.removeChild(value);
 				}
-				value = node_.selectSingleNode("map-entries");
+				value = node_.selectSingleNode("map-entries"); //$NON-NLS-1$
 				if (value != null) {
 					node_.removeChild(value);
 				}
@@ -553,9 +553,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 			@Override
 			public List<String> getListEntries() {
 				List<String> result = new ArrayList<String>();
-				List<XMLNode> nodes = node_.selectNodes("list-entries/value | list-entries/null-value");
+				List<XMLNode> nodes = node_.selectNodes("list-entries/value | list-entries/null-value"); //$NON-NLS-1$
 				for (XMLNode node : nodes) {
-					if ("value".equals(node.getNodeName())) {
+					if ("value".equals(node.getNodeName())) { //$NON-NLS-1$
 						result.add(node.getText());
 					} else {
 						result.add(null);
@@ -570,33 +570,33 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 			 */
 			@Override
 			public void setListEntries(final Collection<?> listEntries) {
-				XMLNode listEntriesNode = node_.selectSingleNode("list-entries");
+				XMLNode listEntriesNode = node_.selectSingleNode("list-entries"); //$NON-NLS-1$
 				String valueClassName = getListValueClassName();
 				if (listEntriesNode != null) {
 					node_.removeChild(listEntriesNode);
 				}
-				listEntriesNode = node_.addChildElement("list-entries");
-				XMLNode valueClassNode = listEntriesNode.addChildElement("value-class");
+				listEntriesNode = node_.addChildElement("list-entries"); //$NON-NLS-1$
+				XMLNode valueClassNode = listEntriesNode.addChildElement("value-class"); //$NON-NLS-1$
 				valueClassNode.setText(valueClassName);
 				for (Object entry : listEntries) {
 					if (entry == null) {
-						listEntriesNode.addChildElement("null-value");
+						listEntriesNode.addChildElement("null-value"); //$NON-NLS-1$
 					} else {
-						XMLNode valueNode = listEntriesNode.addChildElement("value");
+						XMLNode valueNode = listEntriesNode.addChildElement("value"); //$NON-NLS-1$
 						valueNode.setText(String.valueOf(entry));
 					}
 				}
 
 				// Clear out any value and map-entries, as they're mutually incompatible with list-entries
-				XMLNode value = node_.selectSingleNode("value");
+				XMLNode value = node_.selectSingleNode("value"); //$NON-NLS-1$
 				if (value != null) {
 					node_.removeChild(value);
 				}
-				value = node_.selectSingleNode("null-value");
+				value = node_.selectSingleNode("null-value"); //$NON-NLS-1$
 				if (value != null) {
 					node_.removeChild(value);
 				}
-				value = node_.selectSingleNode("map-entries");
+				value = node_.selectSingleNode("map-entries"); //$NON-NLS-1$
 				if (value != null) {
 					node_.removeChild(value);
 				}
@@ -609,13 +609,13 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 			public Map<String, String> getMapEntries() {
 				Map<String, String> result = new LinkedHashMap<String, String>();
 
-				List<XMLNode> mapEntries = node_.selectNodes("map-entries/map-entry");
+				List<XMLNode> mapEntries = node_.selectNodes("map-entries/map-entry"); //$NON-NLS-1$
 				for (XMLNode entry : mapEntries) {
-					XMLNode keyNode = entry.selectSingleNode("key");
-					XMLNode valueNode = entry.selectSingleNode("value | null-value");
+					XMLNode keyNode = entry.selectSingleNode("key"); //$NON-NLS-1$
+					XMLNode valueNode = entry.selectSingleNode("value | null-value"); //$NON-NLS-1$
 
 					if (keyNode != null) {
-						if (valueNode == null || "null-value".equals(valueNode.getNodeName())) {
+						if (valueNode == null || "null-value".equals(valueNode.getNodeName())) { //$NON-NLS-1$
 							result.put(keyNode.getText(), null);
 						} else {
 							result.put(keyNode.getText(), valueNode.getText());
@@ -631,29 +631,29 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 			 */
 			@Override
 			public void setMapEntries(final Map<?, ?> mapEntries) {
-				XMLNode mapEntriesNode = node_.selectSingleNode("map-entries");
+				XMLNode mapEntriesNode = node_.selectSingleNode("map-entries"); //$NON-NLS-1$
 				if (mapEntriesNode != null) {
 					node_.removeChild(mapEntriesNode);
 				}
-				mapEntriesNode = node_.addChildElement("map-entries");
+				mapEntriesNode = node_.addChildElement("map-entries"); //$NON-NLS-1$
 				for (Map.Entry<?, ?> entry : mapEntries.entrySet()) {
-					XMLNode entryNode = mapEntriesNode.addChildElement("map-entry");
-					XMLNode keyNode = entryNode.addChildElement("key");
+					XMLNode entryNode = mapEntriesNode.addChildElement("map-entry"); //$NON-NLS-1$
+					XMLNode keyNode = entryNode.addChildElement("key"); //$NON-NLS-1$
 					keyNode.setText(String.valueOf(entry.getKey()));
 					if (entry.getValue() == null) {
-						entryNode.addChildElement("null-value");
+						entryNode.addChildElement("null-value"); //$NON-NLS-1$
 					} else {
-						XMLNode valueNode = entryNode.addChildElement("value");
+						XMLNode valueNode = entryNode.addChildElement("value"); //$NON-NLS-1$
 						valueNode.setText(String.valueOf(entry.getValue()));
 					}
 				}
 
 				// Clear out any value or list-entries, as they're mutually incompatible with map-entries
-				XMLNode value = node_.selectSingleNode("value");
+				XMLNode value = node_.selectSingleNode("value"); //$NON-NLS-1$
 				if (value != null) {
 					node_.removeChild(value);
 				}
-				XMLNode listEntries = node_.selectSingleNode("list-entries");
+				XMLNode listEntries = node_.selectSingleNode("list-entries"); //$NON-NLS-1$
 				if (listEntries != null) {
 					node_.removeChild(listEntries);
 				}
@@ -681,9 +681,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public String getId() {
-			XMLNode valueNode = node_.selectSingleNode("converter-id");
+			XMLNode valueNode = node_.selectSingleNode("converter-id"); //$NON-NLS-1$
 			if (valueNode == null) {
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			return valueNode.getText();
 		}
@@ -693,9 +693,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public void setId(final String id) {
-			XMLNode valueNode = node_.selectSingleNode("converter-id");
+			XMLNode valueNode = node_.selectSingleNode("converter-id"); //$NON-NLS-1$
 			if (valueNode == null) {
-				valueNode = node_.addChildElement("converter-id");
+				valueNode = node_.addChildElement("converter-id"); //$NON-NLS-1$
 			}
 			valueNode.setText(id);
 		}
@@ -705,9 +705,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public String getClassName() {
-			XMLNode valueNode = node_.selectSingleNode("converter-class");
+			XMLNode valueNode = node_.selectSingleNode("converter-class"); //$NON-NLS-1$
 			if (valueNode == null) {
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			return valueNode.getText();
 		}
@@ -717,9 +717,9 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 		 */
 		@Override
 		public void setClassName(final String className) {
-			XMLNode valueNode = node_.selectSingleNode("converter-class");
+			XMLNode valueNode = node_.selectSingleNode("converter-class"); //$NON-NLS-1$
 			if (valueNode == null) {
-				valueNode = node_.addChildElement("converter-class");
+				valueNode = node_.addChildElement("converter-class"); //$NON-NLS-1$
 			}
 			valueNode.setText(className);
 		}

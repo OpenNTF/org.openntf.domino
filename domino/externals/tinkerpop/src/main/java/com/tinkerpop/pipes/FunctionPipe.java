@@ -6,6 +6,7 @@ package com.tinkerpop.pipes;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class FunctionPipe<S, E> extends AbstractPipe<S, E> {
 
     private final PipeFunction function;

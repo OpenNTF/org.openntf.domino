@@ -70,6 +70,7 @@ public class FramedGraphFactory {
 	 * @param baseGraph The base graph to get a configuration for.
 	 * @return The configuration.
 	 */
+    @SuppressWarnings("nls")
 	protected <T extends Graph> FramedGraphConfiguration getConfiguration(Class<T> requiredType, T baseGraph) {
 		Graph configuredGraph = baseGraph;
 		FramedGraphConfiguration config = getBaseConfig();

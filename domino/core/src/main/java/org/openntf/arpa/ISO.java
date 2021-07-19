@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  * @author dolson
  *
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "nls" })
 public enum ISO {
 	;
 

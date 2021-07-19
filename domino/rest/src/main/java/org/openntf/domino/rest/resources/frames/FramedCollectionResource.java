@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,7 @@ import com.ibm.domino.httpmethod.PATCH;
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.VertexFrame;
 
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 @Path(Routes.ROOT + "/" + Routes.FRAMES + "/" + Routes.NAMESPACE_PATH_PARAM)
 public class FramedCollectionResource extends AbstractCollectionResource {
 
@@ -106,7 +107,6 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		return berg;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFramedObject(@Context final UriInfo uriInfo, @PathParam(Routes.NAMESPACE) final String namespace,
@@ -271,7 +271,6 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		// writer.outArrayLiteral(result);
 	}
 
-	@SuppressWarnings("unchecked")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -280,7 +279,6 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 					throws JsonException, IOException {
 		// org.apache.wink.common.internal.registry.metadata.ResourceMetadataCollector
 		// rc;
-		@SuppressWarnings("rawtypes")
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		StringWriter sw = new StringWriter();
@@ -346,6 +344,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		return response;
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	private boolean processJsonObject(final JsonJavaObject jsonItems, final DFramedTransactionalGraph graph, final JsonGraphWriter writer,
 			final Map<Object, Object> results) {
 		Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
@@ -564,6 +563,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 
 	protected Response updateFrameByMetaid(final String requestEntity, final String namespace, final String ifUnmodifiedSince,
 			final ParamMap pm, final boolean isPut, final Request request) throws JsonException, IOException {
+		@SuppressWarnings("unused")
 		Response result = null;
 		DFramedTransactionalGraph<?> graph = this.getGraph(namespace);
 		JsonJavaObject jsonItems = null;
@@ -614,6 +614,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		return response;
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	private void processJsonUpdate(final JsonJavaObject jsonItems, final DFramedTransactionalGraph graph, final JsonGraphWriter writer,
 			final ParamMap pm, final String method) throws JsonException, IOException {
 		boolean commit = true;

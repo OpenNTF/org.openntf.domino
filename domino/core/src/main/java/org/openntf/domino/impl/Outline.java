@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -346,7 +346,7 @@ org.openntf.domino.Outline {
 	public String getNoteID() {
 		NoteCollection notes = this.getParentDatabase().createNoteCollection(false);
 		notes.setSelectOutlines(true);
-		notes.setSelectionFormula("$TITLE=\"" + this.getName().replace("\"", "\\\"") + "\"");
+		notes.setSelectionFormula("$TITLE=\"" + this.getName().replace("\"", "\\\"") + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		notes.buildCollection();
 		return notes.getFirstNoteID();
 	}
@@ -413,7 +413,7 @@ org.openntf.domino.Outline {
 	public String getUniversalID() {
 		NoteCollection notes = this.getParentDatabase().createNoteCollection(false);
 		notes.setSelectOutlines(true);
-		notes.setSelectionFormula("$TITLE=\"" + this.getName().replace("\"", "\\\"") + "\"");
+		notes.setSelectionFormula("$TITLE=\"" + this.getName().replace("\"", "\\\"") + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		notes.buildCollection();
 		return notes.getUNID(notes.getFirstNoteID());
 	}

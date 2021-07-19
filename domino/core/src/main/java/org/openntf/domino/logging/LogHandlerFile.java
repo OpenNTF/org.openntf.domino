@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,7 @@ import org.openntf.domino.utils.Factory;
  * </pre>
  *
  */
+@SuppressWarnings("nls")
 public class LogHandlerFile extends FileHandler implements LogHandlerUpdateIF {
 
 	private static class LHFConfig implements LogHandlerConfigIF {
@@ -111,30 +112,30 @@ public class LogHandlerFile extends FileHandler implements LogHandlerUpdateIF {
 					ind = -1;
 					break;
 				}
-				if (propKey.equals("Limit")) {
+				if (propKey.equals("Limit")) { //$NON-NLS-1$
 					if ((ind = parsePosNum(propValue, 1000)) > 0) {
 						ret.limit = ind;
 					}
 					break;
 				}
-				if (propKey.equals("Count")) {
+				if (propKey.equals("Count")) { //$NON-NLS-1$
 					if ((ind = parsePosNum(propValue, 1)) > 0) {
 						ret.count = ind;
 					}
 					break;
 				}
-				if (propKey.equals("Append")) {
-					if (propValue.equals("true")) {
+				if (propKey.equals("Append")) { //$NON-NLS-1$
+					if (propValue.equals("true")) { //$NON-NLS-1$
 						ret.append = true;
-					} else if (propValue.equals("false")) {
+					} else if (propValue.equals("false")) { //$NON-NLS-1$
 						ret.append = false;
 					} else {
 						ind = -1;
 					}
 					break;
 				}
-				if (propKey.equals("Pattern")) {
-					ret.pattern = propValue.replace("<notesdata>", Factory.getDataPath());
+				if (propKey.equals("Pattern")) { //$NON-NLS-1$
+					ret.pattern = propValue.replace("<notesdata>", Factory.getDataPath()); //$NON-NLS-1$
 					if (ret.pattern.length() < 3) {
 						ind = -1;
 					}

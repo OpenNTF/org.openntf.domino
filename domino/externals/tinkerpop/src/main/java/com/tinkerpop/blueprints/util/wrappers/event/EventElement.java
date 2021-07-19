@@ -17,6 +17,7 @@ import java.util.Set;
  *
  * @author Stephen Mallette
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class EventElement implements Element {
     protected final EventGraph eventGraph;
 

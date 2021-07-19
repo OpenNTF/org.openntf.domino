@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.openntf.domino.utils.Factory;
  * {@link org.openntf.domino.exceptions.OpenNTFNotesException}. Such exceptions contain details about the environment (Notes user name,
  * current database and so on).
  */
+@SuppressWarnings("nls")
 public class LogRecordAdditionalInfo {
 
 	private List<ExceptionDetails.Entry> exceptionDetails;

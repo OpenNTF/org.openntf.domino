@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,9 +148,9 @@ public class DominoEmail implements IEmail {
 	public Document createSimpleEmail(final Object toNames, final Object ccNames, final Object bccNames, final String subject,
 			final Object body, final String sender) {
 		try {
-			setTo(convertObjectToList(toNames, ","));
-			setCC(convertObjectToList(ccNames, ","));
-			setBCC(convertObjectToList(bccNames, ","));
+			setTo(convertObjectToList(toNames, ",")); //$NON-NLS-1$
+			setCC(convertObjectToList(ccNames, ",")); //$NON-NLS-1$
+			setBCC(convertObjectToList(bccNames, ",")); //$NON-NLS-1$
 			setSubject(subject);
 			setSenderEmail(sender);
 			if (body instanceof CharSequence) {
@@ -192,7 +192,7 @@ public class DominoEmail implements IEmail {
 				retVal_.addAll((List<String>) obj);
 			} else if (obj instanceof CharSequence) {
 				String tmp = obj.toString();
-				String[] tmpArr = tmp.split(",");
+				String[] tmpArr = tmp.split(","); //$NON-NLS-1$
 				for (String element : tmpArr) {
 					retVal_.add(element);
 				}
@@ -220,11 +220,11 @@ public class DominoEmail implements IEmail {
 	@SuppressWarnings("unused")
 	private String generateContentId() {
 		try {
-			Vector<Object> evalResult = getSession().evaluate("@Unique");
+			Vector<Object> evalResult = getSession().evaluate("@Unique"); //$NON-NLS-1$
 			return evalResult.get(0).toString();
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 
@@ -237,9 +237,9 @@ public class DominoEmail implements IEmail {
 
 		// Add plain text part of email
 		if (StringUtil.isEmpty(content.toString())) {
-			contentsText_.add("");
+			contentsText_.add(""); //$NON-NLS-1$
 		} else {
-			contentsText_.add(content.toString().replaceAll("<[a-zA-Z\\/][^>]*>", ""));
+			contentsText_.add(content.toString().replaceAll("<[a-zA-Z\\/][^>]*>", "")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -259,7 +259,7 @@ public class DominoEmail implements IEmail {
 		contentsText_.add(content.toString());
 
 		// Add HTML part by replacing all line breaks with br tag
-		contentsHTML_.add(StringUtil.replace(content.toString(), System.getProperty("line.separator"), "<br/>"));
+		contentsHTML_.add(StringUtil.replace(content.toString(), System.getProperty("line.separator"), "<br/>")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
@@ -339,7 +339,7 @@ public class DominoEmail implements IEmail {
 	public String addFileAttachment(final String path, final String fileName, final boolean isInlineImage) {
 		EmailAttachment att = new EmailAttachment(path, fileName, isInlineImage);
 		addAttachment(att);
-		return "cid:" + att.getContentId();
+		return "cid:" + att.getContentId(); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -349,7 +349,7 @@ public class DominoEmail implements IEmail {
 	public String addFileAttachment(final String path, final String fileName, final boolean isInlineImage, final String contentId) {
 		EmailAttachment att = new EmailAttachment(path, fileName, isInlineImage, contentId);
 		addAttachment(att);
-		return "cid:" + contentId;
+		return "cid:" + contentId; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -393,20 +393,20 @@ public class DominoEmail implements IEmail {
 				// Get content type
 				String contentType = URLConnection.guessContentTypeFromName(fileName);
 				if (null == contentType) {
-					contentType = "application/octet-stream";
+					contentType = "application/octet-stream"; //$NON-NLS-1$
 				}
-				int idex = StringUtil.indexOfIgnoreCase(fileName, ".", fileName.length() - 6);
+				int idex = StringUtil.indexOfIgnoreCase(fileName, ".", fileName.length() - 6); //$NON-NLS-1$
 				if (idex > -1) {
 					String extension = fileName.substring(idex);
-					if (StringUtil.equals("gif", extension)) {
-						contentType = "image/gif";
-					} else if (StringUtil.equals("jpg", extension) || StringUtil.equals("jpeg", extension)) {
-						contentType = "image/jpeg";
-					} else if (StringUtil.equals("png", extension)) {
-						contentType = "image/png";
+					if (StringUtil.equals("gif", extension)) { //$NON-NLS-1$
+						contentType = "image/gif"; //$NON-NLS-1$
+					} else if (StringUtil.equals("jpg", extension) || StringUtil.equals("jpeg", extension)) { //$NON-NLS-1$ //$NON-NLS-2$
+						contentType = "image/jpeg"; //$NON-NLS-1$
+					} else if (StringUtil.equals("png", extension)) { //$NON-NLS-1$
+						contentType = "image/png"; //$NON-NLS-1$
 					}
 				}
-				contentType += "; name=\"" + fileName + "\"";
+				contentType += "; name=\"" + fileName + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 
 				try {
 					Type attachmentType = attach.getAttachmentType();
@@ -429,16 +429,16 @@ public class DominoEmail implements IEmail {
 
 					if (null != is) {
 						MIMEEntity mimeChild = parent.createChildEntity();
-						MIMEHeader mimeHeader = mimeChild.createHeader("Content-Disposition");
+						MIMEHeader mimeHeader = mimeChild.createHeader("Content-Disposition"); //$NON-NLS-1$
 
 						if (attach.isInlineImage()) {
-							mimeHeader.setHeaderVal("inline; filename=\"" + attach.getFileName() + "\"");
+							mimeHeader.setHeaderVal("inline; filename=\"" + attach.getFileName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 						} else {
-							mimeHeader.setHeaderVal("attachment; filename=\"" + attach.getFileName() + "\"");
+							mimeHeader.setHeaderVal("attachment; filename=\"" + attach.getFileName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 
-						mimeHeader = mimeChild.createHeader("Content-ID");
-						mimeHeader.setHeaderVal("<" + attach.getContentId() + ">");
+						mimeHeader = mimeChild.createHeader("Content-ID"); //$NON-NLS-1$
+						mimeHeader.setHeaderVal("<" + attach.getContentId() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 
 						streamFile = getSession().createStream();
 						streamFile.setContents(is);
@@ -632,49 +632,49 @@ public class DominoEmail implements IEmail {
 				currDb = currSess.getCurrentDatabase();
 				if (null == currDb) {
 					// Will this work if we're running from DOTS or OSGi plugin??
-					currDb = currSess.getDatabase(currSess.getServerName(), "mail.box");
+					currDb = currSess.getDatabase(currSess.getServerName(), "mail.box"); //$NON-NLS-1$
 				}
 			} catch (Throwable t) {
-				currDb = currSess.getDatabase(currSess.getServerName(), "mail.box");
+				currDb = currSess.getDatabase(currSess.getServerName(), "mail.box"); //$NON-NLS-1$
 			}
 			Document memo = currDb.createDocument();
-			memo.put("RecNoOutOfOffice", "1");    //no replies from out of office agents
+			memo.put("RecNoOutOfOffice", "1");    //no replies from out of office agents //$NON-NLS-1$ //$NON-NLS-2$
 			String mimeBoundary = memo.getUniversalID().toLowerCase();
 
-			MIMEEntity mimeRoot = memo.createMIMEEntity("Body");
+			MIMEEntity mimeRoot = memo.createMIMEEntity("Body"); //$NON-NLS-1$
 
-			mimeHeader = mimeRoot.createHeader("To");
-			mimeHeader.setHeaderVal(join(getTo(), ""));
+			mimeHeader = mimeRoot.createHeader("To"); //$NON-NLS-1$
+			mimeHeader.setHeaderVal(join(getTo(), "")); //$NON-NLS-1$
 			//memo.replaceItemValue("sendTo", getTo());
 
 			if (cc_.size() > 0) {
-				mimeHeader = mimeRoot.createHeader("CC");
-				mimeHeader.setHeaderVal(join(getCC(), ""));
+				mimeHeader = mimeRoot.createHeader("CC"); //$NON-NLS-1$
+				mimeHeader.setHeaderVal(join(getCC(), "")); //$NON-NLS-1$
 				//memo.replaceItemValue("cc", getCC());
 			}
 
 			if (bcc_.size() > 0) {
-				mimeHeader = mimeRoot.createHeader("BCC");
-				mimeHeader.setHeaderVal(join(getBCC(), ""));
+				mimeHeader = mimeRoot.createHeader("BCC"); //$NON-NLS-1$
+				mimeHeader.setHeaderVal(join(getBCC(), "")); //$NON-NLS-1$
 				//memo.replaceItemValue("bcc", getBCC());
 			}
 
 			//set subject
-			mimeHeader = mimeRoot.createHeader("Subject");
-			mimeHeader.addValText(getSubject(), "UTF-8");
+			mimeHeader = mimeRoot.createHeader("Subject"); //$NON-NLS-1$
+			mimeHeader.addValText(getSubject(), "UTF-8"); //$NON-NLS-1$
 
 			//create text/alternative directive: text/plain and text/html part will be childs of this entity
 			MIMEEntity mimeRootChild = mimeRoot.createChildEntity();
 
-			mimeHeader = mimeRootChild.createHeader("Content-Type");
-			mimeHeader.setHeaderVal("multipart/alternative; boundary=\"" + mimeBoundary + "\"");
+			mimeHeader = mimeRootChild.createHeader("Content-Type"); //$NON-NLS-1$
+			mimeHeader.setHeaderVal("multipart/alternative; boundary=\"" + mimeBoundary + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 
 			//create plain text part
 			if (getText().size() > 0) {
 				mimeEntity = mimeRootChild.createChildEntity();
 				stream = currSess.createStream();
-				stream.writeText(join(getText(), System.getProperty("line.separator")));
-				mimeEntity.setContentFromText(stream, "text/plain; charset=\"UTF-8\"", MIMEEntity.ENC_NONE);
+				stream.writeText(join(getText(), System.getProperty("line.separator"))); //$NON-NLS-1$
+				mimeEntity.setContentFromText(stream, "text/plain; charset=\"UTF-8\"", MIMEEntity.ENC_NONE); //$NON-NLS-1$
 				stream.close();
 			}
 
@@ -682,8 +682,8 @@ public class DominoEmail implements IEmail {
 			if (contentsHTML_.size() > 0) {
 				mimeEntity = mimeRootChild.createChildEntity();
 				stream = currSess.createStream();
-				stream.writeText(join(contentsHTML_, System.getProperty("line.separator")));
-				mimeEntity.setContentFromText(stream, "text/html; charset=\"UTF-8\"", MIMEEntity.ENC_NONE);
+				stream.writeText(join(contentsHTML_, System.getProperty("line.separator"))); //$NON-NLS-1$
+				mimeEntity.setContentFromText(stream, "text/html; charset=\"UTF-8\"", MIMEEntity.ENC_NONE); //$NON-NLS-1$
 				stream.close();
 			}
 
@@ -691,9 +691,9 @@ public class DominoEmail implements IEmail {
 			if (!StringUtil.isEmpty(getJSON())) {
 				mimeEntity = mimeRootChild.createChildEntity();
 				stream = currSess.createStream();
-				String json = "{\"url\" : \"" + getJSON() + "\"}" + System.getProperty("line.separator");
+				String json = "{\"url\" : \"" + getJSON() + "\"}" + System.getProperty("line.separator"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				stream.writeText(json);
-				mimeEntity.setContentFromText(stream, "application/embed+json; charset=\"UTF-8\"", MIMEEntity.ENC_NONE);
+				mimeEntity.setContentFromText(stream, "application/embed+json; charset=\"UTF-8\"", MIMEEntity.ENC_NONE); //$NON-NLS-1$
 				stream.close();
 			}
 
@@ -731,25 +731,25 @@ public class DominoEmail implements IEmail {
 
 		MIMEHeader mimeHeader = null;
 
-		mimeHeader = mimeRoot.createHeader("Reply-To");
+		mimeHeader = mimeRoot.createHeader("Reply-To"); //$NON-NLS-1$
 		mimeHeader.setHeaderVal(getSenderEmail());
 
-		mimeHeader = mimeRoot.createHeader("Return-Path");
+		mimeHeader = mimeRoot.createHeader("Return-Path"); //$NON-NLS-1$
 		mimeHeader.setHeaderVal(getSenderEmail());
 
 		if (StringUtil.isEmpty(getSenderName())) {
 
-			mimeHeader = mimeRoot.createHeader("From");
+			mimeHeader = mimeRoot.createHeader("From"); //$NON-NLS-1$
 			mimeHeader.setHeaderVal(getSenderEmail());
-			mimeHeader = mimeRoot.createHeader("Sender");
+			mimeHeader = mimeRoot.createHeader("Sender"); //$NON-NLS-1$
 			mimeHeader.setHeaderVal(getSenderEmail());
 
 		} else {
 
-			mimeHeader = mimeRoot.createHeader("From");
-			mimeHeader.addValText("\"" + getSenderName() + "\" <" + getSenderEmail() + ">", "UTF-8");
-			mimeHeader = mimeRoot.createHeader("Sender");
-			mimeHeader.addValText("\"" + getSenderName() + "\" <" + getSenderEmail() + ">", "UTF-8");
+			mimeHeader = mimeRoot.createHeader("From"); //$NON-NLS-1$
+			mimeHeader.addValText("\"" + getSenderName() + "\" <" + getSenderEmail() + ">", "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			mimeHeader = mimeRoot.createHeader("Sender"); //$NON-NLS-1$
+			mimeHeader.addValText("\"" + getSenderName() + "\" <" + getSenderEmail() + ">", "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 		}
 
@@ -768,9 +768,9 @@ public class DominoEmail implements IEmail {
 	 * @since org.openntf.domino 4.5.0
 	 */
 	public static String join(final Collection<String> vals, String separator) {
-		String retVal_ = "";
+		String retVal_ = ""; //$NON-NLS-1$
 		if (StringUtil.isEmpty(separator)) {
-			separator = ",";
+			separator = ","; //$NON-NLS-1$
 		}
 		for (String s : vals) {
 			retVal_ += s + separator;

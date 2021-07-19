@@ -16,6 +16,7 @@ import java.util.Map;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked", "deprecation", "nls" })
 public class FramedElement implements InvocationHandler {
 
 	private final Direction direction;

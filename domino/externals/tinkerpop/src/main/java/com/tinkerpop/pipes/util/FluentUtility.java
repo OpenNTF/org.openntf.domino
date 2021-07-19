@@ -12,6 +12,7 @@ import java.util.List;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class FluentUtility {
 
     /**
@@ -44,7 +45,7 @@ public class FluentUtility {
             if (asPipe.getName().equals(namedStep))
                 return asPipe;
         }
-        throw new RuntimeException("No AsPipe with provided name: " + namedStep);
+        throw new RuntimeException("No AsPipe with provided name: " + namedStep); //$NON-NLS-1$
     }
 
     /**

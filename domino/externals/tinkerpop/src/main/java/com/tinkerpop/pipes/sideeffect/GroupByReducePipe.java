@@ -4,12 +4,12 @@ import com.tinkerpop.pipes.PipeFunction;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public class GroupByReducePipe<S, K, V, V2> extends GroupByPipe<S, K, V> {
 
     private Map<K, V2> reduceMap;

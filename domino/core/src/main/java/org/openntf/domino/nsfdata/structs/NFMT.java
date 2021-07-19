@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class NFMT extends AbstractStruct {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Digits: " + Digits.get() + ", Format: " + Format.get() + ", Attributes: "
-				+ getAttributes() + "]";
+		return "[" + getClass().getSimpleName() + ", Digits: " + Digits.get() + ", Format: " + Format.get() + ", Attributes: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				+ getAttributes() + "]"; //$NON-NLS-1$
 	}
 }

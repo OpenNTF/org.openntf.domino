@@ -33,6 +33,7 @@ import java.util.List;
  * @author Roland Praml, Foconis AG
  * 
  */
+@SuppressWarnings("nls")
 public abstract class ValueHolder implements Serializable {
 	private static final long serialVersionUID = 8290517470597891417L;
 
@@ -89,15 +90,15 @@ public abstract class ValueHolder implements Serializable {
 		stringCache = new ValueHolder[256];
 
 		nothing = new ValueHolderObject<Object>(1);
-		nothing.add("");
+		nothing.add(""); //$NON-NLS-1$
 		nothing.immutable = true;
 
 		defaultVar = new ValueHolderObject<Object>(1);
-		defaultVar.add("");
+		defaultVar.add(""); //$NON-NLS-1$
 		defaultVar.immutable = true;
 
 		unavailable = new ValueHolderObject<String>(1);
-		unavailable.add("");
+		unavailable.add(""); //$NON-NLS-1$
 		unavailable.dataType = DataType.UNAVAILABLE;
 		unavailable.immutable = true;
 
@@ -108,7 +109,7 @@ public abstract class ValueHolder implements Serializable {
 
 			ValueHolder vho = stringCache[i] = new ValueHolderObject<Object>(1);
 			if (i == 0) {
-				vho.add("");
+				vho.add(""); //$NON-NLS-1$
 			} else {
 				vho.add(String.valueOf((char) i));
 			}

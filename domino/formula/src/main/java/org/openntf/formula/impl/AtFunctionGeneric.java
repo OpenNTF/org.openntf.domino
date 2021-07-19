@@ -24,6 +24,7 @@ import org.openntf.formula.FormulaReturnException;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.annotation.ParamCount;
 
+@SuppressWarnings("nls")
 public class AtFunctionGeneric extends AtFunction {
 	// How this works:
 	// 

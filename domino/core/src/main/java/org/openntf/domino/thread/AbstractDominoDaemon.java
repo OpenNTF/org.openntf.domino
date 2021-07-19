@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ public abstract class AbstractDominoDaemon<T> extends AbstractDominoRunnable {
 					stop();
 				} catch (PrivilegedActionException e) {
 					stop();
-					log_.log(Level.SEVERE, "Error in " + this.getClass().getName(), e);
+					log_.log(Level.SEVERE, "Error in " + this.getClass().getName(), e); //$NON-NLS-1$
 				}
 			}
 			setChanged();

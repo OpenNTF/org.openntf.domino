@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,8 +38,8 @@ public class DominoConfig extends ExtlibPluginConfig {
 	@Override
 	// TODO: Remove before 3.0 - all functionality introduced in ExtLib 14
 	public String[] getXspConfigFiles(final String[] files) {
-		return concat(files, new String[] { "org/openntf/domino/xsp/config/openntf-domino-picker.xsp-config", // $NON-NLS-1$
-				"org/openntf/domino/xsp/config/openntf-dominodocument.xsp-config",// $NON-NLS-1$
+		return concat(files, new String[] { "org/openntf/domino/xsp/config/openntf-domino-picker.xsp-config", //$NON-NLS-1$
+				"org/openntf/domino/xsp/config/openntf-dominodocument.xsp-config",//$NON-NLS-1$
 		});
 	}
 

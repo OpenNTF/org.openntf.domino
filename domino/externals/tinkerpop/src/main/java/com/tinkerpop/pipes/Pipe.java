@@ -11,6 +11,7 @@ import java.util.List;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @author Darrick Wiebe (darrick@innatesoftware.com)
  */
+@SuppressWarnings({ "rawtypes", "nls" })
 public interface Pipe<S, E> extends Iterator<E>, Iterable<E> {
 
     public static final String NO_PATH_MESSAGE = "Path calculations are not enabled";

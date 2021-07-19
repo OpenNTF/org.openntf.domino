@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class NSFCompiledFormula implements Externalizable {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + "]";
+		return "[" + getClass().getSimpleName() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override

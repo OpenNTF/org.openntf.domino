@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,7 @@ public enum DominoFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
+	@SuppressWarnings("nls")
 	@ParamCount(2)
 	public static ValueHolder atGetDocField(final FormulaContextNotes ctx, final ValueHolder[] params) {
 		Database db = ctx.getDatabase();
@@ -80,6 +81,7 @@ public enum DominoFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
+	@SuppressWarnings("nls")
 	@ParamCount(3)
 	public static ValueHolder atSetDocField(final FormulaContextNotes ctx, final ValueHolder[] params) {
 		Database db = ctx.getDatabase();

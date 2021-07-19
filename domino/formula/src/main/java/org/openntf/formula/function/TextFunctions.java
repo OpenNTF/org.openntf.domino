@@ -45,6 +45,7 @@ import org.openntf.formula.annotation.DiffersFromLotus;
 import org.openntf.formula.annotation.OpenNTF;
 import org.openntf.formula.annotation.ParamCount;
 
+@SuppressWarnings("nls")
 public enum TextFunctions {
 	;
 

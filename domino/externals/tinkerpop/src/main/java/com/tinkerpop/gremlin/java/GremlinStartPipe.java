@@ -9,6 +9,7 @@ import java.util.List;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public class GremlinStartPipe extends IdentityPipe {
 
     private final boolean startIsGraph;

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.openntf.domino.types.CaseInsensitiveString;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class JsonGraphFactory extends JsonJavaFactory {
 	public static final JsonGraphFactory instance = new JsonGraphFactory();
 
@@ -67,7 +68,6 @@ public class JsonGraphFactory extends JsonJavaFactory {
 		return new JsonJavaObject();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object createArray(Object paramObject, String paramString, Collection<Object> paramList)
 			throws JsonException {
 		if (paramList instanceof List) {
@@ -77,7 +77,6 @@ public class JsonGraphFactory extends JsonJavaFactory {
 	}
 
 	@Override
-	@SuppressWarnings({ "rawtypes" })
 	public boolean isArray(Object arg0) throws JsonException {
 		if (arg0 instanceof List) {
 			return super.isArray(arg0);
@@ -92,7 +91,6 @@ public class JsonGraphFactory extends JsonJavaFactory {
 	}
 
 	@Override
-	@SuppressWarnings({ "rawtypes" })
 	public int getArrayCount(Object paramObject) throws JsonException {
 		if (paramObject instanceof List) {
 			return super.getArrayCount(paramObject);
@@ -103,7 +101,6 @@ public class JsonGraphFactory extends JsonJavaFactory {
 	}
 
 	@Override
-	@SuppressWarnings({ "rawtypes" })
 	public Object getArrayItem(Object paramObject, int paramInt) throws JsonException {
 		if (paramObject instanceof List) {
 			return super.getArrayItem(paramObject, paramInt);
@@ -114,7 +111,6 @@ public class JsonGraphFactory extends JsonJavaFactory {
 	}
 
 	@Override
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Iterator<Object> iterateArrayValues(Object paramObject) throws JsonException {
 		// System.out.println("TEMP DEBUG iterating array values from a " +
 		// paramObject.getClass().getName());
@@ -130,7 +126,6 @@ public class JsonGraphFactory extends JsonJavaFactory {
 		return super.iterateArrayValues(paramObject);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Iterator<String> iterateObjectProperties(Object object) throws JsonException {
 		Iterator it = super.iterateObjectProperties(object);
@@ -185,8 +180,8 @@ public class JsonGraphFactory extends JsonJavaFactory {
 			result = ((JsonObject) paramObject).getJsonProperty(paramString);
 		} else {
 			throw new IllegalArgumentException(StringUtil.format(
-					ResourceHandler.getString("JsonJavaFactory.InvalidJsonobjectclass0.1"),
-					new Object[] { (paramObject != null) ? paramObject.getClass().toString() : "null" }));
+					ResourceHandler.getString("JsonJavaFactory.InvalidJsonobjectclass0.1"), //$NON-NLS-1$
+					new Object[] { (paramObject != null) ? paramObject.getClass().toString() : "null" })); //$NON-NLS-1$
 		}
 		// System.out.println("TEMP DEBUG Getting a property of " + paramString
 		// + " from an object of type "

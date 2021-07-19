@@ -14,6 +14,7 @@ import java.util.Map;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class GroupByPipe<S, K, V> extends AbstractPipe<S, S> implements SideEffectPipe.GreedySideEffectPipe<S, Map<K, List<V>>> {
 
     protected Map<K, Collection<V>> byMap;

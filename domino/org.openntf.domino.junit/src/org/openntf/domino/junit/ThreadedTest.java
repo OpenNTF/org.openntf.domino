@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public abstract class ThreadedTest implements Callable<String> {
 			futures[i] = Xots.submit(this.getClass().newInstance());
 		}
 		for (i = 0; i < threadCount; i++) {
-			assertEquals("SUCCESS", futures[i].get());
+			assertEquals("SUCCESS", futures[i].get()); //$NON-NLS-1$
 		}
 	}
 

@@ -11,6 +11,7 @@ import java.util.Set;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public abstract class PartitionElement implements Element {
 
     protected Element baseElement;

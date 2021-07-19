@@ -45,7 +45,8 @@ public abstract class WrapperVertexQuery implements VertexQuery {
         return this;
     }
 
-    public <T extends Comparable<T>> VertexQuery has(final String key, final T value, final Compare compare) {
+    @SuppressWarnings("deprecation")
+	public <T extends Comparable<T>> VertexQuery has(final String key, final T value, final Compare compare) {
         return this.has(key, compare, value);
     }
 

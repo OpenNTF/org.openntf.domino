@@ -3,7 +3,6 @@ package com.tinkerpop.frames.annotations;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.frames.FramedGraph;
-import com.tinkerpop.frames.modules.MethodHandler;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -15,6 +14,7 @@ import java.lang.reflect.Method;
  * @param <T> The type of annotation handled.
  * @deprecated Use {@link MethodHandler} instead
  */
+@SuppressWarnings({ "rawtypes" })
 public interface AnnotationHandler<T extends Annotation> {
     /**
      * @return The annotation type that this handler responds to. 

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,10 +47,10 @@ import org.openntf.domino.helpers.DatabaseMetaData;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.utils.DominoUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Enum Factory.
  */
+@SuppressWarnings("nls")
 public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.openntf.domino.WrapperFactory {
 
 	/** this is the holder for all other object that need to be recycled **/

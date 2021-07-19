@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.ibm.xsp.binding.ValueBindingEx;
 import com.ibm.xsp.exception.EvaluationExceptionEx;
 import com.ibm.xsp.util.ValueBindingUtil;
 
+@SuppressWarnings("nls")
 public class MsgValueBinding extends ValueBindingEx {
 
 	private String msgPar;

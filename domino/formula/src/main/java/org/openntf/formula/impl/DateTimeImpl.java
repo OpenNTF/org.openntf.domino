@@ -1,24 +1,23 @@
 package org.openntf.formula.impl;
 
-import static com.ibm.icu.util.Calendar.DAY_OF_MONTH;
-import static com.ibm.icu.util.Calendar.HOUR_OF_DAY;
-import static com.ibm.icu.util.Calendar.MILLISECOND;
-import static com.ibm.icu.util.Calendar.MINUTE;
-import static com.ibm.icu.util.Calendar.MONTH;
-import static com.ibm.icu.util.Calendar.SECOND;
-import static com.ibm.icu.util.Calendar.YEAR;
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.HOUR_OF_DAY;
+import static java.util.Calendar.MILLISECOND;
+import static java.util.Calendar.MINUTE;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.SECOND;
+import static java.util.Calendar.YEAR;
 
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import org.openntf.formula.DateTime;
 import org.openntf.formula.Formulas;
-
-import com.ibm.icu.util.Calendar;
 
 public class DateTimeImpl implements DateTime, Externalizable {
 	private Locale _locale;
@@ -92,7 +91,7 @@ public class DateTimeImpl implements DateTime, Externalizable {
 
 	public String getDateOnly() {
 		if (_noDate)
-			return "";
+			return ""; //$NON-NLS-1$
 		return Formulas.getFormatter(_locale).formatCalDateOnly(_cal);
 	}
 
@@ -106,7 +105,7 @@ public class DateTimeImpl implements DateTime, Externalizable {
 
 	public String getTimeOnly() {
 		if (_noTime)
-			return "";
+			return ""; //$NON-NLS-1$
 		return Formulas.getFormatter(_locale).formatCalTimeOnly(_cal);
 	}
 

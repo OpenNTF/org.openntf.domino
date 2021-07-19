@@ -16,6 +16,7 @@ import java.util.List;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class LinkPipe extends AbstractPipe<Vertex, Vertex> implements SideEffectPipe.LazySideEffectPipe<Vertex, Object> {
 
     final private Direction direction;

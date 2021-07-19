@@ -1,16 +1,15 @@
 package com.tinkerpop.frames;
 
-import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.frames.annotations.AnnotationHandler;
-import com.tinkerpop.frames.modules.MethodHandler;
-import com.tinkerpop.frames.modules.Module;
-import com.tinkerpop.frames.modules.TypeResolver;
-
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.frames.annotations.AnnotationHandler;
+import com.tinkerpop.frames.modules.MethodHandler;
+import com.tinkerpop.frames.modules.TypeResolver;
 
 /**
  * A configuration for a {@link FramedGraph}. These are supplied to
@@ -23,6 +22,7 @@ import java.util.Map;
  * @author Bryn Cooke
  * 
  */
+@SuppressWarnings("deprecation")
 public class FramedGraphConfiguration {
 	private Map<Class<? extends Annotation>, AnnotationHandler<?>> annotationHandlers = new HashMap<Class<? extends Annotation>, AnnotationHandler<?>>();
 	private Map<Class<? extends Annotation>, MethodHandler<?>> methodHandlers = new HashMap<Class<? extends Annotation>, MethodHandler<?>>();

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,8 +57,8 @@ public class Activator implements BundleActivator {
 	public static Map<String, String> getManifestInfo() {
 		Map<String, String> result = new LinkedHashMap<String, String>();
 		Bundle bundle = getContext().getBundle();
-		Dictionary headers = bundle.getHeaders();
-		Enumeration enumer = headers.keys();
+		Dictionary<String, String> headers = bundle.getHeaders();
+		Enumeration<String> enumer = headers.keys();
 		while (enumer.hasMoreElements()) {
 			Object elem = enumer.nextElement();
 			result.put(String.valueOf(elem), String.valueOf(headers.get(elem)));

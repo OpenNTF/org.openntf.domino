@@ -32,6 +32,7 @@ import java.util.List;
  * @author Roland Praml, Foconis AG
  * 
  */
+@SuppressWarnings("nls")
 public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	private static final long serialVersionUID = 8290517470597891417L;
 

@@ -56,7 +56,7 @@ public class ASTValueString extends SimpleNode {
 
 	@Override
 	public String toString() {
-		return super.toString() + ": " + value.getString(0);
+		return super.toString() + ": " + value.getString(0); //$NON-NLS-1$
 	}
 
 	@Override

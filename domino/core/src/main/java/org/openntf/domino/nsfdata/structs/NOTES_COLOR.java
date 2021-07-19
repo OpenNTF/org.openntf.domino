@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ public class NOTES_COLOR {
 	 * These symbols are used to specify text color, graphic color and background color in a variety of C API structures. (colorid.h)
 	 *
 	 */
+	@SuppressWarnings("nls")
 	public static enum StandardColor {
 		BLACK((short) 0), WHITE((short) 1), RED((short) 2), GREEN((short) 3), BLUE((short) 4), MAGENTA((short) 5), YELLOW((short) 6),
 		CYAN((short) 7), DKRED((short) 8), DKGREEN((short) 9), DKBLUE((short) 10), DKMAGENTA((short) 11), DKYELLOW((short) 12),
@@ -74,6 +75,6 @@ public class NOTES_COLOR {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": value=" + value_ + ", StandardColor=" + getStandardColor() + "]";
+		return "[" + getClass().getSimpleName() + ": value=" + value_ + ", StandardColor=" + getStandardColor() + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 }

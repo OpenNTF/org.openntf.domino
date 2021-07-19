@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,8 +44,6 @@ import org.openntf.domino.xsp.Activator;
 
 import com.ibm.commons.util.io.SharedByteArrayOutputStream;
 import com.ibm.commons.util.io.StreamUtil;
-import com.ibm.icu.text.DecimalFormat;
-import com.ibm.icu.text.SimpleDateFormat;
 
 import lotus.domino.NotesException;
 import lotus.notes.addins.DominoServer;
@@ -54,6 +54,7 @@ import lotus.notes.addins.ServerAccess;
  * 
  *         Class for reading text files from the server
  */
+@SuppressWarnings("nls")
 public class LogReader {
 	private static final Logger log_ = Logger.getLogger(LogReader.class.getName());
 	@SuppressWarnings("unused")
@@ -130,9 +131,9 @@ public class LogReader {
 	 */
 	public String getDataFolder() {
 		String filename = Factory.getDataPath();
-		filename = filename.replace("\\", "/");
-		if (!filename.endsWith("/"))
-			filename += "/";
+		filename = filename.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!filename.endsWith("/")) //$NON-NLS-1$
+			filename += "/"; //$NON-NLS-1$
 		return filename;
 	}
 
@@ -144,9 +145,9 @@ public class LogReader {
 	 */
 	public String getProgramFolder() {
 		String filename = Factory.getProgramPath();
-		filename = filename.replace("\\", "/");
-		if (!filename.endsWith("/"))
-			filename += "/";
+		filename = filename.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!filename.endsWith("/")) //$NON-NLS-1$
+			filename += "/"; //$NON-NLS-1$
 		return filename;
 	}
 
@@ -168,21 +169,21 @@ public class LogReader {
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public String getFolder(final String section) {
-		String folder = "";
-		if (section.equals("tech")) {
-			folder = getDataFolder() + "IBM_TECHNICAL_SUPPORT/";
-		} else if (section.equals("ini")) {
+		String folder = ""; //$NON-NLS-1$
+		if (section.equals("tech")) { //$NON-NLS-1$
+			folder = getDataFolder() + "IBM_TECHNICAL_SUPPORT/"; //$NON-NLS-1$
+		} else if (section.equals("ini")) { //$NON-NLS-1$
 			folder = getProgramFolder();
-		} else if (section.equals("jvm")) {
-			folder = getProgramFolder() + "framework/rcp/deploy/";
-		} else if (section.equals("javapolicy")) {
-			folder = getProgramFolder() + "jvm/lib/security/";
-		} else if (section.equals("rcp")) {
-			folder = getDataFolder() + "domino/workspace/.config/";
-		} else if (section.equals("xml")) {
-			folder = getDataFolder() + "domino/workspace/logs/";
+		} else if (section.equals("jvm")) { //$NON-NLS-1$
+			folder = getProgramFolder() + "framework/rcp/deploy/"; //$NON-NLS-1$
+		} else if (section.equals("javapolicy")) { //$NON-NLS-1$
+			folder = getProgramFolder() + "jvm/lib/security/"; //$NON-NLS-1$
+		} else if (section.equals("rcp")) { //$NON-NLS-1$
+			folder = getDataFolder() + "domino/workspace/.config/"; //$NON-NLS-1$
+		} else if (section.equals("xml")) { //$NON-NLS-1$
+			folder = getDataFolder() + "domino/workspace/logs/"; //$NON-NLS-1$
 		} else {
-			folder = getDataFolder() + section + "/";
+			folder = getDataFolder() + section + "/"; //$NON-NLS-1$
 		}
 		return folder;
 	}
@@ -204,7 +205,7 @@ public class LogReader {
 		if (pattern == null)
 			return true;
 
-		String[] cards = pattern.split("\\*");
+		String[] cards = pattern.split("\\*"); //$NON-NLS-1$
 
 		// Iterate over the cards.
 		for (String card : cards) {
@@ -246,7 +247,7 @@ public class LogReader {
 	 * @return String date in format yyyyMMdd'T'hhmmss
 	 */
 	public static String readableDate(final long date) {
-		String DATE_FORMAT = "yyyyMMdd'T'hhmmss";
+		String DATE_FORMAT = "yyyyMMdd'T'hhmmss"; //$NON-NLS-1$
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		return sdf.format(date);
 	}
@@ -398,7 +399,7 @@ public class LogReader {
 	public String readStreamFast(final SharedByteArrayOutputStream stream, final String filter) {
 		String result = null;
 		try {
-			result = StreamUtil.readString(new ByteArrayInputStream(stream.getByteArray()), "UTF-8");
+			result = StreamUtil.readString(new ByteArrayInputStream(stream.getByteArray()), "UTF-8"); //$NON-NLS-1$
 		} catch (Exception e) {
 			log_.log(Level.WARNING, e.toString(), e);
 		} finally {
@@ -424,12 +425,12 @@ public class LogReader {
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public String readConsole(String filename, String filter) {
-		String html = "";
+		String html = ""; //$NON-NLS-1$
 		if (filename == null)
 			return "Please select a file";
 		if (filter == null)
-			filter = "HTTP";
-		filename = getFolder("tech") + filename;
+			filter = "HTTP"; //$NON-NLS-1$
+		filename = getFolder("tech") + filename; //$NON-NLS-1$
 		html = readFileFast(filename, filter);
 		return html;
 	}
@@ -443,10 +444,10 @@ public class LogReader {
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public String readXPages(String filename) {
-		String html = "";
+		String html = ""; //$NON-NLS-1$
 		if (filename == null)
 			return "Please select a file";
-		filename = getFolder("tech") + filename;
+		filename = getFolder("tech") + filename; //$NON-NLS-1$
 		html = readFileFast(filename);
 		return html;
 	}
@@ -458,8 +459,8 @@ public class LogReader {
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public String readStartup() {
-		String html = "";
-		String filename = getFolder("xml") + "startup.log";
+		String html = ""; //$NON-NLS-1$
+		String filename = getFolder("xml") + "startup.log"; //$NON-NLS-1$ //$NON-NLS-2$
 		html = readFileFast(filename);
 		return html;
 	}
@@ -471,8 +472,8 @@ public class LogReader {
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public String readNotesini() {
-		String html = "";
-		String filename = getFolder("ini") + "notes.ini";
+		String html = ""; //$NON-NLS-1$
+		String filename = getFolder("ini") + "notes.ini"; //$NON-NLS-1$ //$NON-NLS-2$
 		html = readFileFast(filename);
 		return html;
 	}
@@ -484,8 +485,8 @@ public class LogReader {
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public String readJVM() {
-		String html = "";
-		String filename = getFolder("jvm") + "jvm.properties";
+		String html = ""; //$NON-NLS-1$
+		String filename = getFolder("jvm") + "jvm.properties"; //$NON-NLS-1$ //$NON-NLS-2$
 		html = readFileFast(filename);
 		return html;
 	}
@@ -497,8 +498,8 @@ public class LogReader {
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public String readJavaPolicy() {
-		String html = "";
-		String filename = getFolder("javapolicy") + "java.policy";
+		String html = ""; //$NON-NLS-1$
+		String filename = getFolder("javapolicy") + "java.policy"; //$NON-NLS-1$ //$NON-NLS-2$
 		html = readFileFast(filename);
 		return html;
 	}
@@ -510,8 +511,8 @@ public class LogReader {
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public String readJavaPol() {
-		String html = "";
-		String filename = getFolder("javapolicy") + "java.pol";
+		String html = ""; //$NON-NLS-1$
+		String filename = getFolder("javapolicy") + "java.pol"; //$NON-NLS-1$ //$NON-NLS-2$
 		html = readFileFast(filename);
 		return html;
 	}
@@ -523,8 +524,8 @@ public class LogReader {
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public String readRCP() {
-		String html = "";
-		String filename = getFolder("rcp") + "rcpinstall.properties";
+		String html = ""; //$NON-NLS-1$
+		String filename = getFolder("rcp") + "rcpinstall.properties"; //$NON-NLS-1$ //$NON-NLS-2$
 		html = readFileFast(filename);
 		return html;
 	}
@@ -546,23 +547,23 @@ public class LogReader {
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public String readHtml(final String section, String filename) {
-		String html = "";
+		String html = ""; //$NON-NLS-1$
 		if (section == null) { /* If the String is null... */
-		} else if (section.equals("tech")) {
+		} else if (section.equals("tech")) { //$NON-NLS-1$
 			if (filename == null)
 				return "Please select a file";
 			filename = getFolder(section) + filename;
 			html = readFileFast(filename, null);
-		} else if (section.equals("xml")) {
+		} else if (section.equals("xml")) { //$NON-NLS-1$
 			if (filename == null)
-				filename = "startup.log";
+				filename = "startup.log"; //$NON-NLS-1$
 			filename = getFolder(section) + filename;
 			html = readFileFast(filename, null);
-		} else if (section.equals("ini")) {
+		} else if (section.equals("ini")) { //$NON-NLS-1$
 			filename = getFolder(section) + filename;
 			html = readFileFast(filename);
-		} else if (section.equals("log")) {
-			html = "log";
+		} else if (section.equals("log")) { //$NON-NLS-1$
+			html = "log"; //$NON-NLS-1$
 		} else { /* DEFAULT Operation */
 		}
 		return html;
@@ -590,7 +591,7 @@ public class LogReader {
 				TransformerFactory tFactory = TransformerFactory.newInstance();
 				InputStream input = null;
 				try {
-					input = Activator.getDefault().getResourceAsStream("/resources/log-transform.xsl");
+					input = Activator.getDefault().getResourceAsStream("/resources/log-transform.xsl"); //$NON-NLS-1$
 					XFORMER = tFactory.newTransformer(new StreamSource(input));
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -622,7 +623,7 @@ public class LogReader {
 			return "Please select a file";
 		}
 
-		String path = getFolder("xml");
+		String path = getFolder("xml"); //$NON-NLS-1$
 
 		// Get the number of bytes in the file
 		Path file = Paths.get(getFolder("xml")).resolve(filename); //$NON-NLS-1$

@@ -16,27 +16,28 @@
  */
 package org.openntf.formula.impl;
 
-import static com.ibm.icu.util.Calendar.DAY_OF_MONTH;
-import static com.ibm.icu.util.Calendar.HOUR;
-import static com.ibm.icu.util.Calendar.HOUR_OF_DAY;
-import static com.ibm.icu.util.Calendar.MINUTE;
-import static com.ibm.icu.util.Calendar.MONTH;
-import static com.ibm.icu.util.Calendar.SECOND;
-import static com.ibm.icu.util.Calendar.YEAR;
-import static com.ibm.icu.util.Calendar.getInstance;
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.HOUR;
+import static java.util.Calendar.HOUR_OF_DAY;
+import static java.util.Calendar.MINUTE;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.SECOND;
+import static java.util.Calendar.YEAR;
+import static java.util.Calendar.getInstance;
 
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import org.openntf.formula.DateTime;
 import org.openntf.formula.Formatter;
 
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.NumberFormat;
-import com.ibm.icu.text.SimpleDateFormat;
-import com.ibm.icu.util.Calendar;
-
+@SuppressWarnings("nls")
 public class FormatterImpl implements Formatter {
 	private Locale iLocale;
 
@@ -92,11 +93,11 @@ public class FormatterImpl implements Formatter {
 		// Should an empty string lead to a DateTime with noDate=noTime=true?
 		// (Lotus doesn't accept empty strings here.)
 		char spec = 0;
-		if (image.equalsIgnoreCase("TODAY"))
+		if (image.equalsIgnoreCase("TODAY")) //$NON-NLS-1$
 			spec = 'H';
-		else if (image.equalsIgnoreCase("TOMORROW"))
+		else if (image.equalsIgnoreCase("TOMORROW")) //$NON-NLS-1$
 			spec = 'M';
-		else if (image.equalsIgnoreCase("YESTERDAY"))
+		else if (image.equalsIgnoreCase("YESTERDAY")) //$NON-NLS-1$
 			spec = 'G';
 		if (spec != 0) {
 			ret.setTime(new Date());
@@ -117,7 +118,7 @@ public class FormatterImpl implements Formatter {
 			 * First attempt: Take a full date-time format MEDIUM
 			 */
 			DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, iLocale);
-			df.parse(image, ret, p);
+			ret.setTime(df.parse(image, p));
 			if (p.getErrorIndex() < 0)
 				break;
 			if (!ret.isSet(DAY_OF_MONTH) || !ret.isSet(MONTH)) {
@@ -126,7 +127,7 @@ public class FormatterImpl implements Formatter {
 				df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM, iLocale);
 				p.setIndex(0);
 				p.setErrorIndex(-1);
-				df.parse(image, ret, p);
+				ret.setTime(df.parse(image, p));
 				if (!ret.isSet(DAY_OF_MONTH) || !ret.isSet(MONTH)) {	// Give up with date
 					ret.clear();
 					p.setErrorIndex(0);
@@ -140,7 +141,7 @@ public class FormatterImpl implements Formatter {
 			p.setIndex(p.getErrorIndex());
 			p.setErrorIndex(-1);
 			df = DateFormat.getTimeInstance(DateFormat.MEDIUM, iLocale);
-			df.parse(image, ret, p);
+			ret.setTime(df.parse(image, p));
 			if (ret.isSet(MINUTE))
 				break;
 			if (ret.isSet(DAY_OF_MONTH)) { // Set back possible hour (in accordance with Lotus)
@@ -197,7 +198,7 @@ public class FormatterImpl implements Formatter {
 		ParsePosition p = new ParsePosition(0);
 		ret.clear();
 		SimpleDateFormat sdf = new SimpleDateFormat(format, iLocale);
-		sdf.parse(image, ret, p);
+		ret.setTime(sdf.parse(image, p));
 		boolean contDate = ret.isSet(YEAR) || ret.isSet(MONTH) || ret.isSet(DAY_OF_MONTH);
 		boolean contTime = ret.isSet(HOUR_OF_DAY) || ret.isSet(HOUR) || ret.isSet(MINUTE) || ret.isSet(SECOND);
 		boolean illegalDateString = !contDate && !contTime;
@@ -363,7 +364,7 @@ public class FormatterImpl implements Formatter {
 		if (lno.format == 'C')
 			nf = NumberFormat.getCurrencyInstance(iLocale);
 		else if (lno.format == 'S')
-			nf = NumberFormat.getScientificInstance(iLocale);
+			nf = new DecimalFormat("0.######E0"); //$NON-NLS-1$
 		else if (lno.format == '%')
 			nf = NumberFormat.getPercentInstance(iLocale);
 		else
@@ -400,7 +401,7 @@ public class FormatterImpl implements Formatter {
 					break;
 			if (komma - minus <= 15)
 				break;
-			nf = NumberFormat.getScientificInstance(iLocale);
+			nf = new DecimalFormat("0.######E0"); //$NON-NLS-1$
 			nf.setGroupingUsed(lno.useGrouping);
 			ret = nf.format(n);
 		} while (false);

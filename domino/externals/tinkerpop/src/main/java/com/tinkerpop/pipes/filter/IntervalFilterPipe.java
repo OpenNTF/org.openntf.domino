@@ -10,6 +10,7 @@ import com.tinkerpop.pipes.AbstractPipe;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public class IntervalFilterPipe<S extends Element> extends AbstractPipe<S, S> implements FilterPipe<S> {
 
     private final String key;

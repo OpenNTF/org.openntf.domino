@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,14 +52,15 @@ public abstract class AbstractEMBridgeEvent implements IEMBridgeEvent {
 	}
 
 	public final boolean parseEventBuffer(String eventBuffer) {
+		@SuppressWarnings("unused")
 		String[] values = null;
 		if (eventBuffer == null || eventBuffer.length() == 0) {
 			values = new String[0];
 		} else {
-			if (eventBuffer.endsWith(",")) {
-				eventBuffer += " ";
+			if (eventBuffer.endsWith(",")) { //$NON-NLS-1$
+				eventBuffer += " "; //$NON-NLS-1$
 			}
-			values = eventBuffer.split(",");
+			values = eventBuffer.split(","); //$NON-NLS-1$
 		}
 		return false;
 	}

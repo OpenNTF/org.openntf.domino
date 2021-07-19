@@ -9,6 +9,7 @@ import com.tinkerpop.blueprints.util.wrappers.WrapperVertexQuery;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public class PartitionVertex extends PartitionElement implements Vertex {
 
     protected PartitionVertex(final Vertex baseVertex, final PartitionGraph graph) {

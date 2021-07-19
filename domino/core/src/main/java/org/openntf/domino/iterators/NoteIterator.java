@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import java.util.logging.Logger;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.utils.DominoUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DocumentIterator.
  */
+@SuppressWarnings("nls")
 public class NoteIterator implements Iterator<String> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(NoteIterator.class.getName());

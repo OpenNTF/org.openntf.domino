@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class XspLibrary extends AbstractXspLibrary {
 			String[] envs = ODAPlatform.getEnvironmentStrings(Activator.PLUGIN_ID);
 			if (envs != null) {
 				for (String s : envs) {
-					if (s.equalsIgnoreCase("global")) {
+					if (s.equalsIgnoreCase("global")) { //$NON-NLS-1$
 						GLOBAL = Boolean.TRUE;
 					}
 				}
@@ -67,8 +67,8 @@ public class XspLibrary extends AbstractXspLibrary {
 	 */
 	@Override
 	public String[] getDependencies() {
-		return new String[] { "com.ibm.xsp.core.library", "com.ibm.xsp.extsn.library", "com.ibm.xsp.domino.library",
-				"com.ibm.xsp.designer.library", "com.ibm.xsp.extlib.library" };
+		return new String[] { "com.ibm.xsp.core.library", "com.ibm.xsp.extsn.library", "com.ibm.xsp.domino.library", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"com.ibm.xsp.designer.library", "com.ibm.xsp.extlib.library" }; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -78,7 +78,7 @@ public class XspLibrary extends AbstractXspLibrary {
 	 */
 	@Override
 	public String[] getFacesConfigFiles() {
-		String[] files = new String[] { "domino-faces-config.xml" };
+		String[] files = new String[] { "domino-faces-config.xml" }; //$NON-NLS-1$
 		// We might want to take this approach in the future???
 		// List<ExtlibPluginConfig> plugins = getExtlibPluginConfigs();
 		// for( ExtlibPluginConfig plugin: plugins) {

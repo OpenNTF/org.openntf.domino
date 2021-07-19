@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * loop thorough all of the CDBLOBPART records to read in the complete JavaScript code. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDBLOBPART extends CDRecord {
 	public final WSIG Header = inner(new WSIG());
 	public final Unsigned16 OwnerSig = new Unsigned16();

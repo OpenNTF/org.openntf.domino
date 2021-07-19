@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ public class DXLItemFormula extends AbstractDXLItem {
 		super(node, dupItemId);
 
 		XMLNode dataNode = node.getFirstChildElement();
-		if("true".equals(dataNode.getAttribute("compiled"))) {
+		if("true".equals(dataNode.getAttribute("compiled"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			formula_ = null;
 			compiledFormula_ = parseBase64Binary(dataNode.getText());
 		} else {

@@ -36,7 +36,7 @@ class WrappedEdgeIterable implements CloseableIterable<Edge> {
 
     public void close() {
         if (this.iterable instanceof CloseableIterable) {
-            ((CloseableIterable) iterable).close();
+            ((CloseableIterable<?>) iterable).close();
         }
     }
 }

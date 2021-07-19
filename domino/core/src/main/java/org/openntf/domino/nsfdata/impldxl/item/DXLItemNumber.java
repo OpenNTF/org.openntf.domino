@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public class DXLItemNumber extends AbstractDXLItem {
 	protected DXLItemNumber(final XMLNode node, final int dupItemId) {
 		super(node, dupItemId);
 
-		XMLNode dataNode = node.selectSingleNode("./number");
+		XMLNode dataNode = node.selectSingleNode("./number"); //$NON-NLS-1$
 		value_ = Double.parseDouble(dataNode.getText());
 	}
 

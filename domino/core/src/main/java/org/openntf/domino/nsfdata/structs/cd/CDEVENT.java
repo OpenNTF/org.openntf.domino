@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * @since Lotus Notes/Domino 5.0
  *
  */
+@SuppressWarnings("nls")
 public class CDEVENT extends CDRecord {
 	public static enum Flag {
 		EVENT_HAS_LIBRARIES(0x00000001);

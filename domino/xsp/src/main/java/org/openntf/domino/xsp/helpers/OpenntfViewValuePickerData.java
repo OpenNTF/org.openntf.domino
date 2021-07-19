@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ import com.ibm.xsp.model.domino.wrapped.DominoViewEntry;
  *         OpenNTF extension to DominoViewValuePickerData, required because DominoUtils.getViewEntryByKeyWithOptions() crashes the server if
  *         anything other than a lotus.domino.View is passed to it
  */
+@SuppressWarnings("nls")
 public class OpenntfViewValuePickerData extends DominoViewValuePickerData {
 
 	/**

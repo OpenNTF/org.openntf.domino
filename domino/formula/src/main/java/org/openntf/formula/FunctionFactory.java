@@ -132,6 +132,7 @@ public class FunctionFactory {
 	 * 
 	 * @throws
 	 */
+	@SuppressWarnings("nls")
 	public static Map<String, Function> getFunctions(final Class<?> cls) {
 		final Map<String, Function> ret = new HashMap<String, Function>();
 		try {
@@ -143,12 +144,12 @@ public class FunctionFactory {
 					for (Method method : methods) {
 
 						String methodName = method.getName();
-						if (methodName.startsWith("at")) {
+						if (methodName.startsWith("at")) { //$NON-NLS-1$
 							if (Modifier.isPrivate(method.getModifiers())) {
 								// skip methods declared as private
 							} else if (Modifier.isStatic(method.getModifiers())) {
 
-								methodName = "@".concat(methodName.substring(2));
+								methodName = "@".concat(methodName.substring(2)); //$NON-NLS-1$
 
 								// here the magic happens. If the return type of the implemented function is
 								// a ValueHolder then we create an AtFunctionGeneric. You have to do multi value handling

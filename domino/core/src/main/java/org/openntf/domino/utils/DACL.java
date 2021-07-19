@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.openntf.domino.Session;
  * @author Devin S. Olson (dolson@czarnowski.com)
  * 
  */
+@SuppressWarnings("nls")
 public enum DACL {
 	AUTHORS(DACL.ITEMNAME_DACL_AUTHORS, DACL.DEFAULT_DACL_AUTHORS), READERS(DACL.ITEMNAME_DACL_READERS, DACL.DEFAULT_DACL_READERS);
 
@@ -53,7 +54,7 @@ public enum DACL {
 
 	@Override
 	public String toString() {
-		return DACL.class.getName() + ": " + this.name() + "{\"" + this.getItemname() + "\", \"" + this.getRole() + "\"}";
+		return DACL.class.getName() + ": " + this.name() + "{\"" + this.getItemname() + "\", \"" + this.getRole() + "\"}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 	/**

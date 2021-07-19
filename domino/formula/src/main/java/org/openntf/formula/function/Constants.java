@@ -69,6 +69,6 @@ public enum Constants {
 
 	@ParamCount(0)
 	public static ValueHolder atError(final FormulaContext ctx) {
-		throw new IllegalArgumentException("@Error");
+		throw new IllegalArgumentException("@Error"); //$NON-NLS-1$
 	}
 }

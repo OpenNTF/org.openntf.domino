@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ public class FormulaMethodBinding extends MethodBindingEx {
 			ctx.setViewRoot(FacesUtil.getViewRoot(getComponent()));
 		}
 
-		final DominoDocument dominoDoc = (DominoDocument) ExtLibUtil.resolveVariable(ctx, "currentDocument");
+		final DominoDocument dominoDoc = (DominoDocument) ExtLibUtil.resolveVariable(ctx, "currentDocument"); //$NON-NLS-1$
 		Map<String, Object> dataMap = null;
 		if (dominoDoc instanceof Map) {
 			dataMap = (Map<String, Object>) dominoDoc;

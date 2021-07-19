@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -152,7 +152,7 @@ public class FormulaContextXsp extends FormulaContextNotes {
 		ValueBinding ret = valueBindings.get(variable);
 		if (ret == null) {
 			ApplicationEx app = (ApplicationEx) context.getApplication();
-			ret = app.createValueBinding("#{" + variable + "}");
+			ret = app.createValueBinding("#{" + variable + "}"); //$NON-NLS-1$ //$NON-NLS-2$
 			if ((ret instanceof ValueBindingEx)) {
 				ValueBindingEx valueEx = (ValueBindingEx) ret;
 				valueEx.setComponent(component);

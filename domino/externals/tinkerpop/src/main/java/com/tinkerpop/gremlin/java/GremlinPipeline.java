@@ -91,6 +91,7 @@ import java.util.Map;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class GremlinPipeline<S, E> extends Pipeline<S, E> implements GremlinFluentPipeline<S, E> {
 
     private boolean doQueryOptimization = true;
@@ -1264,7 +1265,7 @@ public class GremlinPipeline<S, E> extends Pipeline<S, E> implements GremlinFlue
      *
      * @return the extended Pipeline
      */
-    public GremlinPipeline<S, E> _() {
+    public GremlinPipeline<S, E> identity() {
         return this.add(new IdentityPipe());
     }
 
@@ -1615,7 +1616,8 @@ public class GremlinPipeline<S, E> extends Pipeline<S, E> implements GremlinFlue
      *
      * @return returns the current pipeline with the new end type.
      */
-    @Override
+    @SuppressWarnings("hiding")
+	@Override
     public <E> GremlinPipeline<S, E> cast(Class<E> end) {
         return (GremlinPipeline<S, E>) this;
     }

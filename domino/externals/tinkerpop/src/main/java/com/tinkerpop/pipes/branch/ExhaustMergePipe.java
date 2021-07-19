@@ -13,6 +13,7 @@ import java.util.List;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ExhaustMergePipe<S> extends AbstractMetaPipe<S, S> implements MetaPipe {
 
     private final List<Pipe> pipes;

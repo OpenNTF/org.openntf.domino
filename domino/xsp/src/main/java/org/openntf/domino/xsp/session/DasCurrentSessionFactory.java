@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public class DasCurrentSessionFactory extends AbstractXPageSessionFactory {
 					if (StringUtil.isEmpty(rawDb.getServer())) {
 						currentApiPath_ = rawDb.getFilePath();
 					} else {
-						currentApiPath_ = rawDb.getServer() + "!!" + rawDb.getFilePath();
+						currentApiPath_ = rawDb.getServer() + "!!" + rawDb.getFilePath(); //$NON-NLS-1$
 					}
 				}
 			} catch (NotesException e) {
@@ -93,7 +93,7 @@ public class DasCurrentSessionFactory extends AbstractXPageSessionFactory {
 				if (StringUtil.isEmpty(rawDb.getServer())) {
 					currentApiPath_ = rawDb.getFilePath();
 				} else {
-					currentApiPath_ = rawDb.getServer() + "!!" + rawDb.getFilePath();
+					currentApiPath_ = rawDb.getServer() + "!!" + rawDb.getFilePath(); //$NON-NLS-1$
 				}
 			}
 			return wrapSession(rawSession, true);

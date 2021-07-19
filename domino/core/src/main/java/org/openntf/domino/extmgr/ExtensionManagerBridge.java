@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openntf.domino.extmgr;
 
 import java.lang.reflect.Constructor;
@@ -40,9 +39,9 @@ import org.openntf.domino.extmgr.events.UnknownEMEvent;
 
 public class ExtensionManagerBridge {
 
-	private static final String EM_EVENT_PREFIX = "[[event:"; // $NON-NLS-1$
-	private static final String EM_NSFHOOKEVENT_PREFIX = "[[dbhookevent:"; // $NON-NLS-1$
-	private static final String EM_EVENT_POSTFIX = "]];";
+	private static final String EM_EVENT_PREFIX = "[[event:"; //$NON-NLS-1$
+	private static final String EM_NSFHOOKEVENT_PREFIX = "[[dbhookevent:"; //$NON-NLS-1$
+	private static final String EM_EVENT_POSTFIX = "]];"; //$NON-NLS-1$
 
 	private static final Map<EMEventIds, Class<?>> eventsMap = new EnumMap<EMEventIds, Class<?>>(EMEventIds.class);
 

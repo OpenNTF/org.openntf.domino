@@ -47,6 +47,7 @@ public class ASTAtSort extends SimpleNode {
 	 * regarding to errorhandling, sort is a bit complex as it has more parameters and a lot of code. That's why a try/catch is surrounded
 	 * that wraps every exception in a ValueHolder
 	 */
+	@SuppressWarnings("nls")
 	@Override
 	@DiffersFromLotus({ "Options [ACCENT(IN)SENSITIVE] and [PITCH(IN)SENSITIVE] aren't yet supported",
 			"Standard string compare is done via String.compareTo" })
@@ -112,7 +113,7 @@ public class ASTAtSort extends SimpleNode {
 				else if (what.dataType == DataType.DATETIME)
 					cmp = doSortDateTime(ctx, what.getDateTime(i), what.getDateTime(j), customSort);
 				else
-					throw new IllegalArgumentException("Can't sort Object of this type: " + what.dataType);
+					throw new IllegalArgumentException("Can't sort Object of this type: " + what.dataType); //$NON-NLS-1$
 				if (!sortAscending)
 					cmp = -cmp;
 				if (cmp > 0)
@@ -129,14 +130,14 @@ public class ASTAtSort extends SimpleNode {
 		if (customSort == null)
 			return (sortCaseSensitive ? s1.compareTo(s2) : s1.compareToIgnoreCase(s2));
 
-		ValueHolder oldA = ctx.setVarLC("$a", ValueHolder.valueOf(s1));
-		ValueHolder oldB = ctx.setVarLC("$b", ValueHolder.valueOf(s2));
+		ValueHolder oldA = ctx.setVarLC("$a", ValueHolder.valueOf(s1)); //$NON-NLS-1$
+		ValueHolder oldB = ctx.setVarLC("$b", ValueHolder.valueOf(s2)); //$NON-NLS-1$
 		try {
 			ValueHolder vh = customSort.evaluate(ctx);
 			return (vh.isTrue(ctx)) ? 1 : -1;
 		} finally {
-			ctx.setVarLC("$a", oldA);
-			ctx.setVarLC("$b", oldB);
+			ctx.setVarLC("$a", oldA); //$NON-NLS-1$
+			ctx.setVarLC("$b", oldB); //$NON-NLS-1$
 		}
 
 	}
@@ -149,14 +150,14 @@ public class ASTAtSort extends SimpleNode {
 		if (customSort == null)
 			return Double.compare(n1, n2);
 
-		ValueHolder oldA = ctx.setVarLC("$a", ValueHolder.valueOf(n1));
-		ValueHolder oldB = ctx.setVarLC("$b", ValueHolder.valueOf(n2));
+		ValueHolder oldA = ctx.setVarLC("$a", ValueHolder.valueOf(n1)); //$NON-NLS-1$
+		ValueHolder oldB = ctx.setVarLC("$b", ValueHolder.valueOf(n2)); //$NON-NLS-1$
 		try {
 			ValueHolder vh = customSort.evaluate(ctx);
 			return (vh.isTrue(ctx)) ? 1 : -1;
 		} finally {
-			ctx.setVarLC("$a", oldA);
-			ctx.setVarLC("$b", oldB);
+			ctx.setVarLC("$a", oldA); //$NON-NLS-1$
+			ctx.setVarLC("$b", oldB); //$NON-NLS-1$
 		}
 	}
 
@@ -167,14 +168,14 @@ public class ASTAtSort extends SimpleNode {
 			throws FormulaReturnException {
 		if (customSort == null)
 			return d1.compare(d1, d2);
-		ValueHolder oldA = ctx.setVarLC("$a", ValueHolder.valueOf(d1));
-		ValueHolder oldB = ctx.setVarLC("$b", ValueHolder.valueOf(d2));
+		ValueHolder oldA = ctx.setVarLC("$a", ValueHolder.valueOf(d1)); //$NON-NLS-1$
+		ValueHolder oldB = ctx.setVarLC("$b", ValueHolder.valueOf(d2)); //$NON-NLS-1$
 		try {
 			ValueHolder vh = customSort.evaluate(ctx);
 			return (vh.isTrue(ctx)) ? 1 : -1;
 		} finally {
-			ctx.setVarLC("$a", oldA);
-			ctx.setVarLC("$b", oldB);
+			ctx.setVarLC("$a", oldA); //$NON-NLS-1$
+			ctx.setVarLC("$b", oldB); //$NON-NLS-1$
 		}
 	}
 
@@ -185,7 +186,7 @@ public class ASTAtSort extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@sort");
+		functions.add("@sort"); //$NON-NLS-1$
 	}
 }
 /* JavaCC - OriginalChecksum=3e128312ed1a8ea1e9f98a467e9c3222 (do not edit this line) */

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,12 @@ import org.openntf.domino.utils.xml.XMLNode;
 @SuppressWarnings("serial")
 public abstract class DXLItemObject extends AbstractDXLItem {
 
+	@SuppressWarnings("nls")
 	protected static DXLItemObject create(final XMLNode node, final int dupItemId) {
 		XMLNode objectNode = node.getFirstChildElement();
 		XMLNode objectDataNode = objectNode.getFirstChildElement();
 		String objectDataNodeName = objectDataNode.getNodeName();
-		if("file".equals(objectDataNodeName)) {
+		if("file".equals(objectDataNodeName)) { //$NON-NLS-1$
 			return new DXLItemObjectFile(node, dupItemId);
 		} else {
 			throw new UnsupportedOperationException("Unsupported object type " + objectDataNodeName);

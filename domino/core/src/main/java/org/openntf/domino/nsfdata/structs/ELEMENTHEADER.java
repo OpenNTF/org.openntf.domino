@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ public class ELEMENTHEADER extends AbstractStruct {
 	public final COLOR_VALUE BackgroundColor = inner(new COLOR_VALUE());
 
 	@Override
+	@SuppressWarnings("nls")
 	public String toString() {
 		return "[" + getClass().getSimpleName() + ": Left=" + wLeft.get() + ", Top=" + wTop.get() + ", Width=" + wWidth.get() + ", Height="
 				+ wHeight.get() + ", FontID=" + FontID + ", BackColor=" + byBackColor.get() + ", BackgroundColor=" + BackgroundColor + "]";

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -688,7 +688,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 			if (filename.equals(eo.getSource())) {
 				//				System.out.println("TEMP DEBUG Found matching embeddedobject for name " + filename);
 				beginInsert(eo, true);
-				result = embedObject(org.openntf.domino.EmbeddedObject.Type.EMBED_ATTACHMENT.getValue(), "", sourcePath, "");
+				result = embedObject(org.openntf.domino.EmbeddedObject.Type.EMBED_ATTACHMENT.getValue(), "", sourcePath, ""); //$NON-NLS-1$ //$NON-NLS-2$
 				endInsert();
 				eo.remove();
 				replaced = true;
@@ -697,7 +697,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 			eo = (EmbeddedObject) navigator.getNextElement(RTELEM_TYPE_FILEATTACHMENT);
 		}
 		if (!replaced) {
-			result = embedObject(org.openntf.domino.EmbeddedObject.Type.EMBED_ATTACHMENT.getValue(), "", sourcePath, "");
+			result = embedObject(org.openntf.domino.EmbeddedObject.Type.EMBED_ATTACHMENT.getValue(), "", sourcePath, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return result;
 	}
@@ -718,6 +718,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public String convertToHTML(final Vector htmlOptions) {
 		try {
@@ -728,6 +729,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getHTMLReferences() {
 		try {

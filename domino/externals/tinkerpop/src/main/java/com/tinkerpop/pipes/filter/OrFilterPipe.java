@@ -16,6 +16,7 @@ import java.util.List;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class OrFilterPipe<S> extends AbstractMetaPipe<S, S> implements FilterPipe<S>, MetaPipe {
 
     private final List<Pipe<S, Boolean>> pipes = new ArrayList<Pipe<S, Boolean>>();

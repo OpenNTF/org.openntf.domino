@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -187,7 +187,7 @@ public class ItemDefinition implements IItemDefinition, Externalizable {
 			} else if (checkType == Long.TYPE || checkType.equals(Long.class)) {
 				defaultValue = 0;
 			} else if (checkType.equals(String.class)) {
-				defaultValue = "";
+				defaultValue = ""; //$NON-NLS-1$
 			} else if (checkType.equals(DateTime.class)) {
 				DateTime dt = doc.getAncestorSession().createDateTime(new Date());
 				dt.setAnyDate();
@@ -202,7 +202,7 @@ public class ItemDefinition implements IItemDefinition, Externalizable {
 			item = doc.replaceItemValue(name, defaultValue);
 		} else {
 			try {
-				item = doc.replaceItemValueCustomDataBytes(name, "", new byte[1]);
+				item = doc.replaceItemValueCustomDataBytes(name, "", new byte[1]); //$NON-NLS-1$
 			} catch (IOException e) {
 				DominoUtils.handleException(e);
 			}

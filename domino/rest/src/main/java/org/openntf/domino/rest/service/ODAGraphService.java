@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,7 @@ import com.ibm.domino.das.service.IRestServiceExt;
 import com.ibm.domino.das.service.RestService;
 import com.tinkerpop.frames.FramedGraph;
 
+@SuppressWarnings({ "rawtypes", "nls", "unused" })
 public class ODAGraphService extends RestService implements IRestServiceExt {
 	private static ThreadLocal<HttpServletRequest> REQUEST_CTX = new ThreadLocal<HttpServletRequest>();
 
@@ -212,7 +213,6 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 		return getFactoryMap().get(name);
 	}
 
-	@SuppressWarnings("rawtypes")
 	public DFramedTransactionalGraph getGraph(final String name) {
 		return (DFramedTransactionalGraph) getGraphMap().get(name);
 	}

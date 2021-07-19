@@ -15,8 +15,8 @@ import java.util.Map;
 public class PropertyMapPipe<S extends Element> extends AbstractPipe<S, Map<String, Object>> implements TransformPipe<S, Map<String, Object>> {
 
     private final String[] keys;
-    private static final String ID = "id";
-    private static final String LABEL = "label";
+    private static final String ID = "id"; //$NON-NLS-1$
+    private static final String LABEL = "label"; //$NON-NLS-1$
 
     public PropertyMapPipe(final String... keys) {
         this.keys = keys;

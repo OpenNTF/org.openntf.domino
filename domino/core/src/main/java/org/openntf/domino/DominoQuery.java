@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 package org.openntf.domino;
 
 
-import lotus.domino.NotesException;
-
-import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.FactorySchema;
 

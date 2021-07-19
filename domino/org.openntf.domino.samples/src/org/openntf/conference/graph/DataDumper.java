@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.openntf.domino.utils.Strings;
 
 import com.tinkerpop.frames.FramedTransactionalGraph;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "nls" })
 public class DataDumper implements Runnable {
 	private long marktime;
 	private static final String SRC_DATA_PATH = "OpenNTF Downloads/sphere2015.nsf";

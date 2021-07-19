@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * For instance, clicking on a popup will cause a block of text associated with that popup to be displayed. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDHOTSPOTBEGIN extends CDRecord {
 	/**
 	 * These flags are used to define what type of hotspot is being defined by a CDHOTSPOTBEGIN data structure. (editods.h)

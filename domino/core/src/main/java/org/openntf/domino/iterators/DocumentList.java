@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import org.openntf.domino.utils.CollectionUtils;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 
+@SuppressWarnings("nls")
 public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection>implements org.openntf.domino.DocumentList {
 	protected int realNidLength_;
 	/*TODO 
@@ -363,7 +364,7 @@ public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection>imple
 
 	@Override
 	public boolean contains(final String noteid) {
-		return contains(Integer.valueOf(noteid, 16));
+		return contains((int)Integer.valueOf(noteid, 16));
 	}
 
 	@Override

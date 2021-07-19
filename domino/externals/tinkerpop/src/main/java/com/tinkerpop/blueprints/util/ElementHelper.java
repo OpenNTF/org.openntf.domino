@@ -12,6 +12,7 @@ import java.util.Set;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ElementHelper {
 
     /**
@@ -172,6 +173,7 @@ public class ElementHelper {
      * @param element    the element to set the properties of
      * @param keysValues the key value pairs of the properties
      */
+    @SuppressWarnings("nls")
     public static void setProperties(final Element element, final Object... keysValues) {
         if (keysValues.length % 2 != 0)
             throw new IllegalArgumentException("The object var args must be divisible by 2");

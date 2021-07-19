@@ -34,6 +34,7 @@ import org.openntf.formula.impl.AtFunction;
  * @author Roland Praml, Foconis AG
  * 
  */
+@SuppressWarnings("nls")
 public abstract class Negators extends AtFunction {
 
 	/**
@@ -53,7 +54,7 @@ public abstract class Negators extends AtFunction {
 		}
 
 		static {
-			add(new Negators(" -") { // the space is to distinguish to Op.SUB
+			add(new Negators(" -") { // the space is to distinguish to Op.SUB //$NON-NLS-1$
 
 				@Override
 				protected int compute(final FormulaContext ctx, final int i) {
@@ -71,7 +72,7 @@ public abstract class Negators extends AtFunction {
 				}
 			});
 
-			add(new Negators(" !") {
+			add(new Negators(" !") { //$NON-NLS-1$
 
 				@Override
 				protected int compute(final FormulaContext ctx, final int i) {

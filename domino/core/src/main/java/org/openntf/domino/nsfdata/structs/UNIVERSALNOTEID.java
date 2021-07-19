@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,7 @@ import java.util.Formatter;
  * </p>
  *
  */
+@SuppressWarnings("nls")
 public class UNIVERSALNOTEID extends AbstractStruct {
 	public final TIMEDATE File = inner(new TIMEDATE());
 	public final TIMEDATE Note = inner(new TIMEDATE());
@@ -110,8 +111,8 @@ public class UNIVERSALNOTEID extends AbstractStruct {
 		Formatter formatter = new Formatter();
 		//		byte[] data = new byte[getData().limit() - getData().position()];
 		ByteBuffer data = getData().duplicate().order(ByteOrder.LITTLE_ENDIAN);
-		formatter.format("%16x", data.getLong());
-		formatter.format("%16x", data.getLong());
+		formatter.format("%16x", data.getLong()); //$NON-NLS-1$
+		formatter.format("%16x", data.getLong()); //$NON-NLS-1$
 		String result = formatter.toString();
 		formatter.close();
 
@@ -120,6 +121,6 @@ public class UNIVERSALNOTEID extends AbstractStruct {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": " + getStringValue() + "]";
+		return "[" + getClass().getSimpleName() + ": " + getStringValue() + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

@@ -17,6 +17,7 @@ import java.util.List;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Pipeline<S, E> implements Pipe<S, E>, MetaPipe {
 
     protected Pipe<S, ?> startPipe;
@@ -155,7 +156,8 @@ public class Pipeline<S, E> implements Pipe<S, E>, MetaPipe {
      *
      * @return returns the current pipeline with the new end type.
      */
-    public <E> Pipeline<S, E> cast(Class<E> end) {
+    @SuppressWarnings("hiding")
+	public <E> Pipeline<S, E> cast(Class<E> end) {
         return (Pipeline<S, E>) this;
     }
 

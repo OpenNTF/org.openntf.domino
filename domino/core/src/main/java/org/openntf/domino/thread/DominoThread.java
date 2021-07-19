@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 /**
  * The Class DominoThread extends the NotesThread and clones the current SessionFactory.
  */
+@SuppressWarnings("nls")
 public class DominoThread extends NotesThread {
 	private static final Logger log_ = Logger.getLogger(DominoThread.class.getName());
 	private transient Runnable runnable_;

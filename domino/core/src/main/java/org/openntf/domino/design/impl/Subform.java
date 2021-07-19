@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class Subform extends AbstractDesignBaseNamed implements org.openntf.domi
 	 * @since 4.3.0
 	 */
 	protected Subform(final Database database) {
-		super(database, Subform.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_subform.xml"));
+		super(database, Subform.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_subform.xml")); //$NON-NLS-1$
 	}
 
 	/**
@@ -71,26 +71,26 @@ public class Subform extends AbstractDesignBaseNamed implements org.openntf.domi
 		XMLNode body = getBody();
 
 		// Create an appropriate paragraph definition
-		XMLNode finalPardef = getDxl().selectSingleNode("//pardef[last()]");
-		int nextId = Integer.valueOf(finalPardef.getAttribute("id")) + 1;
-		XMLNode pardef = body.addChildElement("pardef");
-		pardef.setAttribute("id", String.valueOf(nextId));
+		XMLNode finalPardef = getDxl().selectSingleNode("//pardef[last()]"); //$NON-NLS-1$
+		int nextId = Integer.valueOf(finalPardef.getAttribute("id")) + 1; //$NON-NLS-1$
+		XMLNode pardef = body.addChildElement("pardef"); //$NON-NLS-1$
+		pardef.setAttribute("id", String.valueOf(nextId)); //$NON-NLS-1$
 
 		// Now create the par and the field
-		XMLNode par = body.addChildElement("par");
-		par.setAttribute("def", pardef.getAttribute("id"));
+		XMLNode par = body.addChildElement("par"); //$NON-NLS-1$
+		par.setAttribute("def", pardef.getAttribute("id")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Now add the field
-		XMLNode field = par.addChildElement("field");
-		field.setAttribute("kind", "editable");
-		field.setAttribute("name", "");
-		field.setAttribute("type", "text");
+		XMLNode field = par.addChildElement("field"); //$NON-NLS-1$
+		field.setAttribute("kind", "editable"); //$NON-NLS-1$ //$NON-NLS-2$
+		field.setAttribute("name", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		field.setAttribute("type", "text"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		return new org.openntf.domino.design.impl.FormField(field);
 	}
 
 	protected XMLNode getBody() {
-		XMLNode body = getDxl().selectSingleNode("/subform/body/richtext");
+		XMLNode body = getDxl().selectSingleNode("/subform/body/richtext"); //$NON-NLS-1$
 		return body;
 	}
 
@@ -101,7 +101,7 @@ public class Subform extends AbstractDesignBaseNamed implements org.openntf.domi
 	 */
 	@Override
 	public FormFieldList getFields() {
-		return new org.openntf.domino.design.impl.FormFieldList(this, "//field");
+		return new org.openntf.domino.design.impl.FormFieldList(this, "//field"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class Subform extends AbstractDesignBaseNamed implements org.openntf.domi
 	 */
 	@Override
 	public XMLNodeList getSubformNodes() {
-		return getDxl().selectNodes("//subformref");
+		return getDxl().selectNodes("//subformref"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -125,9 +125,9 @@ public class Subform extends AbstractDesignBaseNamed implements org.openntf.domi
 		XMLNodeList nodes = getSubformNodes();
 		ArrayList<String> subforms = new ArrayList<String>();
 		for (XMLNode node : nodes) {
-			String name = node.getAttribute("name");
+			String name = node.getAttribute("name"); //$NON-NLS-1$
 			if (!Strings.isBlankString(name)) {
-				subforms.add(node.getAttribute("name"));
+				subforms.add(node.getAttribute("name")); //$NON-NLS-1$
 			}
 		}
 		return subforms;
@@ -143,10 +143,10 @@ public class Subform extends AbstractDesignBaseNamed implements org.openntf.domi
 		XMLNodeList nodes = getSubformNodes();
 		ArrayList<String> subforms = new ArrayList<String>();
 		for (XMLNode node : nodes) {
-			String name = node.getAttribute("name");
+			String name = node.getAttribute("name"); //$NON-NLS-1$
 			if (!Strings.isBlankString(name)) {
 				if (!existingList.contains(name)) {
-					existingList.add(node.getAttribute("name"));
+					existingList.add(node.getAttribute("name")); //$NON-NLS-1$
 					org.openntf.domino.design.Subform sf = dbDesign.getSubform(name);
 					existingList.addAll(sf.getExplicitSubformsRecursive(subforms));
 				}
@@ -163,9 +163,9 @@ public class Subform extends AbstractDesignBaseNamed implements org.openntf.domi
 		XMLNodeList nodes = getSubformNodes();
 		ArrayList<String> subforms = new ArrayList<String>();
 		for (XMLNode node : nodes) {
-			String name = node.getAttribute("name");
+			String name = node.getAttribute("name"); //$NON-NLS-1$
 			if (Strings.isBlankString(name)) {
-				subforms.add(node.selectSingleNode("code[@event='value']/formula").getText());
+				subforms.add(node.selectSingleNode("code[@event='value']/formula").getText()); //$NON-NLS-1$
 			}
 		}
 		return subforms;

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,14 @@ import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.exceptions.UnimplementedException;
 
+@SuppressWarnings("nls")
 public class ViewEntryCoordinate implements org.openntf.domino.big.ViewEntryCoordinate {
 	public static final char POS_SEP = '.';
 	private NoteCoordinate parentViewCoordinate_;
 	private String position_;
 	private String entryType_;
 	private transient ViewNavigator sourceNav_;
+	@SuppressWarnings("unused")
 	private transient ViewEntryCollection sourceColl_;
 
 	//	private transient ViewEntry sourceEntry_;
@@ -45,13 +47,13 @@ public class ViewEntryCoordinate implements org.openntf.domino.big.ViewEntryCoor
 		parentViewCoordinate_ = new NoteCoordinate(viewEntry.getParentView());
 		position_ = viewEntry.getPosition();
 		if (viewEntry.isCategory()) {
-			entryType_ = "EC";
+			entryType_ = "EC"; //$NON-NLS-1$
 		} else if (viewEntry.isDocument()) {
-			entryType_ = "ED";
+			entryType_ = "ED"; //$NON-NLS-1$
 		} else if (viewEntry.isTotal()) {
-			entryType_ = "ET";
+			entryType_ = "ET"; //$NON-NLS-1$
 		} else {
-			entryType_ = "EU";
+			entryType_ = "EU"; //$NON-NLS-1$
 		}
 	}
 

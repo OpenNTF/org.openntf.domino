@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -324,7 +324,7 @@ implements org.openntf.domino.ReplicationEntry {
 		boolean first = true;
 		for (String view : views) {
 			if (!first) {	//removed cleverness attempt on advice from FindBugs
-				result.append(";");
+				result.append(";"); //$NON-NLS-1$
 			} else {
 				first = false;
 			}

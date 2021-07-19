@@ -19,6 +19,7 @@ import java.util.Queue;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class CopySplitPipe<S> extends AbstractMetaPipe<S, S> implements MetaPipe {
 
     private final List<Pipeline> pipes = new ArrayList<Pipeline>();

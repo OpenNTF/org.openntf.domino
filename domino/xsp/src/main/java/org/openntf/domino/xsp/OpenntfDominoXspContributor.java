@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public class OpenntfDominoXspContributor extends XspContributor {
 		Object[][] result = new Object[][] {
 				// That may not work reliable, as it depends on the sorting of a hashmap
 				// So that object factory will only create open* objects, the GodMode-Factory will create the other objects
-				{ "org.openntf.domino.xsp.helpers.DOMINO_IMPLICIT_OBJECT_FACTORY",
+				{ "org.openntf.domino.xsp.helpers.DOMINO_IMPLICIT_OBJECT_FACTORY", //$NON-NLS-1$
 						org.openntf.domino.xsp.helpers.OpenntfDominoImplicitObjectFactory.class },
 				{ FormulaBindingFactory.FORMULA, FormulaBindingFactory.class }, { MsgBindingFactory.MSG, MsgBindingFactory.class } };
 

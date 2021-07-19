@@ -17,6 +17,7 @@ import org.openntf.formula.parse.AtFormulaParserImpl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
+@SuppressWarnings("nls")
 public enum Formulas {
 	;
 
@@ -54,7 +55,7 @@ public enum Formulas {
 	 * This function returns a preconfigured default instance
 	 */
 	public static FormulaParser getParser(final Formatter formatter, final FunctionFactory factory) {
-		AtFormulaParserImpl parser = new AtFormulaParserImpl(new java.io.StringReader(""));
+		AtFormulaParserImpl parser = new AtFormulaParserImpl(new java.io.StringReader("")); //$NON-NLS-1$
 		parser.reset();
 		parser.formatter = formatter;
 		parser.functionFactory = factory;

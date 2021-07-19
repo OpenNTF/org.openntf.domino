@@ -16,6 +16,7 @@ import java.util.List;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "unchecked", "nls" })
 public class VertexQueryPipe<E extends Element> extends QueryPipe<Vertex, E> {
 
     private Direction direction = Direction.BOTH;

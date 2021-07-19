@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -231,7 +231,7 @@ public class ColorObject extends BaseThreadSafe<org.openntf.domino.ColorObject, 
 			g = g.toLowerCase();
 			b = b.toLowerCase();
 		}
-		return (r.length() < 2 ? "0" : "") + r + (g.length() < 2 ? "0" : "") + g + (b.length() < 2 ? "0" : "") + b;
+		return (r.length() < 2 ? "0" : "") + r + (g.length() < 2 ? "0" : "") + g + (b.length() < 2 ? "0" : "") + b; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	}
 
 	/*

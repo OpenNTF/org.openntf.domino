@@ -10,6 +10,7 @@ import com.tinkerpop.blueprints.util.StringFactory;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 class PartitionIndex<T extends Element> implements Index<T> {
 
     protected Index<T> rawIndex;
@@ -30,7 +31,7 @@ class PartitionIndex<T extends Element> implements Index<T> {
 
     public long count(final String key, final Object value) {
         long counter = 0;
-        for (Element element : this.get(key, value)) {
+        for (@SuppressWarnings("unused") Element element : this.get(key, value)) {
             counter++;
         }
         return counter;

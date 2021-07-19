@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ public class DXLItemRaw extends AbstractDXLItem {
 	private static final long serialVersionUID = 1L;
 
 	protected static DXLItemRaw create(final XMLNode node, final int dupItemId) {
-		XMLNode rawitemdata = node.selectSingleNode("rawitemdata");
-		int typeCode = Integer.parseInt(rawitemdata.getAttribute("type"), 16);
+		XMLNode rawitemdata = node.selectSingleNode("rawitemdata"); //$NON-NLS-1$
+		int typeCode = Integer.parseInt(rawitemdata.getAttribute("type"), 16); //$NON-NLS-1$
 		Type type = Type.valueOf(typeCode);
 
 		switch (type) {
@@ -50,8 +50,8 @@ public class DXLItemRaw extends AbstractDXLItem {
 	protected DXLItemRaw(final XMLNode node, final int dupItemId) {
 		super(node, dupItemId);
 
-		XMLNode rawitemdata = node.selectSingleNode("rawitemdata");
-		int typeCode = Integer.parseInt(rawitemdata.getAttribute("type"), 16);
+		XMLNode rawitemdata = node.selectSingleNode("rawitemdata"); //$NON-NLS-1$
+		int typeCode = Integer.parseInt(rawitemdata.getAttribute("type"), 16); //$NON-NLS-1$
 		type_ = Type.valueOf(typeCode);
 
 		String rawData = rawitemdata.getText();

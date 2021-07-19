@@ -8,7 +8,7 @@ import java.io.IOException;
 public class Version {
 
     public static void main(final String[] arguments) throws IOException {
-        System.out.println("gremlin " + Tokens.VERSION);
+        System.out.println("gremlin " + Tokens.VERSION); //$NON-NLS-1$
     }
 }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.openntf.domino.Document;
 public class DocumentWriteAccessException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
+	@SuppressWarnings("nls")
 	public DocumentWriteAccessException(final Document doc) {
 		super("User " + doc.getAncestorSession().getEffectiveUserName() + " not authorized to write to document " + doc.getUniversalID()
 				+ " in database " + doc.getAncestorDatabase().getApiPath());

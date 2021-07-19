@@ -11,6 +11,7 @@ import java.util.Queue;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "unchecked" })
 public class ExpandableIterator<T> implements Iterator<T> {
 
     private final Queue<T> queue = new LinkedList<T>();

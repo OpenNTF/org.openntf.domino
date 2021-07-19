@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.Vector;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
-import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
@@ -48,11 +44,12 @@ import org.openntf.domino.utils.TypeUtils;
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.util.JsonWriter;
 
-// TODO: Auto-generated Javadoc
+import lotus.domino.NotesException;
 
 /**
  * The Class ViewEntry.
  */
+@SuppressWarnings("nls")
 public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry, View>
 		implements org.openntf.domino.ViewEntry {
 	@SuppressWarnings("unused")
@@ -67,7 +64,7 @@ public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotu
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
 				public Object run() throws Exception {
-					getParentViewMethod = lotus.domino.local.ViewEntry.class.getDeclaredMethod("getParentView", (Class<?>[]) null);
+					getParentViewMethod = lotus.domino.local.ViewEntry.class.getDeclaredMethod("getParentView", (Class<?>[]) null); //$NON-NLS-1$
 					getParentViewMethod.setAccessible(true);
 					return null;
 				}
@@ -154,6 +151,7 @@ public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotu
 
 			if (columnValues_ == null) {
 				// cache the columnValues and rely that the caller will NOT modify the objects inside
+				@SuppressWarnings("unchecked")
 				Vector<Object> raw = getDelegate().getColumnValues();
 				columnValues_ = wrapColumnValues(raw, this.getAncestorSession());
 			}
@@ -660,8 +658,6 @@ public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotu
 		return metaversalid_;
 	}
 
-	private static Pattern posSplit = Pattern.compile("\\.");
-
 	@Override
 	public Object getCategoryValue() {
 		if (isCategory()) {
@@ -689,13 +685,13 @@ public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotu
 	public String toJson(boolean compact) {
 		StringWriter sw = new StringWriter();
 		JsonWriter jw = new JsonWriter(sw, compact);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"); //$NON-NLS-1$
 		try {
 			jw.startObject();
-			jw.outStringProperty("@unid", getUniversalID());
-			jw.outStringProperty("@noteid", getNoteID());
-			jw.outStringProperty("@replicaid", getAncestorDatabase().getReplicaID());
-			jw.outStringProperty("@metaversalid", getMetaversalID());
+			jw.outStringProperty("@unid", getUniversalID()); //$NON-NLS-1$
+			jw.outStringProperty("@noteid", getNoteID()); //$NON-NLS-1$
+			jw.outStringProperty("@replicaid", getAncestorDatabase().getReplicaID()); //$NON-NLS-1$
+			jw.outStringProperty("@metaversalid", getMetaversalID()); //$NON-NLS-1$
 
 			boolean resetPreferDates = false;
 			if (!isPreferJavaDates()) {

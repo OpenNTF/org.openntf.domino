@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,14 +38,14 @@ public class DbDirectoryTree {
 
 	private Map<String, DbDirectoryTree> subDirs = new TreeMap<String, DbDirectoryTree>();
 	private Map<String, DatabaseMetaData> files = new TreeMap<String, DatabaseMetaData>();
-	private String directory_ = "";
+	private String directory_ = ""; //$NON-NLS-1$
 
 	public DbDirectoryTree(final SortedSet<DatabaseMetaData> metaDataSet, final Session session) {
 		session_ = session;
 
 		for (DatabaseMetaData metaData : metaDataSet) {
 			String fileName = metaData.getFilePath().replace('\\', '/');
-			String[] components = fileName.split("/");
+			String[] components = fileName.split("/"); //$NON-NLS-1$
 			add(components, metaData, 0);
 		}
 	}
@@ -73,6 +73,7 @@ public class DbDirectoryTree {
 	/**
 	 * Print Dir structure in a "tree style"
 	 */
+	@SuppressWarnings("nls")
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -106,7 +107,7 @@ public class DbDirectoryTree {
 			return directory_;
 		String parentDir = getParent().getDirPath();
 		if (!parentDir.isEmpty()) {
-			return parentDir + "/" + directory_;
+			return parentDir + "/" + directory_; //$NON-NLS-1$
 		}
 		return directory_;
 	}
@@ -116,8 +117,8 @@ public class DbDirectoryTree {
 			sb.append(indent);
 			sb.append('[');
 			sb.append(e.getKey());
-			sb.append("]\n");
-			e.getValue().toString(sb, indent.concat("    "));
+			sb.append("]\n"); //$NON-NLS-1$
+			e.getValue().toString(sb, indent.concat("    ")); //$NON-NLS-1$
 		}
 		for (Entry<String, DatabaseMetaData> e : files.entrySet()) {
 			sb.append(indent);

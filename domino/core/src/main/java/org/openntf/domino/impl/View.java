@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.openntf.domino.impl;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInput;
@@ -37,8 +36,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lotus.domino.NotesException;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
@@ -55,10 +52,12 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
-// TODO: Auto-generated Javadoc
+import lotus.domino.NotesException;
+
 /**
  * The Class View.
  */
+@SuppressWarnings({ "deprecation", "nls" })
 public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
 	private static final Logger log_ = Logger.getLogger(View.class.getName());
 	private transient List<DominoColumnInfo> columnInfo_;
@@ -686,28 +685,6 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object)
-	 */
-	@Override
-	public ViewNavigator createViewNavFrom(final Object entry) {
-		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
-		try {
-			getDelegate().setAutoUpdate(false);
-			getDelegate().setEnableNoteIDsForCategories(true);
-			ViewNavigator result = fromLotus(getDelegate().createViewNavFrom(toLotus(entry)), ViewNavigator.SCHEMA, this);
-			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.FROM);
-			return result;
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		} finally {
-			s_recycle(recycleThis);
-		}
-		return null;
-	}
-
 	/**
 	 * This method is neccessary to get some Backend-functions working.<br>
 	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
@@ -742,6 +719,28 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		}
 		return null;
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object)
+	 */
+	@Override
+	public ViewNavigator createViewNavFrom(final Object entry) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
+		try {
+			getDelegate().setAutoUpdate(false);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFrom(toLotus(entry)), ViewNavigator.SCHEMA, this);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.FROM);
+			return result;
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
+		}
+		return null;
 	}
 
 	/*
@@ -1336,7 +1335,8 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		try {
 			try {
 				lotus.domino.View raw = getDelegate();
-				Vector rawColumns = raw.getColumns();
+				@SuppressWarnings("unchecked")
+				Vector<ViewColumn> rawColumns = raw.getColumns();
 				return fromLotusAsVector(rawColumns, org.openntf.domino.ViewColumn.SCHEMA, this);
 			} catch (NullPointerException e) {
 				throw new RuntimeException(
@@ -3198,6 +3198,7 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		return getAncestorDatabase().getReplicaID() + getUniversalID();
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ViewNavigator createViewNavFromKey(final Vector arg0, final boolean arg1) {
 		try {
@@ -3218,6 +3219,7 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		}
 		Map<Object, Object> result = new LinkedHashMap<Object, Object>();
 		Vector<ViewColumn> columns = getColumns();
+		@SuppressWarnings("unused")
 		int categoryCount = 0;
 		for (ViewColumn column : columns) {
 			if (column.isCategory()) {

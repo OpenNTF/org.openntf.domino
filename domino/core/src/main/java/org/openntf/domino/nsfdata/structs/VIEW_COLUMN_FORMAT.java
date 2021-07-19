@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.Set;
  * @since forever
  *
  */
+@SuppressWarnings("nls")
 public class VIEW_COLUMN_FORMAT extends AbstractStruct {
 	public static enum FormatSignature {
 		SIGNATURE((short) 0x4356), SIGNATURE2((short) 0x4357), SIGNATURE3((short) 0x4358), SIGNATURE4((short) 0x4359),

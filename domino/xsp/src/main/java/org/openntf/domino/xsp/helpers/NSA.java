@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ import com.ibm.xsp.application.events.SessionListener;
  * @author Nathan T. Freeman
  * 
  */
-@SuppressWarnings("deprecation")
+@SuppressWarnings({ "deprecation", "nls" })
 public enum NSA implements ApplicationListener, SessionListener {
 	INSTANCE;
 

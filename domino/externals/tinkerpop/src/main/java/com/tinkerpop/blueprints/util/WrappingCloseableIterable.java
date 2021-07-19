@@ -35,7 +35,7 @@ public class WrappingCloseableIterable<T> implements CloseableIterable<T> {
 
     public void close() {
         if (this.iterable instanceof CloseableIterable) {
-            ((CloseableIterable) this.iterable).close();
+            ((CloseableIterable<?>) this.iterable).close();
         }
     }
 

@@ -8,6 +8,7 @@ import com.tinkerpop.pipes.transform.TransformPipe;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings("nls")
 public class Tokens {
 
     public static final String VERSION = "2.5.0";

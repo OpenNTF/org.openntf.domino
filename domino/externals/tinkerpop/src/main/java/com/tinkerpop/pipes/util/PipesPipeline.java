@@ -60,6 +60,7 @@ import java.util.Map;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 @Deprecated
 public class PipesPipeline<S, E> extends Pipeline<S, E> implements PipesFluentPipeline<S, E> {
 
@@ -312,7 +313,7 @@ public class PipesPipeline<S, E> extends Pipeline<S, E> implements PipesFluentPi
         return this.add(new GatherFunctionPipe(FluentUtility.prepareFunction(this.asMap, function)));
     }
 
-    public PipesPipeline<S, E> _() {
+    public PipesPipeline<S, E> identity() {
         return this.add(new IdentityPipe<E>());
     }
 
@@ -409,7 +410,8 @@ public class PipesPipeline<S, E> extends Pipeline<S, E> implements PipesFluentPi
      *
      * @return returns the current pipeline with the new end type.
      */
-    public <E> PipesPipeline<S, E> cast(Class<E> end) {
+    @SuppressWarnings("hiding")
+	public <E> PipesPipeline<S, E> cast(Class<E> end) {
         return (PipesPipeline<S, E>) this;
     }
 }

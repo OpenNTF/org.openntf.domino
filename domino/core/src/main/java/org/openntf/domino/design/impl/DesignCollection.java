@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.openntf.domino.design.DesignParseException;
  * @author jgallagher
  *
  */
+@SuppressWarnings("nls")
 public class DesignCollection<E extends DesignBase> implements org.openntf.domino.design.DesignCollection<E> {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DesignCollection.class.getName());

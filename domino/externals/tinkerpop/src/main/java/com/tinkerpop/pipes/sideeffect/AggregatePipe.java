@@ -19,6 +19,7 @@ import java.util.Queue;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class AggregatePipe<S> extends AbstractPipe<S, S> implements SideEffectPipe.GreedySideEffectPipe<S, Collection> {
 
     private Collection aggregate;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright © 2013-2020 The OpenNTF Domino API Team
+    Copyright © 2013-2021 The OpenNTF Domino API Team
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 <feature
       id="org.openntf.domino.dependencies.feature"
       label="OpenNTF Domino API Dependencies"
-      version="11.0.0.qualifier"
+      version="11.0.1.qualifier"
       provider-name="OpenNTF">
 
    <description url="http://www.example.com/description">
@@ -43,29 +43,8 @@
  * permissions and limitations under the License.
    </license>
 
-   <plugin
-         id="com.tinkerpop"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.google.guava"
-         download-size="0"
-         install-size="0"
-         version="19.0.0"/>
-
-   <plugin
-         id="javassist"
-         download-size="0"
-         install-size="0"
-         version="3.18.2.GA"/>
-
-   <plugin
-         id="javolution"
-         download-size="0"
-         install-size="0"
-         version="6.1.1"/>
+   <plugin id="com.tinkerpop" version="0.0.0"/>
+   <plugin id="javassist" version="0.0.0"/>
+   <plugin id="javolution" version="0.0.0"/>
 
 </feature>

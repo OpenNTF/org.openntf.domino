@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,26 +45,10 @@ public class SMTPCommandEvent extends AbstractEMBridgeEvent {
 	}
 
 	/**
-	 * @param sessionID
-	 *            the sessionID to set
-	 */
-	private void setSessionID(final long sessionID) {
-		this.sessionID = sessionID;
-	}
-
-	/**
 	 * @return the command
 	 */
 	public String getCommand() {
 		return command;
-	}
-
-	/**
-	 * @param command
-	 *            the command to set
-	 */
-	private void setCommand(final String command) {
-		this.command = command;
 	}
 
 	/**
@@ -75,14 +59,6 @@ public class SMTPCommandEvent extends AbstractEMBridgeEvent {
 	}
 
 	/**
-	 * @param maxCommandLength
-	 *            the maxCommandLength to set
-	 */
-	private void setMaxCommandLength(final long maxCommandLength) {
-		this.maxCommandLength = maxCommandLength;
-	}
-
-	/**
 	 * @return the sMTPReply
 	 */
 	public String getSMTPReply() {
@@ -90,26 +66,10 @@ public class SMTPCommandEvent extends AbstractEMBridgeEvent {
 	}
 
 	/**
-	 * @param sMTPReply
-	 *            the sMTPReply to set
-	 */
-	private void setSMTPReply(final String sMTPReply) {
-		SMTPReply = sMTPReply;
-	}
-
-	/**
 	 * @return the sMTPReplyLength
 	 */
 	public long getSMTPReplyLength() {
 		return SMTPReplyLength;
-	}
-
-	/**
-	 * @param sMTPReplyLength
-	 *            the sMTPReplyLength to set
-	 */
-	private void setSMTPReplyLength(final long sMTPReplyLength) {
-		SMTPReplyLength = sMTPReplyLength;
 	}
 
 }

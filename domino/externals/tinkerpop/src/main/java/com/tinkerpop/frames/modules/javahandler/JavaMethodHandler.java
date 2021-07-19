@@ -24,6 +24,7 @@ class JavaMethodHandler implements
 
 
 	@Override
+    @SuppressWarnings("nls")
 	public Object processElement(Object framedElement, Method method,
 			Object[] arguments, JavaHandler annotation,
 			FramedGraph<?> framedGraph, Element element) {

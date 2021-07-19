@@ -8,6 +8,7 @@ import java.util.Map;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public class Parameter<K, V> implements Map.Entry<K, V> {
 
     private final K key;
@@ -64,6 +65,7 @@ public class Parameter<K, V> implements Map.Entry<K, V> {
         return result;
     }
 
+    @SuppressWarnings("nls")
     public String toString() {
         return "parameter[" + key + "," + value + "]";
     }

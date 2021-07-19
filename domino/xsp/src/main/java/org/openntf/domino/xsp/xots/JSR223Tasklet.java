@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,8 +53,8 @@ public class JSR223Tasklet extends AbstractDominoRunnable {
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByExtension(scriptExt_);
 
-		engine.put("database", database);
-		engine.put("session", database.getAncestorSession());
+		engine.put("database", database); //$NON-NLS-1$
+		engine.put("session", database.getAncestorSession()); //$NON-NLS-1$
 
 		ScriptContext context = engine.getContext();
 		context.setWriter(new PrintWriter(System.out));

@@ -13,6 +13,7 @@ import java.util.Collection;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class StorePipe<S> extends AbstractPipe<S, S> implements SideEffectPipe.LazySideEffectPipe<S, Collection> {
 
     private Collection storage;

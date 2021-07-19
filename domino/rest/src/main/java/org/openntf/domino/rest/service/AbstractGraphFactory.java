@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.openntf.domino.rest.resources.info.IInfoProvider;
 
 import com.tinkerpop.frames.FramedGraph;
 
+@SuppressWarnings({ "rawtypes", "nls" })
 public abstract class AbstractGraphFactory implements IGraphFactory {
 	protected final Map<String, ICommandProcessor> processorMap_ = new HashMap<String, ICommandProcessor>();
 	protected final Map<String, IInfoProvider> providerMap_ = new HashMap<String, IInfoProvider>();

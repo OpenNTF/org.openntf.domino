@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
-import com.ibm.icu.lang.UCharacter;
 
 /**
  * @author Nathan T. Freeman Much source code shamelessly stolen from com.ibm.icu.util.CaseInsensitiveString. We would have properly
@@ -72,21 +70,14 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 	}
 
 	public static String toString(final Iterable<CaseInsensitiveString> cis) {
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		for (CaseInsensitiveString str : cis) {
-			result = result + (result.length() > 0 ? ", " : "") + str.toString();
+			result = result + (result.length() > 0 ? ", " : "") + str.toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return result;
 	}
 
-	protected static String foldCase(final String foldee) {
-		return UCharacter.foldCase(foldee, true);
-	}
-
 	public String getFolded() {
-		if (folded == null) {
-			folded = foldCase(string);
-		}
 		return folded;
 	}
 
@@ -98,6 +89,7 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 	 */
 	public CaseInsensitiveString(final CharSequence s) {
 		string = String.valueOf(s);
+		folded = string.toLowerCase();
 	}
 
 	public CaseInsensitiveString() {	//used for Externalization
@@ -169,6 +161,7 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 	}
 
 	@Override
+	@SuppressWarnings("nls")
 	public int compareTo(final CharSequence o) {
 		if (o == null) {
 			throw new IllegalArgumentException("Cannot compare to null");
@@ -184,7 +177,7 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 		} catch (ClassCastException e) {
 			try {
 				String s = o.toString();
-				return folded.compareTo(foldCase(s));
+				return folded.compareTo(s.toLowerCase());
 			} catch (ClassCastException e2) {
 				throw new IllegalArgumentException("Cannot compare an object of type " + (o == null ? "null" : o.getClass().getName()));
 
@@ -196,9 +189,9 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 		if (arg0 instanceof CaseInsensitiveString) {
 			return getFolded().startsWith(((CaseInsensitiveString) arg0).getFolded());
 		} else if (arg0 instanceof String) {
-			return getFolded().startsWith(foldCase((String) arg0));
+			return getFolded().startsWith(arg0.toString().toLowerCase());
 		} else {
-			return getFolded().startsWith(foldCase(String.valueOf(arg0)));
+			return getFolded().startsWith(String.valueOf(arg0).toLowerCase());
 		}
 	}
 

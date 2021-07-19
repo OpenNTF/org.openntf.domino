@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * displayed using fonts other than those defined in FONT_FACE_xxx. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDFONTTABLE extends CDRecord {
 	/**
 	 * This defines part of the structure of a font table item in a note. A font table item in a note allows rich text in the note to be

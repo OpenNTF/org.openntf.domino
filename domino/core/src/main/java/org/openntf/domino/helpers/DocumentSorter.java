@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.iterators.DocumentList;
 import org.openntf.domino.types.Null;
 
+@SuppressWarnings("nls")
 public class DocumentSorter implements Externalizable {
 	private static final long serialVersionUID = 1L;
 	private static boolean debug = false;
@@ -245,7 +246,7 @@ public class DocumentSorter implements Externalizable {
 		if (dataset_ == null) {
 			List<String> criteria = getCriteria();
 			if (criteria.isEmpty()) {
-				addCriteria("@created");
+				addCriteria("@created"); //$NON-NLS-1$
 			}
 			if (sourceColl_ == null) {
 				throw new IllegalStateException(

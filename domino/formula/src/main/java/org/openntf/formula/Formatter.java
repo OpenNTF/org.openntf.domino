@@ -16,10 +16,9 @@
  */
 package org.openntf.formula;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
-import com.ibm.icu.util.Calendar;
 
 // TODO RPr Needs a lot of comments
 public interface Formatter {
@@ -75,19 +74,19 @@ public interface Formatter {
 		}
 
 		public String dOptToStr() {
-			return "D" + dOption;
+			return "D" + dOption; //$NON-NLS-1$
 		}
 
 		public String tOptToStr() {
-			return "T" + tOption;
+			return "T" + tOption; //$NON-NLS-1$
 		}
 
 		public String zOptToStr() {
-			return "Z" + zOption;
+			return "Z" + zOption; //$NON-NLS-1$
 		}
 
 		public String sOptToStr() {
-			return "S" + sOption;
+			return "S" + sOption; //$NON-NLS-1$
 		}
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ public class ODARootResource {
 		if ( uri.isAbsolute() && makeRelative ) {
 			String rel = uri.getRawPath();
 			if ( uri.getQuery() != null ) {
-				rel += "?" + uri.getRawQuery();
+				rel += "?" + uri.getRawQuery(); //$NON-NLS-1$
 			}
 			uri = URI.create(rel);
 		}

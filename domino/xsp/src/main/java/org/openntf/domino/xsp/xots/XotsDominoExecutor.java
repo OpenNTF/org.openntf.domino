@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ import com.ibm.domino.xsp.module.nsf.ModuleClassLoader;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
+@SuppressWarnings("nls")
 public class XotsDominoExecutor extends DominoExecutor {
 	private static final Logger log_ = Logger.getLogger(XotsDominoExecutor.class.getName());
 
@@ -388,7 +389,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 					ctx.setOpenLogApiPath(ODAPlatform.getXspPropertyAsString("xsp.openlog.filepath"));
 					ctx.setContextApiPath(module.getDatabasePath());
 					ctx.setTaskletClass(inner.getClass().getName());
-					((AbstractXotsCallable<?>) inner).setContext(ctx);
+					((AbstractXotsCallable) inner).setContext(ctx);
 				}
 				return new XotsWrappedCallable<V>(module, inner);
 			}

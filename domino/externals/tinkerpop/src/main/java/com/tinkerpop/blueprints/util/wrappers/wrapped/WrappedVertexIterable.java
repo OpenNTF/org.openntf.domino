@@ -36,7 +36,7 @@ class WrappedVertexIterable implements CloseableIterable<Vertex> {
 
     public void close() {
         if (this.iterable instanceof CloseableIterable) {
-            ((CloseableIterable) iterable).close();
+            ((CloseableIterable<?>) iterable).close();
         }
     }
 }

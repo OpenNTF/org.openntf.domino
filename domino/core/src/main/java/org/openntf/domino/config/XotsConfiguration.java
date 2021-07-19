@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.Tasklet;
 
+@SuppressWarnings("nls")
 public class XotsConfiguration extends ConfigurationObject {
 
 	private String apiPath_;
@@ -33,8 +34,8 @@ public class XotsConfiguration extends ConfigurationObject {
 
 	public XotsConfiguration(final String path, final String taskletName, final boolean isDatabase) {
 		if (isDatabase) {
-			bundle_ = "";
-			if (path.indexOf("!!") < 0) {
+			bundle_ = ""; //$NON-NLS-1$
+			if (path.indexOf("!!") < 0) { //$NON-NLS-1$
 				apiPath_ = Factory.getLocalServerName() + "!!" + path;
 			} else {
 				apiPath_ = path;

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.openntf.domino.exceptions.OpenNTFNotesException;
  * Default formatter for writing log messages to a file when no formatter is specified in the configuration file. Writes every message on at
  * least two lines (optionally with a stack trace). Date and time is written as 'yyyy-MM-dd HH:mm:ss'.
  */
+@SuppressWarnings("nls")
 public class LogFormatterFileDefault extends Formatter {
 
 	public static LogFormatterFileDefault getInstance() {

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,7 @@ import com.ibm.xsp.exception.EvaluationExceptionEx;
  * @since 1.0.0
  * 
  */
+@SuppressWarnings("nls")
 public class XspOpenLogPhaseListener implements PhaseListener {
 	private static final long serialVersionUID = 1L;
 	private static final int RENDER_RESPONSE = 6;
@@ -84,15 +85,15 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 			if (RENDER_RESPONSE == event.getPhaseId().getOrdinal()) {
 				Map<String, Object> r = FacesContext.getCurrentInstance().getExternalContext().getRequestMap();
 				Map<String, Object> sessScope = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-				if (null == r.get("error")) {
+				if (null == r.get("error")) { //$NON-NLS-1$
 					XspOpenLogUtil.getXspOpenLogItem().setThisAgent(true);
 				}
-				if (null != sessScope.get("openLogBean")) {
+				if (null != sessScope.get("openLogBean")) { //$NON-NLS-1$
 					if (!ODAPlatform.isAPIEnabled()) {
 						return;
 					}
 					// sessionScope.openLogBean is not null, the developer has called openLogBean.addError(e,this)
-					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) sessScope.get("openLogBean");
+					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) sessScope.get("openLogBean"); //$NON-NLS-1$
 					errList.setLoggedErrors(new LinkedHashSet<EventError>());
 					// loop through the ArrayList of EventError objects and add any errors already captured as a facesMessage
 					if (null != errList.getErrors()) {
@@ -119,20 +120,20 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 			if (RENDER_RESPONSE == event.getPhaseId().getOrdinal()) {
 				Map<String, Object> r = FacesContext.getCurrentInstance().getExternalContext().getRequestMap();
 				Map<String, Object> sessScope = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-				if (null != r.get("error")) {
+				if (null != r.get("error")) { //$NON-NLS-1$
 					processUncaughtException(r);
 
-				} else if (null != sessScope.get("openLogBean")) {
+				} else if (null != sessScope.get("openLogBean")) { //$NON-NLS-1$
 					if (!ODAPlatform.isAPIEnabled()) {
 						return;
 					}
 					// sessionScope.openLogBean is not null, the developer has called openLogBean.addError(e,this)
-					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) sessScope.get("openLogBean");
+					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) sessScope.get("openLogBean"); //$NON-NLS-1$
 					// loop through the ArrayList of EventError objects
 					if (null != errList.getErrors()) {
 						for (EventError error : errList.getErrors()) {
-							String msg = "";
-							if (!"".equals(error.getMsg())) {
+							String msg = ""; //$NON-NLS-1$
+							if (!"".equals(error.getMsg())) { //$NON-NLS-1$
 								msg = msg + error.getMsg();
 							}
 							msg = msg + "Error on ";
@@ -140,7 +141,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 								msg = msg + error.getControl().getId();
 							}
 							if (null != error.getError()) {
-								msg = msg + ":\n\n" + error.getError().getLocalizedMessage() + "\n\n"
+								msg = msg + ":\n\n" + error.getError().getLocalizedMessage() + "\n\n" //$NON-NLS-1$ //$NON-NLS-2$
 										+ error.getError().getExpressionText();
 							}
 							Level severity = convertSeverity(error.getSeverity());
@@ -163,10 +164,10 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 							if (null != eventObj.getControl()) {
 								msg = msg + eventObj.getControl().getId();
 							}
-							msg = msg + " " + eventObj.getMsg();
+							msg = msg + " " + eventObj.getMsg(); //$NON-NLS-1$
 							Level severity = convertSeverity(eventObj.getSeverity());
 							Document passedDoc = null;
-							if (!"".equals(eventObj.getUnid())) {
+							if (!"".equals(eventObj.getUnid())) { //$NON-NLS-1$
 								try {
 									Database currDb = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
 									passedDoc = currDb.getDocumentByUNID(eventObj.getUnid());
@@ -177,7 +178,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 							XspOpenLogUtil.getXspOpenLogItem().logEvent(null, msg, severity, passedDoc);
 						}
 					}
-					sessScope.put("openLogBean", null);
+					sessScope.put("openLogBean", null); //$NON-NLS-1$
 				}
 			}
 		} catch (Throwable e) {
@@ -199,21 +200,21 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 	 */
 	private void processUncaughtException(final Map<String, Object> r) {
 		// requestScope.error is not null, we're on the custom error page.
-		Object error = r.get("error");
+		Object error = r.get("error"); //$NON-NLS-1$
 
 		// Set the agent (page we're on) to the *previous* page
 		XspOpenLogUtil.getXspOpenLogItem().setThisAgent(false);
 
-		String msg = "";
+		String msg = ""; //$NON-NLS-1$
 		if (error instanceof EvaluationExceptionEx) {
 			// EvaluationExceptionEx, so SSJS error is on a component property.
 			// Hit by ErrorOnLoad.xsp
 			EvaluationExceptionEx ee = (EvaluationExceptionEx) error;
-			if ("com.ibm.jscript.InterpretException".equals(ee.getCause().getClass().getName())) {
+			if ("com.ibm.jscript.InterpretException".equals(ee.getCause().getClass().getName())) { //$NON-NLS-1$
 				InterpretException ie = (InterpretException) ee.getCause();
 				msg = "Error on " + ee.getErrorComponentId() + " " + ee.getErrorPropertyId() + " property/event, line "
 						+ Integer.toString(ie.getErrorLine()) + ":\n\n" + ie.getLocalizedMessage() + "\n\n" + ie.getExpressionText();
-			} else if ("com.ibm.jscript.parser.ParseException".equals(ee.getCause().getClass().getName())) {
+			} else if ("com.ibm.jscript.parser.ParseException".equals(ee.getCause().getClass().getName())) { //$NON-NLS-1$
 				ParseException ie = (ParseException) ee.getCause();
 				msg = "Error on " + ee.getErrorComponentId() + " " + ee.getErrorPropertyId() + " property/event " + ":\n\n"
 						+ ie.getLocalizedMessage();
@@ -230,15 +231,15 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 			// FacesException, so error is on event - doesn't get hit in examples. Can this still get hit??
 			FacesExceptionEx fe = (FacesExceptionEx) error;
 			try {
-				if ("lotus.domino.NotesException".equals(fe.getCause().getClass().getName())) {
+				if ("lotus.domino.NotesException".equals(fe.getCause().getClass().getName())) { //$NON-NLS-1$
 					// sometimes the cause is a NotesException
 					NotesException ne = (NotesException) fe.getCause();
 
-					msg = msg + "NotesException - " + Integer.toString(ne.id) + " " + ne.text;
-				} else if ("java.io.IOException".equals(error.getClass().getName())) {
+					msg = msg + "NotesException - " + Integer.toString(ne.id) + " " + ne.text; //$NON-NLS-1$ //$NON-NLS-2$
+				} else if ("java.io.IOException".equals(error.getClass().getName())) { //$NON-NLS-1$
 					IOException e = (IOException) error;
 
-					msg = "Java IO:" + error.toString();
+					msg = "Java IO:" + error.toString(); //$NON-NLS-1$
 					XspOpenLogUtil.getXspOpenLogItem().logErrorEx(e.getCause(), msg, null, null);
 				} else {
 					EvaluationExceptionEx ee = (EvaluationExceptionEx) fe.getCause();
@@ -264,21 +265,21 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 			msg = "Error on ";
 			try {
 				// javax.faces.el.MethodNotFoundException hit by ErrorOnMethod.xsp
-				if (!"javax.faces.el.MethodNotFoundException".equals(fe.getCause().getClass().getName())) {
-					if ("com.ibm.xsp.exception.EvaluationExceptionEx".equals(fe.getCause().getClass().getName())) {
+				if (!"javax.faces.el.MethodNotFoundException".equals(fe.getCause().getClass().getName())) { //$NON-NLS-1$
+					if ("com.ibm.xsp.exception.EvaluationExceptionEx".equals(fe.getCause().getClass().getName())) { //$NON-NLS-1$
 						// Hit by ErrorOnClick.xsp
 						ee = (EvaluationExceptionEx) fe.getCause();
-					} else if ("javax.faces.el.PropertyNotFoundException".equals(fe.getCause().getClass().getName())) {
+					} else if ("javax.faces.el.PropertyNotFoundException".equals(fe.getCause().getClass().getName())) { //$NON-NLS-1$
 						// Property not found exception, so error is on a component property
 						msg = "PropertyNotFoundException Error, cannot locate component:\n\n";
-					} else if ("com.ibm.xsp.exception.EvaluationExceptionEx".equals(fe.getCause().getCause().getClass().getName())) {
+					} else if ("com.ibm.xsp.exception.EvaluationExceptionEx".equals(fe.getCause().getCause().getClass().getName())) { //$NON-NLS-1$
 						// Hit by using e.g. currentDocument.isNewDoc()
 						// i.e. using a Variable that relates to a valid Java object but a method that doesn't exist
 						ee = (EvaluationExceptionEx) fe.getCause().getCause();
 					}
 					if (null != ee) {
 						msg = msg + ee.getErrorComponentId() + " " + ee.getErrorPropertyId() + " property/event:\n\n";
-						if ("com.ibm.jscript.InterpretException".equals(ee.getCause().getClass().getName())) {
+						if ("com.ibm.jscript.InterpretException".equals(ee.getCause().getClass().getName())) { //$NON-NLS-1$
 							ie = (InterpretException) ee.getCause();
 						}
 					}
@@ -287,7 +288,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 				msg = "Unexpected error class: " + fe.getCause().getClass().getName() + "\n Message recorded is: ";
 			}
 			if (null != ie) {
-				msg = msg + Integer.toString(ie.getErrorLine()) + ":\n\n" + ie.getLocalizedMessage() + "\n\n" + ie.getExpressionText();
+				msg = msg + Integer.toString(ie.getErrorLine()) + ":\n\n" + ie.getLocalizedMessage() + "\n\n" + ie.getExpressionText(); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				msg = msg + fe.getCause().getLocalizedMessage();
 			}

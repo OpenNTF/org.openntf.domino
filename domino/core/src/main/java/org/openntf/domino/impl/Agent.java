@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.openntf.domino.impl;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInput;
@@ -24,8 +23,6 @@ import java.util.Date;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
@@ -41,10 +38,12 @@ import org.openntf.domino.utils.Strings;
 
 import com.ibm.commons.util.StringUtil;
 
-// TODO: Auto-generated Javadoc
+import lotus.domino.NotesException;
+
 /**
  * The Class Agent.
  */
+@SuppressWarnings("nls")
 public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.domino.Agent, Database> implements org.openntf.domino.Agent {
 	private static final Logger log_ = Logger.getLogger(Agent.class.getName());
 	private String names_;
@@ -876,7 +875,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 	}
 
 	protected Object readResolve() {
-		// TODO: The Agent name may not be acourate enough, if the view is not unique
+		// TODO: The Agent name may not be accurate enough, if the name is not unique
 		try {
 			return fromLotus(resurrectAgent(), Agent.SCHEMA, getAncestorDatabase());
 		} catch (NotesException e) {

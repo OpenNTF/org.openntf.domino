@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.openntf.domino.big.impl.IndexHit;
 import org.openntf.domino.helpers.DocumentScanner;
 import org.openntf.domino.types.CaseInsensitiveString;
 
+@SuppressWarnings("nls")
 public interface IndexDatabase extends IScannerStateManager {
 
 	public static final String TERM_VIEW_NAME = "$TermIndex";

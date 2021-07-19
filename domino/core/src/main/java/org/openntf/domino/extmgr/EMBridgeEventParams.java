@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,10 +54,10 @@ public enum EMBridgeEventParams implements IEMBridgeEventParams {
 		if (buffer == null || buffer.length() == 0) {
 			values = new String[0];
 		} else {
-			if (buffer.endsWith(",")) {
-				buffer += " ";
+			if (buffer.endsWith(",")) { //$NON-NLS-1$
+				buffer += " "; //$NON-NLS-1$
 			}
-			values = buffer.split(",");
+			values = buffer.split(","); //$NON-NLS-1$
 		}
 		for (int i = 0; i < values.length; i++) {
 			if (params.length > i) {
@@ -70,7 +70,7 @@ public enum EMBridgeEventParams implements IEMBridgeEventParams {
 				} else if (Integer.class.equals(param.getType())) {
 					map.put(param, Integer.parseInt(values[i], 16));
 				} else if (Boolean.class.equals(param.getType())) {
-					map.put(param, ("0".equals(values[i]) || "false".equals(values[i])));
+					map.put(param, ("0".equals(values[i]) || "false".equals(values[i]))); //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (Long.class.equals(param.getType())) {
 					map.put(param, Long.parseLong(values[i], 16));
 				}

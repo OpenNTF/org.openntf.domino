@@ -17,6 +17,7 @@ import java.util.Map;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
 @Deprecated
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public interface PipesFluentPipeline<S, E> {
 
     /**
@@ -596,7 +597,7 @@ public interface PipesFluentPipeline<S, E> {
      *
      * @return the extended Pipeline
      */
-    public PipesFluentPipeline<S, E> _();
+    public PipesFluentPipeline<S, E> identity();
 
     /**
      * Add a MemoizePipe to the end of the Pipeline.
@@ -839,6 +840,7 @@ public interface PipesFluentPipeline<S, E> {
      *
      * @return returns the current pipeline with the new end type.
      */
-    public <E> PipesFluentPipeline<S, E> cast(Class<E> end);
+    @SuppressWarnings("hiding")
+	public <E> PipesFluentPipeline<S, E> cast(Class<E> end);
 
 }

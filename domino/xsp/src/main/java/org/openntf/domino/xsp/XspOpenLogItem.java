@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package org.openntf.domino.xsp;
+
+import java.util.Calendar;
 
 /*
 
@@ -106,9 +108,9 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.commons.util.StringUtil;
-import com.ibm.icu.util.Calendar;
 import com.ibm.xsp.extlib.util.ExtLibUtil;
 
+@SuppressWarnings("nls")
 public class XspOpenLogItem extends BaseOpenLogItem {
 
 	private transient String logEmail_;
@@ -143,8 +145,8 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 
 	public void setThisAgent(final boolean currPage) {
 		try {
-			String fromPage = "";
-			String includeQueryString = ODAPlatform.getXspPropertyAsString("xsp.openlog.includeQueryString");
+			String fromPage = ""; //$NON-NLS-1$
+			String includeQueryString = ODAPlatform.getXspPropertyAsString("xsp.openlog.includeQueryString"); //$NON-NLS-1$
 			String[] historyUrls = ExtLibUtil.getXspContext().getHistoryUrls();
 			if (StringUtil.isEmpty(historyUrls)) {
 				fromPage = ExtLibUtil.getXspContext().getUrl().toSiteRelativeString(ExtLibUtil.getXspContext());
@@ -160,12 +162,12 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 				}
 			}
 
-			if (fromPage.indexOf("/") > -1) {
+			if (fromPage.indexOf("/") > -1) { //$NON-NLS-1$
 				fromPage = fromPage.substring(1, fromPage.length());
 			}
-			if (!"true".equalsIgnoreCase(includeQueryString)) {
-				if (fromPage.indexOf("?") > -1) {
-					fromPage = fromPage.substring(0, fromPage.indexOf("?"));
+			if (!"true".equalsIgnoreCase(includeQueryString)) { //$NON-NLS-1$
+				if (fromPage.indexOf("?") > -1) { //$NON-NLS-1$
+					fromPage = fromPage.substring(0, fromPage.indexOf("?")); //$NON-NLS-1$
 				}
 			}
 			currXPage_ = fromPage;
@@ -189,7 +191,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	 */
 	public static String getLogExpireDate() {
 		if (StringUtil.isEmpty(_logExpireDate)) {
-			_logExpireDate = ODAPlatform.getXspPropertyAsString("xsp.openlog.expireDate");
+			_logExpireDate = ODAPlatform.getXspPropertyAsString("xsp.openlog.expireDate"); //$NON-NLS-1$
 		}
 		return _logExpireDate;
 	}
@@ -200,7 +202,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	public String getLogEmail() {
 		try {
 			if (StringUtil.isEmpty(logEmail_)) {
-				logEmail_ = ODAPlatform.getXspPropertyAsString("xsp.openlog.email");
+				logEmail_ = ODAPlatform.getXspPropertyAsString("xsp.openlog.email"); //$NON-NLS-1$
 			}
 			return logEmail_;
 		} catch (Throwable t) {
@@ -216,10 +218,10 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	public String getLogDbName() {
 		try {
 			if (StringUtil.isEmpty(logDbName_)) {
-				String logDbName_ = ODAPlatform.getXspPropertyAsString("xsp.openlog.filepath");
+				String logDbName_ = ODAPlatform.getXspPropertyAsString("xsp.openlog.filepath"); //$NON-NLS-1$
 				if (StringUtil.isEmpty(logDbName_)) {
-					super.setLogDbName("OpenLog.nsf");
-				} else if ("[CURRENT]".equalsIgnoreCase(logDbName_)) {
+					super.setLogDbName("OpenLog.nsf"); //$NON-NLS-1$
+				} else if ("[CURRENT]".equalsIgnoreCase(logDbName_)) { //$NON-NLS-1$
 					super.setLogDbName(getCurrentDatabase().getFilePath());
 				} else {
 					super.setLogDbName(logDbName_);
@@ -228,18 +230,18 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			return super.getLogDbName();
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
-			return "OpenLog.nsf";
+			return "OpenLog.nsf"; //$NON-NLS-1$
 		}
 	}
 
 	@Override
 	public Boolean getSuppressEventStack() {
 		try {
-			String dummyVar = ODAPlatform.getXspPropertyAsString("xsp.openlog.suppressEventStack");
+			String dummyVar = ODAPlatform.getXspPropertyAsString("xsp.openlog.suppressEventStack"); //$NON-NLS-1$
 			if (StringUtil.isEmpty(dummyVar)) {
 				setSuppressEventStack(true);
 				return true;
-			} else if ("false".equalsIgnoreCase(dummyVar)) {
+			} else if ("false".equalsIgnoreCase(dummyVar)) { //$NON-NLS-1$
 				setSuppressEventStack(false);
 				return false;
 			} else {
@@ -262,10 +264,10 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	 */
 	public Boolean getDisplayError() {
 		try {
-			String dummyVar = ODAPlatform.getXspPropertyAsString("xsp.openlog.displayError");
+			String dummyVar = ODAPlatform.getXspPropertyAsString("xsp.openlog.displayError"); //$NON-NLS-1$
 			if (StringUtil.isEmpty(dummyVar)) {
 				setDisplayError(true);
-			} else if ("false".equalsIgnoreCase(dummyVar)) {
+			} else if ("false".equalsIgnoreCase(dummyVar)) { //$NON-NLS-1$
 				setDisplayError(false);
 			} else {
 				setDisplayError(true);
@@ -291,31 +293,31 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	public String getDisplayErrorGeneric() {
 		try {
 			if (null == displayErrorGeneric_) {
-				displayErrorGeneric_ = ODAPlatform.getXspPropertyAsString("xsp.openlog.genericErrorMessage");
+				displayErrorGeneric_ = ODAPlatform.getXspPropertyAsString("xsp.openlog.genericErrorMessage"); //$NON-NLS-1$
 			}
 			return displayErrorGeneric_;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 
 	private String getDefaultDebugLevel() {
 		try {
-			String defaultLevel_ = ODAPlatform.getXspPropertyAsString("xsp.openlog.debugLevel");
+			String defaultLevel_ = ODAPlatform.getXspPropertyAsString("xsp.openlog.debugLevel"); //$NON-NLS-1$
 			if (StringUtil.isEmpty(defaultLevel_)) {
-				defaultLevel_ = "2";
+				defaultLevel_ = "2"; //$NON-NLS-1$
 			}
 			return defaultLevel_;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
-			return "2";
+			return "2"; //$NON-NLS-1$
 		}
 	}
 
 	@Override
 	public String logError(final Throwable ee) {
-		String m = "";
+		String m = ""; //$NON-NLS-1$
 		if (ee != null) {
 			for (StackTraceElement elem : ee.getStackTrace()) {
 				if (elem.getClassName().equals(XspOpenLogItem.class.getName())) {
@@ -351,7 +353,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			setLogSuccess(false);
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 
@@ -386,7 +388,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			Database docDb;
 
 			if (null == Factory.getSession(SessionType.CURRENT).getCurrentDatabase()) {
-				if (!StringUtil.equals(super.getCurrentDatabasePath(), "")) {
+				if (!StringUtil.equals(super.getCurrentDatabasePath(), "")) { //$NON-NLS-1$
 					reinitialiseSettings();
 				}
 			} else {
@@ -399,7 +401,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			if (StringUtil.isEmpty(getLogEmail())) {
 				db = getLogDb();
 			} else {
-				db = Factory.getSession(SessionType.NATIVE).getDatabase(getThisServer(), "mail.box", false);
+				db = Factory.getSession(SessionType.NATIVE).getDatabase(getThisServer(), "mail.box", false); //$NON-NLS-1$
 			}
 			if (db == null) {
 				System.out.println("Could not retrieve database at path " + getLogDbName());
@@ -407,18 +409,18 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			}
 
 			logDoc = db.createDocument();
-			rtitem = logDoc.createRichTextItem("LogDocInfo");
+			rtitem = logDoc.createRichTextItem("LogDocInfo"); //$NON-NLS-1$
 
-			logDoc.appendItemValue("Form", super.getLogFormName());
+			logDoc.appendItemValue("Form", super.getLogFormName()); //$NON-NLS-1$
 
 			Throwable ee = getBase();
-			String errMsg = "";
+			String errMsg = ""; //$NON-NLS-1$
 			if (null != ee) {
 				StackTraceElement ste = ee.getStackTrace()[0];
 				if (ee instanceof NotesException) {
-					logDoc.replaceItemValue("LogErrorNumber", ((NotesException) ee).id);
+					logDoc.replaceItemValue("LogErrorNumber", ((NotesException) ee).id); //$NON-NLS-1$
 					errMsg = ((NotesException) ee).text;
-				} else if ("Interpret exception".equals(ee.getMessage()) && ee instanceof com.ibm.jscript.JavaScriptException) {
+				} else if ("Interpret exception".equals(ee.getMessage()) && ee instanceof com.ibm.jscript.JavaScriptException) { //$NON-NLS-1$
 					com.ibm.jscript.InterpretException ie = (com.ibm.jscript.InterpretException) ee;
 					errMsg = "Expression Language Interpret Exception " + ie.getExpressionText();
 				} else {
@@ -427,13 +429,13 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 
 				if (LogType.TYPE_EVENT.getValue().equals(getEventType())) {
 					if (!getSuppressEventStack()) {
-						logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
+						logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee)); //$NON-NLS-1$
 					}
 				} else {
-					logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
+					logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee)); //$NON-NLS-1$
 				}
-				logDoc.replaceItemValue("LogErrorLine", ste.getLineNumber());
-				logDoc.replaceItemValue("LogFromMethod", ste.getClass() + "." + ste.getMethodName());
+				logDoc.replaceItemValue("LogErrorLine", ste.getLineNumber()); //$NON-NLS-1$
+				logDoc.replaceItemValue("LogFromMethod", ste.getClass() + "." + ste.getMethodName()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			if ("".equals(errMsg)) {
@@ -442,27 +444,27 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 				errMsg += " - " + getMessage();
 			}
 
-			logDoc.replaceItemValue("LogErrorMessage", errMsg);
-			logDoc.replaceItemValue("LogEventTime", getEventTime());
-			logDoc.replaceItemValue("LogEventType", getEventType());
+			logDoc.replaceItemValue("LogErrorMessage", errMsg); //$NON-NLS-1$
+			logDoc.replaceItemValue("LogEventTime", getEventTime()); //$NON-NLS-1$
+			logDoc.replaceItemValue("LogEventType", getEventType()); //$NON-NLS-1$
 			// If greater than 32k, put in logDocInfo
 			if (getMessage().length() > 32000) {
 				rtitem.appendText(getMessage());
 				rtitem.addNewLine();
 			} else {
-				logDoc.replaceItemValue("LogMessage", getMessage());
+				logDoc.replaceItemValue("LogMessage", getMessage()); //$NON-NLS-1$
 			}
-			logDoc.replaceItemValue("LogSeverity", getSeverity().getName());
-			logDoc.replaceItemValue("LogFromDatabase", getCurrentDatabase().getFilePath());
-			logDoc.replaceItemValue("LogFromServer", getThisServer());
-			logDoc.replaceItemValue("LogFromAgent", getThisAgent());
-			logDoc.replaceItemValue("LogAgentLanguage", "Java");
-			logDoc.replaceItemValue("LogUserName", Factory.getSession(SessionType.CURRENT).getUserName());
-			logDoc.replaceItemValue("LogEffectiveName", Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
-			logDoc.replaceItemValue("LogAccessLevel", getAccessLevel());
-			logDoc.replaceItemValue("LogUserRoles", getUserRoles());
-			logDoc.replaceItemValue("LogClientVersion", getClientVersion());
-			logDoc.replaceItemValue("LogAgentStartTime", getStartTime());
+			logDoc.replaceItemValue("LogSeverity", getSeverity().getName()); //$NON-NLS-1$
+			logDoc.replaceItemValue("LogFromDatabase", getCurrentDatabase().getFilePath()); //$NON-NLS-1$
+			logDoc.replaceItemValue("LogFromServer", getThisServer()); //$NON-NLS-1$
+			logDoc.replaceItemValue("LogFromAgent", getThisAgent()); //$NON-NLS-1$
+			logDoc.replaceItemValue("LogAgentLanguage", "Java"); //$NON-NLS-1$ //$NON-NLS-2$
+			logDoc.replaceItemValue("LogUserName", Factory.getSession(SessionType.CURRENT).getUserName()); //$NON-NLS-1$
+			logDoc.replaceItemValue("LogEffectiveName", Factory.getSession(SessionType.CURRENT).getEffectiveUserName()); //$NON-NLS-1$
+			logDoc.replaceItemValue("LogAccessLevel", getAccessLevel()); //$NON-NLS-1$
+			logDoc.replaceItemValue("LogUserRoles", getUserRoles()); //$NON-NLS-1$
+			logDoc.replaceItemValue("LogClientVersion", getClientVersion()); //$NON-NLS-1$
+			logDoc.replaceItemValue("LogAgentStartTime", getStartTime()); //$NON-NLS-1$
 
 			if (getErrDoc() != null) {
 				docDb = getErrDoc().getParentDatabase();
@@ -481,10 +483,10 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			}
 
 			// make sure Depositor-level users can add documents too
-			logDoc.appendItemValue("$PublicAccess", "1");
+			logDoc.appendItemValue("$PublicAccess", "1"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (StringUtil.isNotEmpty(getLogEmail())) {
-				logDoc.replaceItemValue("Recipients", getLogEmail());
+				logDoc.replaceItemValue("Recipients", getLogEmail()); //$NON-NLS-1$
 			}
 
 			// Set expiry date, if defined
@@ -494,9 +496,9 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 					Calendar expTime = Calendar.getInstance();
 					expTime.setTime(getStartTime());
 					expTime.add(Calendar.DAY_OF_YEAR, expiryPeriod);
-					logDoc.replaceItemValue("ExpireDate", expTime.getTime());
+					logDoc.replaceItemValue("ExpireDate", expTime.getTime()); //$NON-NLS-1$
 				} catch (Throwable t) {
-					logDoc.replaceItemValue("ArchiveFlag",
+					logDoc.replaceItemValue("ArchiveFlag", //$NON-NLS-1$
 							"WARNING: Xsp Properties in the application has a non-numeric value for xsp.openlog.expireDate, so cannot be set to auto-expire");
 				}
 			}
@@ -521,8 +523,8 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	public void addFacesMessage(final String component, String msg) {
 		try {
 			if (StringUtil.isNotEmpty(getDisplayErrorGeneric())) {
-				if (null == ExtLibUtil.getRequestScope().get("genericOpenLogMessage")) {
-					ExtLibUtil.getRequestScope().put("genericOpenLogMessage", "Added");
+				if (null == ExtLibUtil.getRequestScope().get("genericOpenLogMessage")) { //$NON-NLS-1$
+					ExtLibUtil.getRequestScope().put("genericOpenLogMessage", "Added"); //$NON-NLS-1$
 				} else {
 					return;
 				}

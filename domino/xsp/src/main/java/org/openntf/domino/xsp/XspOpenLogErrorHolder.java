@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ import com.ibm.xsp.component.xp.XspEventHandler;
  * @since 1.0.0
  * 
  */
+@SuppressWarnings("nls")
 public class XspOpenLogErrorHolder implements Serializable {
 
 	// Changed from using TreeSet because there is a bug with that. If compareTo returns 0, because it implements TreeMap,
@@ -122,7 +123,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	public InterpretException getInterpretException(final Object je) {
 		try {
 			String className = je.getClass().getName();
-			if ("com.ibm.jscript.InterpretException".equals(className)) {
+			if ("com.ibm.jscript.InterpretException".equals(className)) { //$NON-NLS-1$
 				return (InterpretException) je;
 			} else {
 				Throwable t = new Throwable(je.toString());
@@ -163,7 +164,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 		try {
 			InterpretException ie = getInterpretException(je);
 			UIComponent control = getComponentFromThis(thisObj);
-			EventError newErr = createEventError(ie, "", control, severity, unid);
+			EventError newErr = createEventError(ie, "", control, severity, unid); //$NON-NLS-1$
 			addToErrorsList(newErr);
 		} catch (Throwable e) {
 			XspOpenLogUtil.getXspOpenLogItem().logError(e);
@@ -195,7 +196,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 		try {
 			InterpretException ie = getInterpretException(je);
 			UIComponent control = getComponentFromThis(thisObj);
-			EventError newErr = createEventError(ie, "", control, severity, "");
+			EventError newErr = createEventError(ie, "", control, severity, ""); //$NON-NLS-1$ //$NON-NLS-2$
 			addToErrorsList(newErr);
 		} catch (Throwable e) {
 			XspOpenLogUtil.getXspOpenLogItem().logError(e);
@@ -225,7 +226,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 		try {
 			InterpretException ie = getInterpretException(je);
 			UIComponent control = getComponentFromThis(thisObj);
-			EventError newErr = createEventError(ie, "", control, 4, "");
+			EventError newErr = createEventError(ie, "", control, 4, ""); //$NON-NLS-1$ //$NON-NLS-2$
 			addToErrorsList(newErr);
 		} catch (Throwable e) {
 			XspOpenLogUtil.getXspOpenLogItem().logError(e);
@@ -297,7 +298,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 		try {
 			InterpretException ie = getInterpretException(je);
 			UIComponent control = getComponentFromThis(thisObj);
-			EventError newErr = createEventError(ie, msg, control, severity, "");
+			EventError newErr = createEventError(ie, msg, control, severity, ""); //$NON-NLS-1$
 			addToErrorsList(newErr);
 		} catch (Throwable e) {
 			XspOpenLogUtil.getXspOpenLogItem().logError(e);
@@ -329,7 +330,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 		try {
 			InterpretException ie = getInterpretException(je);
 			UIComponent control = getComponentFromThis(thisObj);
-			EventError newErr = createEventError(ie, msg, control, 4, "");
+			EventError newErr = createEventError(ie, msg, control, 4, ""); //$NON-NLS-1$
 			addToErrorsList(newErr);
 		} catch (Throwable e) {
 			XspOpenLogUtil.getXspOpenLogItem().logError(e);
@@ -407,7 +408,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	public void addEvent(final String msg, final Object thisObj, final int severity) {
 		try {
 			UIComponent control = getComponentFromThis(thisObj);
-			EventError newEv = createEventError(null, msg, control, severity, "");
+			EventError newEv = createEventError(null, msg, control, severity, ""); //$NON-NLS-1$
 			addToEventsList(newEv);
 		} catch (Throwable e) {
 			XspOpenLogUtil.getXspOpenLogItem().logError(e);
@@ -433,7 +434,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	public void addEvent(final String msg, final Object thisObj) {
 		try {
 			UIComponent control = getComponentFromThis(thisObj);
-			EventError newEv = createEventError(null, msg, control, 4, "");
+			EventError newEv = createEventError(null, msg, control, 4, ""); //$NON-NLS-1$
 			addToEventsList(newEv);
 		} catch (Throwable e) {
 			XspOpenLogUtil.getXspOpenLogItem().logError(e);
@@ -453,10 +454,10 @@ public class XspOpenLogErrorHolder implements Serializable {
 			if (null == thisObj) {
 				return null;
 			}
-			if ("com.ibm.xsp.component.xp.XspEventHandler".equals(thisObj.getClass().getName())) {
+			if ("com.ibm.xsp.component.xp.XspEventHandler".equals(thisObj.getClass().getName())) { //$NON-NLS-1$
 				XspEventHandler handler = (XspEventHandler) thisObj;
 				return handler.getParent();
-			} else if ("com.ibm.jscript.types.FBSGlobalObject".equals(thisObj.getClass().getName())) {
+			} else if ("com.ibm.jscript.types.FBSGlobalObject".equals(thisObj.getClass().getName())) { //$NON-NLS-1$
 				FBSGlobalObject obj = (FBSGlobalObject) thisObj;
 				XspOpenLogUtil.logErrorEx(new Throwable(),
 						"Developer has passed 'this' directly from an SSJS function in Script Library " + obj.getLibrary().getName()
@@ -533,10 +534,10 @@ public class XspOpenLogErrorHolder implements Serializable {
 			} else if (!unid.equals(other.unid))
 				return false;
 
-			String srcMsg = "";
-			String srcText = "";
-			String otherMsg = "";
-			String otherText = "";
+			String srcMsg = ""; //$NON-NLS-1$
+			String srcText = ""; //$NON-NLS-1$
+			String otherMsg = ""; //$NON-NLS-1$
+			String otherText = ""; //$NON-NLS-1$
 			if (null != this.getError()) {
 				srcMsg = this.getError().getLocalizedMessage();
 				srcText = this.getError().getExpressionText();
@@ -632,7 +633,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 			if (null != newErr.getControl()) {
 				ctrlId = newErr.getControl().getId();
 			}
-			if ("Interpret exception".equals(dispErr)) {
+			if ("Interpret exception".equals(dispErr)) { //$NON-NLS-1$
 				dispErr = newErr.getError().getExpressionText();
 			}
 			if (XspOpenLogUtil.getXspOpenLogItem().getDisplayError()) {

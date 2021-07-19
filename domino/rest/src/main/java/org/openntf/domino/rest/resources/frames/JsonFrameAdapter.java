@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,7 @@ import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.VertexFrame;
 
+@SuppressWarnings({ "rawtypes", "unchecked", "unused", "nls" })
 public class JsonFrameAdapter implements JsonObject {
 	private final static List<String> EMPTY_STRINGS = new ArrayList<String>();
 	protected final boolean isCollectionRoute_;
@@ -102,7 +103,6 @@ public class JsonFrameAdapter implements JsonObject {
 	}
 
 	protected Object frame_;
-	@SuppressWarnings("rawtypes")
 	protected DFramedTransactionalGraph graph_;
 	protected Class<?> type_;
 	protected Map<CaseInsensitiveString, Method> getters_;
@@ -112,7 +112,6 @@ public class JsonFrameAdapter implements JsonObject {
 	protected Map<CaseInsensitiveString, Method> setters_;
 	protected ParamMap parameters_;
 
-	@SuppressWarnings("rawtypes")
 	public JsonFrameAdapter(final DFramedTransactionalGraph graph, final EdgeFrame frame, final ParamMap pm, final boolean isCollectionRoute) {
 		graph_ = graph;
 		frame_ = frame;
@@ -121,7 +120,6 @@ public class JsonFrameAdapter implements JsonObject {
 		isCollectionRoute_ = isCollectionRoute;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public JsonFrameAdapter(final DFramedTransactionalGraph graph, final VertexFrame frame, final ParamMap pm,
 			final boolean isCollectionRoute) {
 		graph_ = graph;
@@ -135,7 +133,6 @@ public class JsonFrameAdapter implements JsonObject {
 		return frame_;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public DFramedTransactionalGraph getGraph() {
 		return graph_;
 	}
@@ -452,6 +449,7 @@ public class JsonFrameAdapter implements JsonObject {
 		return result.iterator();
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public Object getJsonProperty(final String paramKey) {
 		Object result = null;

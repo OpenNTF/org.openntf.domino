@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public class DXLItemNumberRange extends AbstractDXLItem {
 		super(node, dupItemId);
 
 		// Luckily, number ranges can't be stored in an NSF, so we'll never encounter them here
-		XMLNodeList dataNodes = node.selectNodes("./numberlist/number");
+		XMLNodeList dataNodes = node.selectNodes("./numberlist/number"); //$NON-NLS-1$
 		value_ = new Double[dataNodes.size()];
 		for(int i = 0; i < dataNodes.size(); i++) {
 			value_[i] = Double.valueOf(dataNodes.get(i).getText());

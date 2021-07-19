@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ public class FormulaValueBinding extends ValueBindingEx {
 			ctx.setViewRoot(FacesUtil.getViewRoot(getComponent()));
 		}
 
-		final DominoDocument dominoDoc = (DominoDocument) ExtLibUtil.resolveVariable(ctx, "currentDocument");
+		final DominoDocument dominoDoc = (DominoDocument) ExtLibUtil.resolveVariable(ctx, "currentDocument"); //$NON-NLS-1$
 		Map<String, Object> dataMap = null;
 		if (dominoDoc instanceof Map) {
 			dataMap = (Map<String, Object>) dominoDoc;
@@ -123,7 +123,7 @@ public class FormulaValueBinding extends ValueBindingEx {
 				return firstValue == null ? Boolean.FALSE : (Boolean) firstValue;
 			}
 			if ((expectedType == Character.class) || (expectedType == Character.TYPE)) {
-				String str = firstValue == null ? "" : firstValue.toString();
+				String str = firstValue == null ? "" : firstValue.toString(); //$NON-NLS-1$
 				if (str.length() > 0) {
 					return new Character(str.charAt(0));
 				}
@@ -168,6 +168,7 @@ public class FormulaValueBinding extends ValueBindingEx {
 	 * This is not supported here
 	 */
 	@Override
+	@SuppressWarnings("nls")
 	public void setValue(final FacesContext arg0, final Object arg1) throws EvaluationException, PropertyNotFoundException {
 		throw new EvaluationExceptionEx("FormulaValueBinding is read-only", this);
 	}

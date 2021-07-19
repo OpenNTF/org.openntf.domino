@@ -24,8 +24,8 @@ import org.openntf.formula.ValueHolder;
 import org.openntf.formula.parse.AtFormulaParserImpl;
 
 public class ASTGetVariable extends SimpleNode {
-	String variableName = "";
-	String variableNameLC = "";
+	String variableName = ""; //$NON-NLS-1$
+	String variableNameLC = ""; //$NON-NLS-1$
 
 	public ASTGetVariable(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
@@ -38,7 +38,7 @@ public class ASTGetVariable extends SimpleNode {
 
 	@Override
 	public String toString() {
-		return super.toString() + ": " + variableName;
+		return super.toString() + ": " + variableName; //$NON-NLS-1$
 	}
 
 	@Override

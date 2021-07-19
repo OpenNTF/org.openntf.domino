@@ -31,6 +31,7 @@ import org.openntf.formula.ValueHolder.DataType;
  * @author Roland Praml, Foconis AG
  * 
  */
+@SuppressWarnings("nls")
 public class AtFunctionSimple extends AtFunctionGeneric {
 
 	public AtFunctionSimple(final String image, final Method method) {

@@ -5,6 +5,7 @@ package com.tinkerpop.blueprints;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 public enum Compare implements Predicate {
 
     EQUAL, NOT_EQUAL, GREATER_THAN, GREATER_THAN_EQUAL, LESS_THAN, LESS_THAN_EQUAL;

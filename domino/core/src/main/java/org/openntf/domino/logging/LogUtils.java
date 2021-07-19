@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import org.openntf.domino.utils.DominoUtils;
  * @author withersp
  *
  */
+@SuppressWarnings("nls")
 public class LogUtils {
 
 	/**
@@ -50,7 +51,7 @@ public class LogUtils {
 	private static ThreadLocal<SimpleDateFormat> ISO_LOCAL = new ThreadLocal<SimpleDateFormat>() {
 		@Override
 		protected SimpleDateFormat initialValue() {
-			return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); //$NON-NLS-1$
 		}
 	};
 
@@ -63,7 +64,7 @@ public class LogUtils {
 		@Override
 		protected SimpleDateFormat initialValue() {
 			SimpleDateFormat ISO8601_UTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); //$NON-NLS-1$;
-			TimeZone tz = TimeZone.getTimeZone("UTC");
+			TimeZone tz = TimeZone.getTimeZone("UTC"); //$NON-NLS-1$
 			ISO8601_UTC.setTimeZone(tz);
 			return ISO8601_UTC;
 		}
@@ -96,8 +97,8 @@ public class LogUtils {
 				if (key instanceof String) {
 					String keyName = (String) key;
 					String value = props.getProperty(keyName);
-					if (value.indexOf("<notesdata>") > -1) {
-						String result = value.replace("<notesdata>", datapath);
+					if (value.indexOf("<notesdata>") > -1) { //$NON-NLS-1$
+						String result = value.replace("<notesdata>", datapath); //$NON-NLS-1$
 						//						System.out.println("Found notesdata variable in properties value for " + keyName);
 						//						System.out.println("Replacing with " + datapath + " to result in " + result);
 						props.put(keyName, result);
@@ -107,7 +108,7 @@ public class LogUtils {
 				}
 			}
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			props.store(os, "");
+			props.store(os, ""); //$NON-NLS-1$
 			InputStream result = new ByteArrayInputStream(os.toByteArray());
 			return result;
 		} catch (Exception e) {
@@ -126,7 +127,7 @@ public class LogUtils {
 	 */
 	public static InputStream getDefaultLogConfigFile() {
 		try {
-			InputStream raw = LogUtils.class.getResourceAsStream("logging.properties");
+			InputStream raw = LogUtils.class.getResourceAsStream("logging.properties"); //$NON-NLS-1$
 			return parsePropertiesStream(raw);
 		} catch (Throwable e) {
 			System.out.println("SEVERE: Error getting default log config file");
@@ -202,7 +203,7 @@ public class LogUtils {
 				@Override
 				public Object run() throws Exception {
 					LogManager manager = LogManager.getLogManager();
-					if ("".equals(filePath)) {
+					if ("".equals(filePath)) { //$NON-NLS-1$
 						InputStream is = getDefaultLogConfigFile();
 						if (is != null) {
 							manager.readConfiguration(is);

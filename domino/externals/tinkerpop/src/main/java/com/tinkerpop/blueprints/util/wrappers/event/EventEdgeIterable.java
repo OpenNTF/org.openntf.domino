@@ -10,6 +10,7 @@ import java.util.Iterator;
  *
  * @author Stephen Mallette
  */
+@SuppressWarnings({ "rawtypes" })
 public class EventEdgeIterable implements CloseableIterable<Edge> {
 
     private final Iterable<Edge> iterable;

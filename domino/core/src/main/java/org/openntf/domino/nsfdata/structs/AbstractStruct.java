@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -314,7 +314,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 							if (element.isAscii) {
 								byte[] chars = new byte[length];
 								data.get(chars);
-								return new String(chars, Charset.forName("US-ASCII"));
+								return new String(chars, Charset.forName("US-ASCII")); //$NON-NLS-1$
 							} else {
 								return ODSUtils.fromLMBCS(data);
 							}
@@ -332,7 +332,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 									data.limit(data.position() + size);
 									try {
 										result[i] = element.dataClass.newInstance();
-										element.dataClass.getMethod("init", ByteBuffer.class).invoke(result[i], data);
+										element.dataClass.getMethod("init", ByteBuffer.class).invoke(result[i], data); //$NON-NLS-1$
 									} catch (Throwable t) {
 										throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
 									}
@@ -420,7 +420,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 							if (String.class.equals(element.dataClass)) {
 								String stringVal = String.valueOf(value);
 								if (element.isAscii) {
-									replacedBytes = stringVal.getBytes(Charset.forName("US-ASCII"));
+									replacedBytes = stringVal.getBytes(Charset.forName("US-ASCII")); //$NON-NLS-1$
 								} else {
 									replacedBytes = ODSUtils.toLMBCS(stringVal).array();
 								}
@@ -504,11 +504,11 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 							if (field != null) {
 								//								System.out.println("setting size field to " + replacedBytes.length);
 								if (Unsigned8.class.isAssignableFrom(field.getType())) {
-									Unsigned8.class.getMethod("set", Short.TYPE).invoke(field.get(this), (short) replacedBytes.length);
+									Unsigned8.class.getMethod("set", Short.TYPE).invoke(field.get(this), (short) replacedBytes.length); //$NON-NLS-1$
 								} else if (Unsigned16.class.isAssignableFrom(field.getType())) {
-									Unsigned16.class.getMethod("set", Integer.TYPE).invoke(field.get(this), replacedBytes.length);
+									Unsigned16.class.getMethod("set", Integer.TYPE).invoke(field.get(this), replacedBytes.length); //$NON-NLS-1$
 								} else if (Unsigned32.class.isAssignableFrom(field.getType())) {
-									Unsigned32.class.getMethod("set", Long.TYPE).invoke(field.get(this), (long) replacedBytes.length);
+									Unsigned32.class.getMethod("set", Long.TYPE).invoke(field.get(this), (long) replacedBytes.length); //$NON-NLS-1$
 								}
 							}
 						}
@@ -562,7 +562,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 		} else {
 			Field field = null;
 			try {
-				field = sizeClass.getField("SIZE");
+				field = sizeClass.getField("SIZE"); //$NON-NLS-1$
 			} catch (SecurityException e1) {
 				e1.printStackTrace();
 			} catch (NoSuchFieldException e1) {
@@ -578,7 +578,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 			}
 		}
 
-		throw new UnsupportedOperationException("Unknown size class " + sizeClass);
+		throw new UnsupportedOperationException("Unknown size class " + sizeClass); //$NON-NLS-1$
 	}
 
 	private static boolean _isPrimitive(final Class<?> clazz) {
@@ -693,9 +693,9 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 		String currentField = null;
 		try {
 			StringBuilder result = new StringBuilder();
-			result.append("[");
+			result.append("["); //$NON-NLS-1$
 			result.append(getClass().getSimpleName());
-			result.append(": ");
+			result.append(": "); //$NON-NLS-1$
 
 			boolean addedProp = false;
 
@@ -704,15 +704,15 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 				// TODO add array support
 				if (Struct.Member.class.isAssignableFrom(field.getType())) {
 					if (addedProp) {
-						result.append(", ");
+						result.append(", "); //$NON-NLS-1$
 					} else {
 						addedProp = true;
 					}
 					result.append(field.getName());
-					result.append("=");
+					result.append("="); //$NON-NLS-1$
 					try {
 						//						System.out.println("getting field " + field.getName());
-						Method getMethod = field.getType().getDeclaredMethod("get");
+						Method getMethod = field.getType().getDeclaredMethod("get"); //$NON-NLS-1$
 						result.append(getMethod.invoke(field.get(this)));
 					} catch (Exception e) {
 						throw new RuntimeException(e);
@@ -725,21 +725,21 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 					currentField = element.name;
 					//					System.out.println("getting element " + element.name);
 					if (addedProp) {
-						result.append(", ");
+						result.append(", "); //$NON-NLS-1$
 					} else {
 						addedProp = true;
 					}
 
 					result.append(element.name);
-					result.append("=");
+					result.append("="); //$NON-NLS-1$
 					result.append(getVariableElement(element.name));
 				}
 			}
 
-			result.append("]");
+			result.append("]"); //$NON-NLS-1$
 			return result.toString();
 		} catch (RuntimeException re) {
-			System.err.println("RUNTIME EXCEPTION IN " + getClass().getName() + " FOR FIELD " + currentField);
+			System.err.println("RUNTIME EXCEPTION IN " + getClass().getName() + " FOR FIELD " + currentField); //$NON-NLS-1$ //$NON-NLS-2$
 			throw re;
 		}
 	}

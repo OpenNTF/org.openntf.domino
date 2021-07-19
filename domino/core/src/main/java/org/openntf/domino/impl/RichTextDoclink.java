@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -311,7 +311,7 @@ implements org.openntf.domino.RichTextDoclink {
 	@Override
 	public Database getDatabase() {
 		Session session = getAncestorSession();
-		Database database = session.getDatabase("", "");
+		Database database = session.getDatabase("", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		database.openByReplicaID(getServerHint(), getDBReplicaID());
 		return database;
 	}
@@ -340,7 +340,7 @@ implements org.openntf.domino.RichTextDoclink {
 			Database database = getDatabase();
 			Session session = getAncestorSession();
 			String databaseUrl = database.getURL();
-			String url = databaseUrl.substring(0, databaseUrl.length() - "?OpenDatabase".length()) + "/" + viewId + "?OpenView";
+			String url = databaseUrl.substring(0, databaseUrl.length() - "?OpenDatabase".length()) + "/" + viewId + "?OpenView"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return (View) session.resolve(url);
 
 		}

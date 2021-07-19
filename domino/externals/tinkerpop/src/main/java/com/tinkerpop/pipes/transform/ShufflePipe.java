@@ -16,6 +16,7 @@ import java.util.List;
  *
  * @author Stephen Mallette (http://stephen.genoprime.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ShufflePipe<S> extends AbstractPipe<S, S> implements TransformPipe<S, S> {
     private Iterator<S> tempIterator = PipeHelper.emptyIterator();
 

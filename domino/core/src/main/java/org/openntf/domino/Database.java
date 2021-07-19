@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -204,7 +204,7 @@ Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 		 * @since org.openntf.domino 4.5.0
 		 */
 		public static boolean isTemplate(final Database db) {
-			return db.getFilePath().toLowerCase().endsWith(".ntf");
+			return db.getFilePath().toLowerCase().endsWith(".ntf"); //$NON-NLS-1$
 		}
 
 		/**
@@ -217,7 +217,7 @@ Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 		 */
 		public static boolean isDatabase(final Database db) {
 			String path = db.getFilePath().toLowerCase();
-			return (path.endsWith(".nsf") || path.endsWith(".nsh") || path.endsWith(".nsg"));
+			return (path.endsWith(".nsf") || path.endsWith(".nsh") || path.endsWith(".nsg")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		/**

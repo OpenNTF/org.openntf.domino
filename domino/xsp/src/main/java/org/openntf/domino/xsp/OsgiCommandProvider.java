@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,25 +37,25 @@ import com.ibm.commons.util.StringUtil;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "nls" })
 public class OsgiCommandProvider implements CommandProvider {
-	private static final String tab = "\t";
-	private static final String newline = "\r\n";
+	private static final String tab = "\t"; //$NON-NLS-1$
+	private static final String newline = "\r\n"; //$NON-NLS-1$
 	private static final Logger log_ = Logger.getLogger(OsgiCommandProvider.class.getName());
 
 	private Map<String, Logger> configuredLoggers = new HashMap<String, Logger>();
 
 	private void addHeader(final String title, final StringBuffer sb) {
-		sb.append("---");
+		sb.append("---"); //$NON-NLS-1$
 		sb.append(title);
-		sb.append("---");
+		sb.append("---"); //$NON-NLS-1$
 		sb.append(newline);
 	}
 
 	private void addCommand(final String cmd, final String desc, final StringBuffer sb) {
 		sb.append(tab);
 		sb.append(cmd);
-		sb.append(" - ");
+		sb.append(" - "); //$NON-NLS-1$
 		sb.append(desc);
 		sb.append(newline);
 	}
@@ -63,9 +63,9 @@ public class OsgiCommandProvider implements CommandProvider {
 	private void addCommand(final String cmd, final String params, final String desc, final StringBuffer sb) {
 		sb.append(tab);
 		sb.append(cmd);
-		sb.append(" ");
+		sb.append(" "); //$NON-NLS-1$
 		sb.append(params);
-		sb.append(" - ");
+		sb.append(" - "); //$NON-NLS-1$
 		sb.append(desc);
 		sb.append(newline);
 	}
@@ -78,12 +78,12 @@ public class OsgiCommandProvider implements CommandProvider {
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append(newline); // the previous call forgot newline
 		addHeader("XOTS commands", sb);
-		addCommand("xots tasks", "(filter)", "Show currently running tasks", sb);
-		addCommand("xots schedule", "(filter)", "Show all scheduled tasks", sb);
+		addCommand("xots tasks", "(filter)", "Show currently running tasks", sb); //$NON-NLS-1$ //$NON-NLS-2$
+		addCommand("xots schedule", "(filter)", "Show all scheduled tasks", sb); //$NON-NLS-1$ //$NON-NLS-2$
 		//		addCommand("junit <package> <testclass>", "Run the JUnit runnable", sb);
-		addCommand("oda stop", "Stop the ODA-API", sb);
-		addCommand("oda start", "Start the ODA-API", sb);
-		addCommand("oda restart", "ReStart the ODA-API", sb);
+		addCommand("oda stop", "Stop the ODA-API", sb); //$NON-NLS-1$
+		addCommand("oda start", "Start the ODA-API", sb); //$NON-NLS-1$
+		addCommand("oda restart", "ReStart the ODA-API", sb); //$NON-NLS-1$
 		return sb.toString();
 	}
 
@@ -121,11 +121,11 @@ public class OsgiCommandProvider implements CommandProvider {
 			if (StringUtil.isEmpty(cmd)) {
 				// TODO what does XOTS?
 				xotsTasks(ci);
-			} else if (cmp(cmd, "tasks", 1)) { // tasks
+			} else if (cmp(cmd, "tasks", 1)) { // tasks //$NON-NLS-1$
 				xotsTasks(ci);
-			} else if (cmp(cmd, "schedule", 1)) {
+			} else if (cmp(cmd, "schedule", 1)) { //$NON-NLS-1$
 				xotsSchedule(ci);
-			} else if (cmp(cmd, "run", 1)) {
+			} else if (cmp(cmd, "run", 1)) { //$NON-NLS-1$
 				xotsRun(ci);
 			} else {
 				ci.println("Unknown command: " + cmd);
@@ -168,11 +168,11 @@ public class OsgiCommandProvider implements CommandProvider {
 			String cmd = ci.nextArgument();
 			if (StringUtil.isEmpty(cmd)) {
 				// TODO what does ODA?
-			} else if (cmp(cmd, "stop", 3)) {
+			} else if (cmp(cmd, "stop", 3)) { //$NON-NLS-1$
 				ODAPlatform.stop();
-			} else if (cmp(cmd, "start", 3)) {
+			} else if (cmp(cmd, "start", 3)) { //$NON-NLS-1$
 				ODAPlatform.start();
-			} else if (cmp(cmd, "restart", 1)) {
+			} else if (cmp(cmd, "restart", 1)) { //$NON-NLS-1$
 				ODAPlatform.stop();
 				ODAPlatform.start();
 			}
@@ -193,9 +193,9 @@ public class OsgiCommandProvider implements CommandProvider {
 
 		List<DominoFutureTask<?>> tasks = Xots.getTasks(null);
 		for (DominoFutureTask<?> task : tasks) {
-			ci.println(task.getId() + "\t" + // ID
-					task.getState() + "\t" + // State
-					task.getWrappedTask().getDescription() + "\t" + convertTimeUnit(task.getNextExecutionTimeInMillis()));
+			ci.println(task.getId() + "\t" + // ID //$NON-NLS-1$
+					task.getState() + "\t" + // State //$NON-NLS-1$
+					task.getWrappedTask().getDescription() + "\t" + convertTimeUnit(task.getNextExecutionTimeInMillis())); //$NON-NLS-1$
 
 		}
 	}

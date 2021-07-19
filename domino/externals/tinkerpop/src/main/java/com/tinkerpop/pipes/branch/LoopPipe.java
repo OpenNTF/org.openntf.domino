@@ -22,6 +22,7 @@ import java.util.Queue;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class LoopPipe<S> extends AbstractMetaPipe<S, S> implements MetaPipe {
 
     private final PipeFunction<LoopBundle<S>, Boolean> whileFunction;

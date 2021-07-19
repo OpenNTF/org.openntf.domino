@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,12 +62,12 @@ public final class JarResource extends AbstractDesignFileResource implements org
 			Map<String, byte[]> classData = new HashMap<String, byte[]>();
 			while (entry != null) {
 				String name = entry.getName();
-				if (name.endsWith(".class")) {
+				if (name.endsWith(".class")) { //$NON-NLS-1$
 					ByteArrayOutputStream bos = new ByteArrayOutputStream();
 					while (jis.available() > 0) {
 						bos.write(jis.read());
 					}
-					classData.put(DominoUtils.filePathToJavaBinaryName(name, "/"), bos.toByteArray());
+					classData.put(DominoUtils.filePathToJavaBinaryName(name, "/"), bos.toByteArray()); //$NON-NLS-1$
 				}
 
 				entry = jis.getNextJarEntry();

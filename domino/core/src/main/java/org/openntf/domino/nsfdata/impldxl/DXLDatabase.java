@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ import org.xml.sax.SAXException;
 
 public class DXLDatabase implements Serializable, NSFDatabase {
 	private static final long serialVersionUID = 1L;
-	private static final boolean DEBUG = false;
 
 	private Set<NSFNote> notes_ = new LinkedHashSet<NSFNote>();
 	private transient Map<Integer, NSFNote> notesByNoteId_ = new TreeMap<Integer, NSFNote>();
@@ -53,8 +52,8 @@ public class DXLDatabase implements Serializable, NSFDatabase {
 			String aLine = reader.readLine();
 
 			// Assume that we don't have multiple notes per line, but one may end and another may start
-			int startIndex = aLine.indexOf("<note ");
-			int endIndex = aLine.indexOf("</note>");
+			int startIndex = aLine.indexOf("<note "); //$NON-NLS-1$
+			int endIndex = aLine.indexOf("</note>"); //$NON-NLS-1$
 
 			// We may be in a note
 			if (inNote) {
@@ -68,8 +67,6 @@ public class DXLDatabase implements Serializable, NSFDatabase {
 				XMLDocument xml = new XMLDocument();
 				xml.loadInputStream(bis);
 
-				if (DEBUG)
-					System.out.println("want to add note of class " + xml.getDocumentElement().getAttribute("class"));
 				DXLNote note = DXLNote.create(xml.getDocumentElement());
 				notes_.add(note);
 				notesByNoteId_.put(note.getNoteId(), note);

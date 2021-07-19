@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ public class CROPRECT extends AbstractStruct {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Left=" + left.get() + ", Top=" + top.get() + ", Right=" + right.get() + ", Bottom="
-				+ bottom.get() + "]";
+		return "[" + getClass().getSimpleName() + ": Left=" + left.get() + ", Top=" + top.get() + ", Right=" + right.get() + ", Bottom=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				+ bottom.get() + "]"; //$NON-NLS-1$
 	}
 }

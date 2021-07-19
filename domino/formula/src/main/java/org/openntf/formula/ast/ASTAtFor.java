@@ -76,7 +76,7 @@ public class ASTAtFor extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@for");
+		functions.add("@for"); //$NON-NLS-1$
 	}
 }
 /* JavaCC - OriginalChecksum=f70d2e6a39964b2d6bee287bd8bf7aca (do not edit this line) */

@@ -5,7 +5,7 @@
 
 	<groupId>org.openntf.domino</groupId>
 	<artifactId>domino</artifactId>
-	<version>11.0.0</version>
+	<version>11.0.1</version>
 	<packaging>pom</packaging>
 
 	<name>OpenNTF Domino API</name>
@@ -49,20 +49,31 @@
 		<module>externals</module>
 		<module>formula</module>
 		<module>core</module>
+		<module>org.openntf.domino.graph</module>
 		<module>org.openntf.domino.junit</module>
 		<module>org.openntf.domino.samples</module>
 		<module>xsp</module>
         <module>org.openntf.domino.xsp.test</module>
 		<module>rest</module>
-		<module>tests</module>
+<!-- 		<module>tests</module> -->
 		
 		<module>features/org.openntf.domino.dependencies.feature</module>
 		<module>features/org.openntf.domino.feature</module>
+		<module>features/org.openntf.domino.graph.feature</module>
 		<module>features/org.openntf.domino.nonxsp.feature</module>
 		
 		<module>releng/org.openntf.domino.updatesite</module>
 		<module>releng/org.openntf.domino.nonxsp.updatesite</module>
 	</modules>
+	
+	<dependencies>
+		<!-- Deployed with Domino 11+ -->
+		<dependency>
+		    <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		    <version>30.0-jre</version>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
@@ -158,6 +169,7 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
+					<pomDependencies>consider</pomDependencies>
 					<environments>
 						<environment>
 							<os>linux</os>
@@ -186,7 +198,6 @@
 						</environment>
 					</environments>
 					<dependency-resolution>
-						<optionalDependencies>ignore</optionalDependencies>
 						<extraRequirements>
 							<requirement>
 								<type>eclipse-plugin</type>
@@ -224,7 +235,7 @@
 					</excludes>
 					<properties>
 						<owner>The OpenNTF Domino API Team</owner>
-						<copyrightYear>2020</copyrightYear>
+						<copyrightYear>2021</copyrightYear>
 					</properties>
 				</configuration>
 			</plugin>
@@ -280,6 +291,7 @@
 						<inputEncoding>UTF-8</inputEncoding>
 						<outputEncoding>UTF-8</outputEncoding>
 						<argLine>-ea -Dfile.encoding=UTF-8</argLine>
+						<trimStackTrace>false</trimStackTrace>
 					</configuration>
 				</plugin>
 				<!-- This is to enable test execution only on supported platforms below -->

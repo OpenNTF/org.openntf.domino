@@ -38,7 +38,7 @@ public class ASTValueInt extends SimpleNode {
 
 	@Override
 	public String toString() {
-		return super.toString() + ": " + value;
+		return super.toString() + ": " + value; //$NON-NLS-1$
 	}
 
 	@Override

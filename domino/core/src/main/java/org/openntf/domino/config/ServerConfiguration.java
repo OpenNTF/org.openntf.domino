@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,28 +30,28 @@ public class ServerConfiguration extends ConfigurationObject {
 	protected Object[] schema() {
 		// @formatter:off
 		return new Object[] {
-				"ServerName", 		String.class, 
-				"ServerAlias", 		String.class,
-				"XotsTasks", 		Integer.class,
-				"XotsStopDelay", 	Integer.class
+				"ServerName", 		String.class,  //$NON-NLS-1$
+				"ServerAlias", 		String.class, //$NON-NLS-1$
+				"XotsTasks", 		Integer.class, //$NON-NLS-1$
+				"XotsStopDelay", 	Integer.class //$NON-NLS-1$
 		};
 		// @formatter:on
 	}
 
 	public String getServerName() {
-		return get("ServerName");
+		return get("ServerName"); //$NON-NLS-1$
 	}
 
 	public String getServerAlias() {
-		return get("ServerAlias");
+		return get("ServerAlias"); //$NON-NLS-1$
 	}
 
 	public int getXotsTasks() {
-		return get("XotsTasks", 10);
+		return get("XotsTasks", 10); //$NON-NLS-1$
 	}
 
 	public int getXotsStopDelay() {
-		return get("XotsStopDelay", 15);
+		return get("XotsStopDelay", 15); //$NON-NLS-1$
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class ServerConfiguration extends ConfigurationObject {
 		if (odaDb == null)
 			return null;
 
-		String unid = Configuration.computeUNID("ServerConfig:".concat(serverName_), odaDb);
+		String unid = Configuration.computeUNID("ServerConfig:".concat(serverName_), odaDb); //$NON-NLS-1$
 
 		Document currentConfig_ = odaDb.getDocumentByUNID(unid);
 		if (currentConfig_ == null) {
@@ -73,9 +73,9 @@ public class ServerConfiguration extends ConfigurationObject {
 				return null;
 			currentConfig_ = odaDb.createDocument();
 			currentConfig_.setUniversalID(unid);
-			currentConfig_.replaceItemValue("Form", "Configuration");
-			currentConfig_.replaceItemValue("ServerName", serverName_).setNames(true);
-			currentConfig_.replaceItemValue("$ConflictAction", "3"); // merge - no conflicts
+			currentConfig_.replaceItemValue("Form", "Configuration"); //$NON-NLS-1$ //$NON-NLS-2$
+			currentConfig_.replaceItemValue("ServerName", serverName_).setNames(true); //$NON-NLS-1$
+			currentConfig_.replaceItemValue("$ConflictAction", "3"); // merge - no conflicts //$NON-NLS-1$ //$NON-NLS-2$
 			currentConfig_.save();
 		}
 		return currentConfig_;

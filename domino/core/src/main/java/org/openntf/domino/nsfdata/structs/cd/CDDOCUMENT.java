@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDDOCUMENT extends CDRecord {
 	public static enum FormFlag1 {
 		REFERENCE(0x0001), MAIL(0x0002), NOTEREF(0x0004), NOTEREF_MAIN(0x0008), RECALC(0x0010), BOILERPLATE(0x0020), FGCOLOR(0x0040),

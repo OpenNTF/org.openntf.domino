@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,10 @@ implements org.openntf.domino.ViewNavigator {
 	private int[] collapsedNoteIds_ = null;
 	private int[] expandedNoteIds_ = null;
 	private String curPosition_ = null;
+	@SuppressWarnings("unused")
 	private String curNoteid_ = null;
 	private String startingPosition_ = null;
+	@SuppressWarnings("unused")
 	private String startingNoteid_ = null;
 	private String startingCategory_ = null;
 	private String unreadUsername_;
@@ -1320,6 +1322,10 @@ implements org.openntf.domino.ViewNavigator {
 				} else {
 					newDelegate = rawView.createViewNavMaxLevel(maxLevel_);
 				}
+			case KEYS:
+				break;
+			default:
+				break;
 			}
 			if (entryOptions_ > -1) {
 				newDelegate.setEntryOptions(entryOptions_);
@@ -1541,7 +1547,7 @@ implements org.openntf.domino.ViewNavigator {
 		if (ve != null) {
 			startingPosition_ = ve.getPosition();
 		} else {
-			startingPosition_ = "";
+			startingPosition_ = ""; //$NON-NLS-1$
 		}
 	}
 

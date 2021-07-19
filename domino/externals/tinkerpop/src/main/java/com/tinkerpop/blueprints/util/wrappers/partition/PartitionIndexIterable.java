@@ -8,6 +8,7 @@ import java.util.Iterator;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 class PartitionIndexIterable<T extends Element> implements Iterable<Index<T>> {
 
     protected Iterable<Index<T>> iterable;

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.openntf.domino.nsfdata.structs.ODSConstants.RecordLength;
 import org.openntf.domino.nsfdata.structs.SIG;
 import org.openntf.domino.nsfdata.structs.WSIG;
 
+@SuppressWarnings("nls")
 public enum CDSignature {
 	PDEF_MAIN(WORD, 83, CDPDEF_MAIN.class),
 	PDEF_TYPE(WORD, 84, CDPDEF_TYPE.class),

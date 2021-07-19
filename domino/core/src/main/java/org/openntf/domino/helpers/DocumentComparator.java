@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ public class DocumentComparator implements Comparator<Document>, Serializable {
 	public static class ValuesNotComparableException extends RuntimeException {
 		private static final long serialVersionUID = 4918210702121980155L;
 
+		@SuppressWarnings("nls")
 		public ValuesNotComparableException(final Object o1, final Object o2) {
 			super("Cannot compare objects of type " + (o1 == null ? "null" : o1.getClass().getName()) + " and "
 					+ (o2 == null ? "null" : o2.getClass().getName()));

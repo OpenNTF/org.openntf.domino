@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,10 @@ import org.openntf.domino.iterators.DocumentCollectionIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DocumentCollection.
  */
+@SuppressWarnings("nls")
 public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database>
 		implements org.openntf.domino.DocumentCollection {
 

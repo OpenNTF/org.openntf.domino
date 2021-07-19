@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 class PartitionVertexIterable implements CloseableIterable<Vertex> {
 
     private final Iterable<Vertex> iterable;

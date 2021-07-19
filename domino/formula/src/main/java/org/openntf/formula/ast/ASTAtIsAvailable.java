@@ -32,7 +32,7 @@ public class ASTAtIsAvailable extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@isavailable");
+		functions.add("@isavailable"); //$NON-NLS-1$
 	}
 
 }

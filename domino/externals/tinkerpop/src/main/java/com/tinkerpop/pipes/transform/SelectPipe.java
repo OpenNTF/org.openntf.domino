@@ -18,6 +18,7 @@ import java.util.List;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class SelectPipe<S> extends AbstractPipe<S, Row> implements TransformPipe<S, Row> {
 
     private final PipeFunction[] stepFunctions;

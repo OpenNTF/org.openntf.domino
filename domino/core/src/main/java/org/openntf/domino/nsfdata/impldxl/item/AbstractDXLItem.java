@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.util.Set;
 import org.openntf.domino.nsfdata.NSFItem;
 import org.openntf.domino.utils.xml.XMLNode;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "nls" })
 public abstract class AbstractDXLItem implements NSFItem, Serializable {
 	private final String name_;
 	private final Set<Flag> flags_;

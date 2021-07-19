@@ -25,3 +25,5 @@ domino/externals/asm/.project
 .classpath
 .factorypath
 .settings/
+
+.DS_Store

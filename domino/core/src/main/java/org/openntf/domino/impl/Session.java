@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
@@ -84,8 +85,6 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.Strings;
 
-import com.ibm.icu.util.Calendar;
-
 // TODO: Auto-generated Javadoc
 //import lotus.domino.Name;
 
@@ -96,11 +95,13 @@ import com.ibm.icu.util.Calendar;
  * @author Paul Withers
  */
 
+@SuppressWarnings("nls")
 public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory>
 		implements org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
 
+	@SuppressWarnings("unused")
 	private static final String BLANK_DB_REPID = "802581A000512F49";
 
 	/** The formatter_. */
@@ -149,6 +150,7 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	private Set<Fixes> fixes_ = EnumSet.noneOf(Fixes.class);
 
 	private String timeFormat_;
+	@SuppressWarnings("unused")
 	private DateTimeFormatter dateFormatter_;
 	private DateTimeFormatter dateTimeFormatter_;
 
@@ -300,18 +302,6 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 		DateRange ret = getFactory().create(DateRange.SCHEMA, this, null);
 		ret.setStartDateTime(startTime);
 		ret.setEndDateTime(endTime);
-		return ret;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.openntf.domino.Session#createDateTime(java.util.Calendar)
-	 */
-	@Override
-	public DateTime createDateTime(final java.util.Calendar date) {
-		DateTime ret = getFactory().create(DateTime.SCHEMA, this, null);
-		ret.setLocalTime(date);
 		return ret;
 	}
 
@@ -2241,18 +2231,6 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 			return Strings.leftBack(filePath, "\\");
 		} else {
 			return "";
-		}
-	}
-
-	private String getFileName(final String filePath) {
-		if (filePath.contains(File.separator)) {
-			return Strings.rightBack(filePath, File.separator);
-		} else if (filePath.contains("/")) {
-			return Strings.rightBack(filePath, "/");
-		} else if (filePath.contains("\\")) {
-			return Strings.rightBack(filePath, "\\");
-		} else {
-			return filePath;
 		}
 	}
 

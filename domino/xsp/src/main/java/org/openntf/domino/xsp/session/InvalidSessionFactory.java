@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.openntf.domino.xsp.session;
 import org.openntf.domino.Session;
 import org.openntf.domino.session.ISessionFactory;
 
+@SuppressWarnings("nls")
 public class InvalidSessionFactory implements ISessionFactory {
 	private static final long serialVersionUID = 1L;
 

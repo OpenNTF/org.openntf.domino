@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,9 @@ package org.openntf.domino.utils;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -49,7 +51,7 @@ import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
-import org.openntf.domino.exceptions.Domino32KLimitException;
+import org.openntf.domino.exceptions.DominoNonSummaryLimitException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.ext.Formula;
@@ -62,14 +64,12 @@ import org.openntf.domino.types.ReadersList;
 
 import com.google.common.collect.ImmutableList;
 import com.ibm.commons.util.StringUtil;
-import com.ibm.icu.math.BigDecimal;
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * @author nfreeman
  *
  */
+@SuppressWarnings("nls")
 public enum TypeUtils {
 	;
 
@@ -77,12 +77,7 @@ public enum TypeUtils {
 	protected static final List<CustomConverter> converterList_ = new ArrayList<CustomConverter>();
 	//	protected static final List<Class<?>> converterFromList_ = new ArrayList<Class<?>>();
 
-	private static final ThreadLocal<SimpleDateFormat> DEFAULT_FORMAT = new ThreadLocal<SimpleDateFormat>() {
-		@Override
-		protected SimpleDateFormat initialValue() {
-			return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		}
-	};
+	private static final ThreadLocal<SimpleDateFormat> DEFAULT_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")); //$NON-NLS-1$
 
 	public static SimpleDateFormat getDefaultDateFormat() {
 		return DEFAULT_FORMAT.get();
@@ -879,14 +874,6 @@ public enum TypeUtils {
 			} else {
 				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
 			}
-		} else if (type == BigDecimal.class) {
-			if (localValue instanceof String) {
-				result = (T) new BigDecimal((String) localValue);
-			} else if (localValue instanceof Double) {
-				result = (T) new BigDecimal((Double) localValue);
-			} else {
-				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
-			}
 		} else if (type == BigInteger.class) {
 			if (localValue instanceof String) {
 				result = (T) new BigInteger((String) localValue);
@@ -1060,9 +1047,6 @@ public enum TypeUtils {
 			if (ctype == Character.TYPE) {
 				throw new UnimplementedException("Primitive conversion for char not yet defined");
 			}
-			if (ctype == com.ibm.icu.lang.UCharacter.class) {
-				throw new UnimplementedException("Primitive conversion for char not yet defined");
-			}
 			throw new DataNotCompatibleException("");
 
 		}
@@ -1101,9 +1085,6 @@ public enum TypeUtils {
 			throw new UnimplementedException("Primitive conversion for byte not yet defined");
 		}
 		if (ctype == Character.TYPE) {
-			throw new UnimplementedException("Primitive conversion for char not yet defined");
-		}
-		if (ctype == com.ibm.icu.lang.UCharacter.class) {
 			throw new UnimplementedException("Primitive conversion for char not yet defined");
 		}
 		throw new DataNotCompatibleException("");
@@ -1946,7 +1927,7 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static Item writeToItem(final org.openntf.domino.Document doc, final String itemName, Object value, final Boolean isSummary)
-			throws Domino32KLimitException {
+			throws DominoNonSummaryLimitException {
 		Class<?> fromClass = value.getClass();
 		CustomConverter converter = findCustomConverter(fromClass);
 		if (converter != null) {
@@ -1997,7 +1978,7 @@ public enum TypeUtils {
 				if (lh > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {				// Then skip making dominoFriendly if it's a primitive
 					String cn = value.getClass().getName();
 					if (cn.length() == 2) {				// It is primitive
-						throw new Domino32KLimitException();
+						throw new DominoNonSummaryLimitException();
 					}
 				}
 				dominoFriendlyVec = new Vector<Object>(lh);
@@ -2080,7 +2061,7 @@ public enum TypeUtils {
 
 			if (payload > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {
 				// the datatype is OK, but there's no way to store the data in the Document
-				throw new Domino32KLimitException();
+				throw new DominoNonSummaryLimitException();
 			}
 			if (firstElementClass == String.class) { 	// Strings have to be further inspected, because
 				// each sign may demand up to 3 bytes in LMBCS
@@ -2092,7 +2073,7 @@ public enum TypeUtils {
 						payload = payloadOverhead + LMBCSUtils.getPayload((String) dominoFriendlyObj);
 					}
 					if (payload > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {
-						throw new Domino32KLimitException();
+						throw new DominoNonSummaryLimitException();
 					}
 				}
 			}

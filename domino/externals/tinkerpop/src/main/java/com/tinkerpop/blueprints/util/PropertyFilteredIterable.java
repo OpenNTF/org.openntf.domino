@@ -15,6 +15,7 @@ import java.util.NoSuchElementException;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public class PropertyFilteredIterable<T extends Element> implements CloseableIterable<T> {
 
     private final Iterable<T> iterable;

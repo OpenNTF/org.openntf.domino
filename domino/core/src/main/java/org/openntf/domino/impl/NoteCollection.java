@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -202,6 +202,7 @@ public class NoteCollection extends BaseThreadSafe<org.openntf.domino.NoteCollec
 	 * @see org.openntf.domino.NoteCollection#buildCollection()
 	 */
 	@Override
+	@SuppressWarnings("nls")
 	public void buildCollection() {
 		try {
 			lotus.domino.NoteCollection nc = getDelegate();

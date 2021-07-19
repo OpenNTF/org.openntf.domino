@@ -81,7 +81,7 @@ public class ASTAtTransform extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@transform");
+		functions.add("@transform"); //$NON-NLS-1$
 	}
 }
 /* JavaCC - OriginalChecksum=31c61346c6eb18629c143c94ecab660b (do not edit this line) */

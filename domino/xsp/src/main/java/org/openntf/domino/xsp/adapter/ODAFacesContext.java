@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,8 +47,8 @@ public class ODAFacesContext extends DominoFacesContext {
 				Map<String, Object> ecMap = TypedUtil.getRequestMap(getExternalContext());
 
 				// overwrite the DominoImplicitObjects objects
-				ecMap.put("session", session);
-				ecMap.put("database", db);
+				ecMap.put("session", session); //$NON-NLS-1$
+				ecMap.put("database", db); //$NON-NLS-1$
 			}
 			implicitsDone_ = true;
 		}
@@ -57,9 +57,9 @@ public class ODAFacesContext extends DominoFacesContext {
 	@Override
 	public Object getDynamicImplicitObject(final String objectName) {
 		if (ODAPlatform.isAppGodMode(null)) {
-			if ("sessionAsSignerWithFullAccess".equals(objectName)) {
+			if ("sessionAsSignerWithFullAccess".equals(objectName)) { //$NON-NLS-1$
 				return Factory.getSession(SessionType.SIGNER_FULL_ACCESS);
-			} else if ("sessionAsSigner".equals(objectName)) {
+			} else if ("sessionAsSigner".equals(objectName)) { //$NON-NLS-1$
 				return Factory.getSession(SessionType.SIGNER);
 			}
 		}

@@ -21,6 +21,7 @@ import java.util.NoSuchElementException;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class OrderPipe<S> extends AbstractPipe<S, S> implements TransformPipe<S, S> {
 
     private final ArrayQueue<ObjectBundle<S>> bundles = new ArrayQueue<ObjectBundle<S>>();
@@ -122,7 +123,8 @@ public class OrderPipe<S> extends AbstractPipe<S, S> implements TransformPipe<S,
     }
 
 
-    private class ObjectBundle<S> implements Comparable<ObjectBundle<S>> {
+    @SuppressWarnings("hiding")
+	private class ObjectBundle<S> implements Comparable<ObjectBundle<S>> {
 
         public final S object;
         public final List path;

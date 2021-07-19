@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 
 import com.google.common.collect.Ordering;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "nls" })
 public class SessionsByTimeslot implements Runnable {
 	private long marktime;
 	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM HH:mm");

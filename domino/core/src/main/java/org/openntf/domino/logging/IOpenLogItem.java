@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public interface IOpenLogItem {
 	 * @since org.openntf.domino 4.0.0
 	 */
 	public static enum LogType {
-		TYPE_ERROR("Error"), TYPE_EVENT("Event");
+		TYPE_ERROR("Error"), TYPE_EVENT("Event"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		private final String value_;
 
@@ -61,7 +61,7 @@ public interface IOpenLogItem {
 	 * @since org.openntf.domino 4.0.0
 	 */
 	public static enum DebugLevel {
-		LEVEL_DISCARD("0"), LEVEL_SUMMARY("1"), LEVEL_FULL("2");
+		LEVEL_DISCARD("0"), LEVEL_SUMMARY("1"), LEVEL_FULL("2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		private final String value_;
 

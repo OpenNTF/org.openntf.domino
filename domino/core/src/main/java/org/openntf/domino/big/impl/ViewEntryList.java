@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.big.ViewEntryCoordinate;
 import org.openntf.domino.exceptions.UnimplementedException;
 
+@SuppressWarnings("nls")
 public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoordinate> {
 	//	private View parentView_;
 	private ViewNavigator navigator_;
@@ -84,6 +85,7 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 			throw new UnsupportedOperationException("ViewEntryListIterator is not modifiable");
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public boolean hasNext() {
 			if (parentList_.emptyIterator_) {
@@ -132,6 +134,7 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 			return hasPrevCache_;
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public ViewEntryCoordinate next() {
 			hasPrevCache_ = null;
@@ -621,7 +624,6 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 			vec.setSourceNav(getNavigator());
 			return vec;
 		} else {
-			@SuppressWarnings("deprecation")
 			ViewEntry entry = getCollection().getNthEntry(arg0);
 			ViewEntryCoordinate vec = new org.openntf.domino.big.impl.ViewEntryCoordinate(entry);
 			vec.setSourceColl(getCollection());
@@ -742,7 +744,6 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 		return toIndex_;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public List<ViewEntryCoordinate> subList(final int fromIndex, final int toIndex) {
 		//		System.out.println("Getting entry from " + arg0 + " position");

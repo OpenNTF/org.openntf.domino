@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,26 +46,10 @@ public class SMTPConnectEvent extends AbstractEMBridgeEvent {
 	}
 
 	/**
-	 * @param sessionID
-	 *            the sessionID to set
-	 */
-	private void setSessionID(final long sessionID) {
-		this.sessionID = sessionID;
-	}
-
-	/**
 	 * @return the remoteIP
 	 */
 	public String getRemoteIP() {
 		return remoteIP;
-	}
-
-	/**
-	 * @param remoteIP
-	 *            the remoteIP to set
-	 */
-	private void setRemoteIP(final String remoteIP) {
-		this.remoteIP = remoteIP;
 	}
 
 	/**
@@ -76,26 +60,10 @@ public class SMTPConnectEvent extends AbstractEMBridgeEvent {
 	}
 
 	/**
-	 * @param remoteHost
-	 *            the remoteHost to set
-	 */
-	private void setRemoteHost(final String remoteHost) {
-		this.remoteHost = remoteHost;
-	}
-
-	/**
 	 * @return the possibleRelay
 	 */
 	public boolean isPossibleRelay() {
 		return possibleRelay;
-	}
-
-	/**
-	 * @param possibleRelay
-	 *            the possibleRelay to set
-	 */
-	private void setPossibleRelay(final boolean possibleRelay) {
-		this.possibleRelay = possibleRelay;
 	}
 
 	/**
@@ -106,26 +74,10 @@ public class SMTPConnectEvent extends AbstractEMBridgeEvent {
 	}
 
 	/**
-	 * @param greeting
-	 *            the greeting to set
-	 */
-	private void setGreeting(final String greeting) {
-		this.greeting = greeting;
-	}
-
-	/**
 	 * @return the maxGreetingLen
 	 */
 	public long getMaxGreetingLen() {
 		return maxGreetingLen;
-	}
-
-	/**
-	 * @param maxGreetingLen
-	 *            the maxGreetingLen to set
-	 */
-	private void setMaxGreetingLen(final long maxGreetingLen) {
-		this.maxGreetingLen = maxGreetingLen;
 	}
 
 }

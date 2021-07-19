@@ -13,6 +13,7 @@ import java.util.Set;
  *
  * @author Darrick Wiebe (http://૯.com/)
  */
+@SuppressWarnings({ "rawtypes", "hiding" })
 public class ReadOnlyKeyIndexableGraph<T extends KeyIndexableGraph> extends ReadOnlyIndexableGraph<IndexableGraph> implements KeyIndexableGraph {
     public ReadOnlyKeyIndexableGraph(final T baseKIGraph) {
         super((IndexableGraph) baseKIGraph);

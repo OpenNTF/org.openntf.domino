@@ -32,6 +32,7 @@ import java.util.concurrent.ExecutionException;
  *         to execute the method then ignoring the resulting framed object
  * 
  */
+@SuppressWarnings("nls")
 public class JavaFrameInitializer implements FrameInitializer {
 
 	private JavaHandlerModule module;

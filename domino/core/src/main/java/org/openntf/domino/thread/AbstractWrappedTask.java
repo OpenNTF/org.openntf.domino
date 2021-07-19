@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,7 @@ public abstract class AbstractWrappedTask implements IWrappedTask {
 	 * @param task
 	 *            the runnable to determine the DominoSessionType
 	 */
+	@SuppressWarnings("nls")
 	protected synchronized void setWrappedTask(final Object task) {
 		wrappedTask = task;
 		if (task == null)

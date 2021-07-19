@@ -9,6 +9,7 @@ import java.util.List;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public interface MetaPipe {
 
     public List<Pipe> getPipes();

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,8 +94,8 @@ import org.openntf.domino.types.Resurrectable;
  */
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, org.openntf.domino.ext.Document, Resurrectable,
 DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
-	public static int MAX_NATIVE_FIELD_SIZE = 32000;
-	public static int MAX_SUMMARY_FIELD_SIZE = 14000;
+	public static int MAX_NATIVE_FIELD_SIZE = 64000;
+	public static int MAX_SUMMARY_FIELD_SIZE = 64000;
 
 	public static class Schema extends FactorySchema<Document, lotus.domino.Document, Database> {
 		@Override

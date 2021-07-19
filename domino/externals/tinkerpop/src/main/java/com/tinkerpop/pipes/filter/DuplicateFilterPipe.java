@@ -15,6 +15,7 @@ import java.util.Set;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class DuplicateFilterPipe<S> extends AbstractPipe<S, S> implements FilterPipe<S> {
 
     private final Set historySet = new LinkedHashSet();

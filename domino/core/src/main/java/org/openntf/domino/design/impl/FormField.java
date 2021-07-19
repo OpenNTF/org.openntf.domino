@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,82 +41,82 @@ public class FormField implements org.openntf.domino.design.FormField {
 
 	@Override
 	public Kind getKind() {
-		return Kind.valueOf(node_.getAttribute("kind").toUpperCase());
+		return Kind.valueOf(node_.getAttribute("kind").toUpperCase()); //$NON-NLS-1$
 	}
 
 	@Override
 	public void setKind(final Kind kind) {
-		node_.setAttribute("kind", kind.toString().toLowerCase());
+		node_.setAttribute("kind", kind.toString().toLowerCase()); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getName() {
-		return node_.getAttribute("name");
+		return node_.getAttribute("name"); //$NON-NLS-1$
 	}
 
 	@Override
 	public void setName(final String name) {
-		node_.setAttribute("name", name);
+		node_.setAttribute("name", name); //$NON-NLS-1$
 	}
 
 	@Override
 	public boolean isAllowMultiValues() {
-		return node_.getAttribute("allowmultivalues").equals("true");
+		return node_.getAttribute("allowmultivalues").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	public void setAllowMultiValues(final boolean allowMultiValues) {
-		node_.setAttribute("allowmultivalues", String.valueOf(allowMultiValues));
+		node_.setAttribute("allowmultivalues", String.valueOf(allowMultiValues)); //$NON-NLS-1$
 	}
 
 	@Override
 	public boolean isProtected() {
-		return node_.getAttribute("protected").equals("true");
+		return node_.getAttribute("protected").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	public void setProtected(final boolean _protected) {
-		node_.setAttribute("protected", String.valueOf(_protected));
+		node_.setAttribute("protected", String.valueOf(_protected)); //$NON-NLS-1$
 	}
 
 	@Override
 	public boolean isSign() {
-		return node_.getAttribute("sign").equals("true");
+		return node_.getAttribute("sign").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	public void setSign(final boolean sign) {
-		node_.setAttribute("sign", String.valueOf(sign));
+		node_.setAttribute("sign", String.valueOf(sign)); //$NON-NLS-1$
 	}
 
 	@Override
 	public boolean isSeal() {
-		return node_.getAttribute("seal").equals("true");
+		return node_.getAttribute("seal").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	public void setSeal(final boolean seal) {
-		node_.setAttribute("seal", String.valueOf(seal));
+		node_.setAttribute("seal", String.valueOf(seal)); //$NON-NLS-1$
 	}
 
 	@Override
 	public boolean isLookUpAddressOnRefresh() {
-		return node_.getAttribute("lookupaddressonrefresh").equals("true");
+		return node_.getAttribute("lookupaddressonrefresh").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	public void setLookUpAddressOnRefresh(final boolean lookUpAddressOnRefresh) {
-		node_.setAttribute("lookupaddressonrefresh", String.valueOf(lookUpAddressOnRefresh));
+		node_.setAttribute("lookupaddressonrefresh", String.valueOf(lookUpAddressOnRefresh)); //$NON-NLS-1$
 	}
 
 	@Override
 	public boolean isLookUpEachChar() {
-		return node_.getAttribute("lookupeachchar").equals("true");
+		return node_.getAttribute("lookupeachchar").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	public void setLookUpEachChar(final boolean lookUpEachChar) {
-		node_.setAttribute("lookupeachchar", String.valueOf(lookUpEachChar));
+		node_.setAttribute("lookupeachchar", String.valueOf(lookUpEachChar)); //$NON-NLS-1$
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class FormField implements org.openntf.domino.design.FormField {
 		if (node != null) {
 			return node.getText();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override
@@ -151,15 +151,15 @@ public class FormField implements org.openntf.domino.design.FormField {
 	// attribute to handle referring to the field type like a human might
 	@Override
 	public Type getFieldType() {
-		String type = node_.getAttribute("type");
-		if (type.equals("keyword")) {
+		String type = node_.getAttribute("type"); //$NON-NLS-1$
+		if (type.equals("keyword")) { //$NON-NLS-1$
 			XMLNode keywords = this.getKeywordsNode();
-			String ui = keywords.getAttribute("ui");
-			if (ui.equals("checkbox")) {
+			String ui = keywords.getAttribute("ui"); //$NON-NLS-1$
+			if (ui.equals("checkbox")) { //$NON-NLS-1$
 				return Type.CHECKBOX;
-			} else if (ui.equals("radiobutton")) {
+			} else if (ui.equals("radiobutton")) { //$NON-NLS-1$
 				return Type.RADIOBUTTON;
-			} else if (ui.equals("combobox")) {
+			} else if (ui.equals("combobox")) { //$NON-NLS-1$
 				return Type.COMBOBOX;
 			} else {
 				return Type.DIALOGLIST;
@@ -177,28 +177,28 @@ public class FormField implements org.openntf.domino.design.FormField {
 			case COMBOBOX:
 			case DIALOGLIST:
 			case RADIOBUTTON:
-				node_.setAttribute("type", "keyword");
+				node_.setAttribute("type", "keyword"); //$NON-NLS-1$ //$NON-NLS-2$
 				XMLNode keywords = this.getKeywordsNode();
-				keywords.setAttribute("ui", fieldType.toString().toLowerCase());
-				keywords.setAttribute("helperbutton", String.valueOf(fieldType == Type.DIALOGLIST));
-				if (keywords.getAttribute("columns").length() == 0) {
-					keywords.setAttribute("columns", "1");
+				keywords.setAttribute("ui", fieldType.toString().toLowerCase()); //$NON-NLS-1$
+				keywords.setAttribute("helperbutton", String.valueOf(fieldType == Type.DIALOGLIST)); //$NON-NLS-1$
+				if (keywords.getAttribute("columns").length() == 0) { //$NON-NLS-1$
+					keywords.setAttribute("columns", "1"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				break;
 			default:
-				node_.setAttribute("type", fieldType.toString().toLowerCase());
+				node_.setAttribute("type", fieldType.toString().toLowerCase()); //$NON-NLS-1$
 				if (fieldType == Type.PASSWORD) {
-					node_.setAttribute("seal", "true");
+					node_.setAttribute("seal", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (fieldType == Type.RICHTEXTLITE) {
 					if (getKind() == Kind.COMPUTEDFORDISPLAY || getKind() == Kind.COMPUTEDWHENCOMPOSED) {
 						this.setKind(Kind.COMPUTED);
 					}
-					if (node_.getAttribute("onlyallow").isEmpty()) {
-						node_.setAttribute("onlyallow",
-								"picture sharedimage attachment view datepicker sharedapplet text object calendar inbox help clear graphic link");
+					if (node_.getAttribute("onlyallow").isEmpty()) { //$NON-NLS-1$
+						node_.setAttribute("onlyallow", //$NON-NLS-1$
+								"picture sharedimage attachment view datepicker sharedapplet text object calendar inbox help clear graphic link"); //$NON-NLS-1$
 					}
-					if (node_.getAttribute("firstdisplay").isEmpty()) {
-						node_.setAttribute("firstdisplay", "text");
+					if (node_.getAttribute("firstdisplay").isEmpty()) { //$NON-NLS-1$
+						node_.setAttribute("firstdisplay", "text"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				} else if (fieldType == Type.RICHTEXT && (getKind() == Kind.COMPUTEDFORDISPLAY || getKind() == Kind.COMPUTEDWHENCOMPOSED)) {
 					setKind(Kind.COMPUTED);
@@ -212,7 +212,7 @@ public class FormField implements org.openntf.domino.design.FormField {
 
 	@Override
 	public RTLType getFirstDisplay() {
-		String firstDisplay = node_.getAttribute("firstdisplay");
+		String firstDisplay = node_.getAttribute("firstdisplay"); //$NON-NLS-1$
 		if (!StringUtil.isEmpty(firstDisplay)) {
 			return RTLType.valueOf(firstDisplay.toUpperCase());
 		}
@@ -222,17 +222,17 @@ public class FormField implements org.openntf.domino.design.FormField {
 	@Override
 	public void setFirstDisplay(final RTLType firstDisplay) {
 		if (firstDisplay != null) {
-			node_.setAttribute("firstdisplay", firstDisplay.toString().toLowerCase());
+			node_.setAttribute("firstdisplay", firstDisplay.toString().toLowerCase()); //$NON-NLS-1$
 		} else {
-			node_.setAttribute("firstdisplay", "");
+			node_.setAttribute("firstdisplay", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
 	@Override
 	public Set<RTLType> getOnlyAllow() {
-		String values = node_.getAttribute("onlyallow");
+		String values = node_.getAttribute("onlyallow"); //$NON-NLS-1$
 		Set<RTLType> result = new HashSet<RTLType>();
-		for (String val : values.split("\\s")) {
+		for (String val : values.split("\\s")) { //$NON-NLS-1$
 			if (StringUtil.isNotEmpty(val)) {
 				result.add(RTLType.valueOf(val.toUpperCase()));
 			}
@@ -243,49 +243,49 @@ public class FormField implements org.openntf.domino.design.FormField {
 	@Override
 	public void setOnlyAllow(final Set<RTLType> onlyAllow) {
 		if (onlyAllow != null) {
-			node_.setAttribute("onlyallow", TypeUtils.join(onlyAllow, " ").toLowerCase());
+			node_.setAttribute("onlyallow", TypeUtils.join(onlyAllow, " ").toLowerCase()); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			node_.setAttribute("onlyallow", "");
+			node_.setAttribute("onlyallow", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
 	@Override
 	public String getFieldHelp() {
-		return node_.getAttribute("fieldhelp");
+		return node_.getAttribute("fieldhelp"); //$NON-NLS-1$
 	}
 
 	@Override
 	public void setFieldHelp(final String fieldHelp) {
-		node_.setAttribute("fieldhelp", fieldHelp);
+		node_.setAttribute("fieldhelp", fieldHelp); //$NON-NLS-1$
 	}
 
 	/* ******************************************************************************************
 	 * Internal utility methods
 	 ********************************************************************************************/
 	private XMLNode getKeywordsNode() {
-		XMLNode node = node_.selectSingleNode("keywords");
+		XMLNode node = node_.selectSingleNode("keywords"); //$NON-NLS-1$
 
 		if (node == null) {
-			node = node_.addChildElement("keywords");
+			node = node_.addChildElement("keywords"); //$NON-NLS-1$
 		}
 		return node;
 	}
 
 	private XMLNode getDefaultValueFormulaNode() {
-		XMLNode node = node_.selectSingleNode("code[@event='defaultvalue']");
+		XMLNode node = node_.selectSingleNode("code[@event='defaultvalue']"); //$NON-NLS-1$
 
 		if (node == null) {
 			return null;
 		} else {
-			node = node.selectSingleNode("formula");
+			node = node.selectSingleNode("formula"); //$NON-NLS-1$
 		}
 		return node;
 	}
 
 	private XMLNode createDefaultValueFormulaNode() {
-		XMLNode node = node_.addChildElement("code");
-		node.setAttribute("event", "defaultvalue");
-		node = node.addChildElement("formula");
+		XMLNode node = node_.addChildElement("code"); //$NON-NLS-1$
+		node.setAttribute("event", "defaultvalue"); //$NON-NLS-1$ //$NON-NLS-2$
+		node = node.addChildElement("formula"); //$NON-NLS-1$
 		return node;
 	}
 }

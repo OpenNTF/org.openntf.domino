@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,7 @@ import com.ibm.domino.xsp.module.nsf.RuntimeFileSystem.NSFXspClassResource;
  * @author Nathan T. Freeman
  * @author Roland Praml, FOCONIS AG
  */
+@SuppressWarnings("nls")
 public class XotsNsfScanner extends AbstractDominoRunnable implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static final Logger log_ = Logger.getLogger(XotsNsfScanner.class.getName());
@@ -271,5 +272,10 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 			log_.log(Level.INFO, e.getMessage(), e);
 		}
 		return null;
+	}
+	
+	@Override
+	public String toString() {
+		return "XOTS NSF Scanner";
 	}
 }

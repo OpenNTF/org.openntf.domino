@@ -33,6 +33,7 @@ import java.util.logging.Logger;
  *
  * @author Joshua Shinavier (http://fortytwo.net)
  */
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 public class IdGraph<T extends KeyIndexableGraph> implements KeyIndexableGraph, WrapperGraph<T>, IndexableGraph, TransactionalGraph {
 
     private static final Logger LOGGER = Logger.getLogger(IdGraph.class.getName());
@@ -256,7 +257,8 @@ public class IdGraph<T extends KeyIndexableGraph> implements KeyIndexableGraph, 
     }
 
     // Note: this is a no-op if the base graph is not an instance of TransactionalGraph
-    public void stopTransaction(Conclusion conclusion) {
+    @SuppressWarnings("deprecation")
+	public void stopTransaction(Conclusion conclusion) {
         if (Conclusion.SUCCESS == conclusion)
             commit();
         else
@@ -283,7 +285,8 @@ public class IdGraph<T extends KeyIndexableGraph> implements KeyIndexableGraph, 
         return StringFactory.graphString(this, this.baseGraph.toString());
     }
 
-    public <T extends Element> void dropKeyIndex(final String key, final Class<T> elementClass) {
+    @SuppressWarnings("hiding")
+	public <T extends Element> void dropKeyIndex(final String key, final Class<T> elementClass) {
         if (elementClass == null)
             throw ExceptionFactory.classForElementCannotBeNull();
 
@@ -297,7 +300,8 @@ public class IdGraph<T extends KeyIndexableGraph> implements KeyIndexableGraph, 
         }
     }
 
-    public <T extends Element> void createKeyIndex(final String key,
+    @SuppressWarnings("hiding")
+	public <T extends Element> void createKeyIndex(final String key,
                                                    final Class<T> elementClass,
                                                    final Parameter... indexParameters) {
         if (elementClass == null)
@@ -313,7 +317,8 @@ public class IdGraph<T extends KeyIndexableGraph> implements KeyIndexableGraph, 
         }
     }
 
-    public <T extends Element> Set<String> getIndexedKeys(final Class<T> elementClass) {
+    @SuppressWarnings("hiding")
+	public <T extends Element> Set<String> getIndexedKeys(final Class<T> elementClass) {
         if (elementClass == null)
             throw ExceptionFactory.classForElementCannotBeNull();
 
@@ -338,7 +343,8 @@ public class IdGraph<T extends KeyIndexableGraph> implements KeyIndexableGraph, 
         this.uniqueIds = enforceUniqueIds;
     }
 
-    public <T extends Element> Index<T> createIndex(final String indexName,
+    @SuppressWarnings("hiding")
+	public <T extends Element> Index<T> createIndex(final String indexName,
                                                     final Class<T> indexClass,
                                                     final Parameter... indexParameters) {
         verifyBaseGraphIsIndexableGraph();
@@ -348,7 +354,8 @@ public class IdGraph<T extends KeyIndexableGraph> implements KeyIndexableGraph, 
                 : (Index<T>) new IdEdgeIndex((Index<Edge>) ((IndexableGraph) baseGraph).createIndex(indexName, indexClass, indexParameters), this);
     }
 
-    public <T extends Element> Index<T> getIndex(final String indexName,
+    @SuppressWarnings("hiding")
+	public <T extends Element> Index<T> getIndex(final String indexName,
                                                  final Class<T> indexClass) {
         verifyBaseGraphIsIndexableGraph();
 

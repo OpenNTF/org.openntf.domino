@@ -15,8 +15,10 @@ import com.tinkerpop.pipes.PipeFunction;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Table extends ArrayList<Row> {
-
+	private static final long serialVersionUID = 1L;
+	
 	private List<String> columnNames;
 	private int tableWidth = -1;
 
@@ -42,6 +44,7 @@ public class Table extends ArrayList<Row> {
 		return table;
 	}
 
+    @SuppressWarnings("nls")
 	public void addRow(final List row) {
 		if (this.tableWidth == -1) {
 			this.tableWidth = row.size();
@@ -57,6 +60,7 @@ public class Table extends ArrayList<Row> {
 		this.addRow(Arrays.asList(row));
 	}
 
+    @SuppressWarnings("nls")
 	public void setColumnNames(final String... columnNames) {
 		if (tableWidth != -1 && columnNames.length != tableWidth) {
 			throw new RuntimeException(

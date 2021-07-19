@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,10 +60,10 @@ public final class ImageResource extends AbstractDesignFileResource implements o
 	public byte[] getFileData() {
 		switch (getDxlFormat(true)) {
 		case DXL:
-			String rawData = getDxl().selectSingleNode("//jpeg|//gif|//png").getText();
+			String rawData = getDxl().selectSingleNode("//jpeg|//gif|//png").getText(); //$NON-NLS-1$
 			return parseBase64Binary(rawData);
 		default:
-			return getFileDataRaw("$ImageData");
+			return getFileDataRaw("$ImageData"); //$NON-NLS-1$
 
 		}
 	}

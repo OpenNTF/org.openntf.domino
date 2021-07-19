@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.rest.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -25,19 +26,12 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.wink.common.internal.utils.StringUtils;
 import org.openntf.domino.types.CaseInsensitiveString;
 
-import com.ibm.icu.text.SimpleDateFormat;
-
 public enum Parameters {
 	DEBUG, ID, KEY, TYPE, EDGES, VERTICES, COUNTS, DESC, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START,
 	COUNT, ORDERBY, PROPS, HIDEPROPS, INPROPS, OUTPROPS, INVPROPS, OUTVPROPS, COMMAND, ITEM, SWITCH,
 	PARTIALKEY, PARTIALVALUE, STARTSKEY, STARTSVALUE, ADD, REMOVE, ACTION, ACTIONS, VERSION, REVERTTO;
 
-	private static final ThreadLocal<SimpleDateFormat> URL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
-		@Override
-		protected SimpleDateFormat initialValue() {
-			return new SimpleDateFormat("yyyyMMddHHmmss");
-		}
-	};
+	private static final ThreadLocal<SimpleDateFormat> URL_DATE_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyyMMddHHmmss")); //$NON-NLS-1$
 
 	public static SimpleDateFormat getURLDateFormat() {
 		return URL_DATE_FORMAT.get();
@@ -53,8 +47,8 @@ public enum Parameters {
 				try {
 					for (String value : values) {
 						if (value != null) {
-							if (value.contains(",")) {
-								String[] sepstrs = StringUtils.fastSplit(value, ",");
+							if (value.contains(",")) { //$NON-NLS-1$
+								String[] sepstrs = StringUtils.fastSplit(value, ","); //$NON-NLS-1$
 								for (String sepstr : sepstrs) {
 									newValues.add(sepstr);
 								}

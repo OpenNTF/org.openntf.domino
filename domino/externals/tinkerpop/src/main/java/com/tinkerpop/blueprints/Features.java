@@ -13,6 +13,7 @@ import java.util.Map;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @author Stephen Mallette
  */
+@SuppressWarnings({ "rawtypes" })
 public class Features {
     /**
      * Does the graph allow for two edges with the same vertices and edge label to exist?
@@ -146,7 +147,7 @@ public class Features {
         try {
             final StringBuilder string = new StringBuilder();
             for (final Field field : this.getClass().getFields()) {
-                string.append(field.getName() + ": " + field.get(this).toString() + "\n");
+                string.append(field.getName() + ": " + field.get(this).toString() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
             }
             return string.toString().substring(0, string.length() - 1);
         } catch (IllegalAccessException e) {
@@ -177,7 +178,7 @@ public class Features {
         try {
             for (final Field field : this.getClass().getFields()) {
                 if (field.get(this) == null)
-                    throw new IllegalStateException("The feature " + field.getName() + " was not specified");
+                    throw new IllegalStateException("The feature " + field.getName() + " was not specified"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e.getMessage(), e);

@@ -16,6 +16,7 @@ import java.util.List;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 public abstract class QueryPipe<S, E extends Element> extends AbstractPipe<S, E> implements TransformPipe<S, E> {
 
     protected List<HasContainer> hasContainers = new ArrayList<HasContainer>();

@@ -8,6 +8,7 @@ import com.tinkerpop.frames.Range;
 
 import java.lang.reflect.Method;
 
+@SuppressWarnings({ "rawtypes", "unchecked", "deprecation" })
 public class RangeAnnotationHandler implements AnnotationHandler<Range> {
 
     @Override

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.openntf.domino.graph2.annotations.FramedVertexList;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 
+@SuppressWarnings("nls")
 public class JsonFrameListAdapter implements JsonArray {
 	protected static class FrameListAdapterIterator implements Iterator<Object> {
 		protected final JsonFrameListAdapter parent_;

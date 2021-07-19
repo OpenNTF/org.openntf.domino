@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class VariableResolver extends javax.faces.el.VariableResolver {
 	 * 
 	 */
 	public VariableResolver() throws FacesException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-		this._resolver = ((javax.faces.el.VariableResolver) Delegation.getImplementation("variable-resolver"));
+		this._resolver = ((javax.faces.el.VariableResolver) Delegation.getImplementation("variable-resolver")); //$NON-NLS-1$
 		// TODO
 	}
 

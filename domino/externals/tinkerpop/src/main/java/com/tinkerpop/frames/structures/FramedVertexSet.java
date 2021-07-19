@@ -11,6 +11,7 @@ import java.util.Set;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public class FramedVertexSet<T> implements Set<T> {
     protected final Class<T> kind;
     protected final Set<Vertex> set;
@@ -66,7 +67,8 @@ public class FramedVertexSet<T> implements Set<T> {
         throw new UnsupportedOperationException();
     }
 
-    public <T> T[] toArray(T[] array) {
+    @SuppressWarnings("hiding")
+	public <T> T[] toArray(T[] array) {
         throw new UnsupportedOperationException();
     }
 

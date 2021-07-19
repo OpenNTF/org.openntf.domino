@@ -8,6 +8,7 @@ import java.util.Iterator;
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
+@SuppressWarnings({ "rawtypes" })
 class IdEdgeIterable implements CloseableIterable<Edge> {
     private final Iterable<Edge> iterable;
     private final IdGraph idGraph;

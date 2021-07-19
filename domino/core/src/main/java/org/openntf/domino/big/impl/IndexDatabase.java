@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ import org.openntf.domino.types.CaseInsensitiveString;
  * @author Nathan T. Freeman
  *
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 public class IndexDatabase implements IScannerStateManager, org.openntf.domino.big.IndexDatabase {
 	private static final Logger log_ = Logger.getLogger(IndexDatabase.class.getName());
 

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,26 +43,10 @@ public class ExtractFileEvent extends AbstractDocumentEvent {
 	}
 
 	/**
-	 * @param itemName
-	 *            the itemName to set
-	 */
-	private void setItemName(final String itemName) {
-		this.itemName = itemName;
-	}
-
-	/**
 	 * @return the fileName
 	 */
 	public String getFileName() {
 		return fileName;
-	}
-
-	/**
-	 * @param fileName
-	 *            the fileName to set
-	 */
-	private void setFileName(final String fileName) {
-		this.fileName = fileName;
 	}
 
 }

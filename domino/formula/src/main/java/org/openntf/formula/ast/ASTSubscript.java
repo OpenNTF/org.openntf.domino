@@ -39,7 +39,7 @@ public class ASTSubscript extends SimpleNode {
 
 			int idx = subscript.getInt(0); // we need it as INT here
 			if (idx < 1 || idx > base.size) {
-				throw new IndexOutOfBoundsException("Index " + idx + " not in 1.." + base.size);
+				throw new IndexOutOfBoundsException("Index " + idx + " not in 1.." + base.size); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			idx--; // Formula is 1 based

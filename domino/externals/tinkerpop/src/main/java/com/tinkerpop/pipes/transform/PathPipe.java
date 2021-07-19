@@ -17,6 +17,7 @@ import java.util.NoSuchElementException;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class PathPipe<S> extends AbstractPipe<S, List> implements TransformPipe<S, List> {
 
     private final PipeFunction[] pathFunctions;
@@ -50,7 +51,7 @@ public class PathPipe<S> extends AbstractPipe<S, List> implements TransformPipe<
                 return closedPath;
             }
         } else {
-            throw new NoSuchElementException("The start of this pipe was not a pipe");
+            throw new NoSuchElementException("The start of this pipe was not a pipe"); //$NON-NLS-1$
         }
     }
 

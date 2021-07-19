@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -81,13 +82,13 @@ import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.das.utils.ErrorHelper;
 import com.ibm.domino.httpmethod.PATCH;
-import com.ibm.icu.text.SimpleDateFormat;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.VertexFrame;
 
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 @Path(Routes.ROOT + "/" + Routes.FRAMED + "/" + Routes.NAMESPACE_PATH_PARAM)
 public class FramedResource extends AbstractResource {
 
@@ -95,12 +96,10 @@ public class FramedResource extends AbstractResource {
 		super(service);
 	}
 
-	@SuppressWarnings("unchecked")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFramedObject(@Context final UriInfo uriInfo, @PathParam(Routes.NAMESPACE) final String namespace,
 			@Context final Request request) throws JsonException, IOException {
-		@SuppressWarnings("rawtypes")
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		if (pm.getVersion() != null) {
@@ -263,7 +262,7 @@ public class FramedResource extends AbstractResource {
 				graph.rollback();
 			} else {
 				MultivaluedMap<String, String> mvm = uriInfo.getQueryParameters();
-				for (String key : mvm.keySet()) {
+				for (@SuppressWarnings("unused") String key : mvm.keySet()) {
 					// System.out.println("TEMP DEBUG: " + key + ": " +
 					// mvm.getFirst(key));
 				}
@@ -345,6 +344,7 @@ public class FramedResource extends AbstractResource {
 
 	protected Response updateFrameByMetaid(final String requestEntity, final String namespace, final String ifUnmodifiedSince,
 			final ParamMap pm, final boolean isPut, final Request request) throws JsonException, IOException {
+		@SuppressWarnings("unused")
 		Response result = null;
 		DFramedTransactionalGraph<?> graph = this.getGraph(namespace);
 		JsonJavaObject jsonItems = null;
@@ -413,6 +413,7 @@ public class FramedResource extends AbstractResource {
 		return response;
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	private void processJsonUpdate(final JsonJavaObject jsonItems, final DFramedTransactionalGraph graph, final JsonGraphWriter writer,
 			final ParamMap pm, final boolean isPut) throws JsonException, IOException {
 		Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
@@ -504,9 +505,9 @@ public class FramedResource extends AbstractResource {
 		}
 	}
 
+	@SuppressWarnings("resource")
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
-	@SuppressWarnings("rawtypes")
 	public Response deleteFramedObject(final String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace, @Context final Request request)
 					throws JsonException, IOException {
@@ -516,6 +517,7 @@ public class FramedResource extends AbstractResource {
 		StringWriter sw = new StringWriter();
 		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true, false);
 
+		@SuppressWarnings("unused")
 		JsonGraphFactory factory = JsonGraphFactory.instance;
 
 		Map<String, String> report = new HashMap<String, String>();
@@ -571,7 +573,6 @@ public class FramedResource extends AbstractResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@SuppressWarnings("rawtypes")
 	public Response createFramedObject(final String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace, @Context final Request request)
 					throws JsonException, IOException {
@@ -638,6 +639,7 @@ public class FramedResource extends AbstractResource {
 		return response;
 	}
 
+	@SuppressWarnings({ "resource", "unlikely-arg-type" })
 	private void processJsonObject(final JsonJavaObject jsonItems, final DFramedTransactionalGraph graph, final JsonGraphWriter writer,
 			final ParamMap pm/* , Map<Object, Object> resultMap */) {
 		Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();

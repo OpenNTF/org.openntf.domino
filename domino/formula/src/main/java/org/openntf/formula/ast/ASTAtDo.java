@@ -53,7 +53,7 @@ public class ASTAtDo extends SimpleNode {
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
 		if (!virtual) {
-			functions.add("@do");
+			functions.add("@do"); //$NON-NLS-1$
 		}
 	}
 

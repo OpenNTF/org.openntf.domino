@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,23 +82,23 @@ public class JSONFormatter extends Formatter {
 		try {
 			startObject();
 
-			startProperty("level");
+			startProperty("level"); //$NON-NLS-1$
 			out(record.getLevel().getName());
 			endProperty();
 
-			startProperty("message");
+			startProperty("message"); //$NON-NLS-1$
 			out(record.getMessage());
 			endProperty();
 
-			startProperty("event");
-			out(record.getSourceClassName() + "." + record.getSourceMethodName() + "()");
+			startProperty("event"); //$NON-NLS-1$
+			out(record.getSourceClassName() + "." + record.getSourceMethodName() + "()"); //$NON-NLS-1$ //$NON-NLS-2$
 			endProperty();
 
-			startProperty("time");
+			startProperty("time"); //$NON-NLS-1$
 			out(record.getMillis());
 			endProperty();
 
-			startProperty("datetime");
+			startProperty("datetime"); //$NON-NLS-1$
 			Date recordDate = new Date(record.getMillis());
 			out(LogUtils.dateToString(recordDate, UTC_Format));
 			endProperty();
@@ -120,24 +120,24 @@ public class JSONFormatter extends Formatter {
 	private void formatThrowable(final LogRecord record) {
 		try {
 			if (record.getThrown() != null) {
-				startProperty("exception");
+				startProperty("exception"); //$NON-NLS-1$
 				startArray();
 				for (StackTraceElement element : record.getThrown().getStackTrace()) {
-					startProperty("message");
+					startProperty("message"); //$NON-NLS-1$
 					startObject();
 
-					startProperty("class");
+					startProperty("class"); //$NON-NLS-1$
 					out(element.getClassName());
 					endProperty();
 
-					startProperty("method");
+					startProperty("method"); //$NON-NLS-1$
 					out(element.getMethodName());
 					endProperty();
 
-					startProperty("line");
+					startProperty("line"); //$NON-NLS-1$
 					out(element.getLineNumber());
 					endProperty();
-					out(element.getClassName() + "." + element.getMethodName() + "()");
+					out(element.getClassName() + "." + element.getMethodName() + "()"); //$NON-NLS-1$ //$NON-NLS-2$
 					endObject();
 					endProperty();
 				}
@@ -156,7 +156,7 @@ public class JSONFormatter extends Formatter {
 	 */
 	@Override
 	public String getHead(final Handler h) {
-		return "{\"id\": \"0001\",\"records\":";
+		return "{\"id\": \"0001\",\"records\":"; //$NON-NLS-1$
 
 	}
 
@@ -167,7 +167,7 @@ public class JSONFormatter extends Formatter {
 	 */
 	@Override
 	public String getTail(final Handler h) {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -378,7 +378,7 @@ public class JSONFormatter extends Formatter {
 	public void indent() throws IOException {
 		if ((!(this.compact)) && (this.indentLevel > 0)) {
 			for (int i = 0; i < this.indentLevel; ++i) {
-				out("  ");
+				out("  "); //$NON-NLS-1$
 			}
 		}
 	}

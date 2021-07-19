@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,13 +158,13 @@ public class DatabaseMetaData implements Serializable {
 
 	public String getApiPath() {
 		if (server_.length() > 0)
-			return server_ + "!!" + filePath_;
+			return server_ + "!!" + filePath_; //$NON-NLS-1$
 		return filePath_;
 	}
 
 	public String getMetaReplicaID() {
 		if (server_.length() > 0)
-			return server_ + "!!" + replicaID_;
+			return server_ + "!!" + replicaID_; //$NON-NLS-1$
 		return replicaID_;
 	}
 

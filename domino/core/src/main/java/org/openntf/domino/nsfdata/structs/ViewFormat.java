@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class ViewFormat {
 				localData.get(itemNameBytes);
 				itemNames_[i] = ODSUtils.fromLMBCS(itemNameBytes);
 			} else {
-				itemNames_[i] = "";
+				itemNames_[i] = ""; //$NON-NLS-1$
 			}
 
 			int columnTitleSize = columnFormats_[i].TitleSize.get();
@@ -83,7 +83,7 @@ public class ViewFormat {
 				localData.get(columnTitleBytes);
 				columnTitles_[i] = ODSUtils.fromLMBCS(columnTitleBytes);
 			} else {
-				columnTitles_[i] = "";
+				columnTitles_[i] = ""; //$NON-NLS-1$
 			}
 
 			int formulaSize = columnFormats_[i].FormulaSize.get();
@@ -146,7 +146,7 @@ public class ViewFormat {
 					localData.get(twistieResourceBytes);
 					twistieResources_[i] = ODSUtils.fromLMBCS(twistieResourceBytes);
 				} else {
-					twistieResources_[i] = "";
+					twistieResources_[i] = ""; //$NON-NLS-1$
 				}
 			}
 		} else {

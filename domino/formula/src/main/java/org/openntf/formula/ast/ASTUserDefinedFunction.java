@@ -31,7 +31,7 @@ public class ASTUserDefinedFunction extends SimpleNode {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
-		return ValueHolder.valueOf("");
+		return ValueHolder.valueOf(""); //$NON-NLS-1$
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * This structure defines the appearance of a button in a rich text field. (editods.h)
  *
  */
+@SuppressWarnings("nls")
 public class CDBUTTON extends CDRecord {
 	/**
 	 * Possible values for the Flags member of the CDBUTTON structure.

@@ -30,6 +30,7 @@ import org.openntf.formula.impl.AtFunction;
  * @author Roland Praml, Foconis AG
  * 
  */
+@SuppressWarnings("nls")
 public abstract class OperatorsAbstract extends AtFunction {
 
 	protected boolean isPermutative;

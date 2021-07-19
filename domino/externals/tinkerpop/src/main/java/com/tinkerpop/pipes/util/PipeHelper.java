@@ -16,6 +16,7 @@ import java.util.NoSuchElementException;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class PipeHelper {
 
     private PipeHelper() {
@@ -143,11 +144,11 @@ public class PipeHelper {
     public static String makePipeString(final Pipe pipe, final Object... arguments) {
         String result = pipe.getClass().getSimpleName();
         if (arguments.length > 0) {
-            result = result + "(";
+            result = result + "("; //$NON-NLS-1$
             for (final Object arg : arguments) {
-                result = result + arg + ",";
+                result = result + arg + ","; //$NON-NLS-1$
             }
-            result = result.substring(0, result.length() - 1) + ")";
+            result = result.substring(0, result.length() - 1) + ")"; //$NON-NLS-1$
         }
         return result;
     }

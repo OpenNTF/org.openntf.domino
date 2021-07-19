@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ import org.openntf.domino.design.impl.DesignColumn;
 public interface AnyFolderOrView extends DesignBaseNamed {
 
 	public enum OnRefreshType {
-		DISPLAY_INDICATOR("displayindicator"), REFRESH_DISPLAY("refresh"), REFRESH_FROM_TOP("refreshtop"),
-		REFRESH_FROM_BOTTOM("refreshbottom");
+		DISPLAY_INDICATOR("displayindicator"), REFRESH_DISPLAY("refresh"), REFRESH_FROM_TOP("refreshtop"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		REFRESH_FROM_BOTTOM("refreshbottom"); //$NON-NLS-1$
 
 		String propName;
 

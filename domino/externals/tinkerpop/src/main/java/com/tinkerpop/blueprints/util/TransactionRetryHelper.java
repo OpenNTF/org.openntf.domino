@@ -10,6 +10,7 @@ import java.util.Set;
  *
  * @param <T> The return value of the work.
  */
+@SuppressWarnings({ "rawtypes" })
 public class TransactionRetryHelper<T> {
     private final TransactionalGraph graph;
     private final TransactionWork<T> work;

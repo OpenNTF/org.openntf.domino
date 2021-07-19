@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2020 The OpenNTF Domino API Team
+ * Copyright © 2013-2021 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({"unchecked", "rawtypes", "nls"})
 public class DocumentScanner extends Observable {
 
 	protected boolean trackFieldTokens_ = true;
@@ -375,18 +375,18 @@ public class DocumentScanner extends Observable {
 		return tokenFreqMap_;
 	}
 
-	public static final Pattern REGEX_SUFFIX_TRIM = Pattern.compile("\\W*$");
-	public static final Pattern REGEX_PREFIX_TRIM = Pattern.compile("^\\W*");
-	public static final Pattern REGEX_PUNCTUATION = Pattern.compile("\\p{P}");
-	public static final Pattern REGEX_NONALPHANUMERIC = Pattern.compile("[^a-zA-Z0-9-']");
+	public static final Pattern REGEX_SUFFIX_TRIM = Pattern.compile("\\W*$"); //$NON-NLS-1$
+	public static final Pattern REGEX_PREFIX_TRIM = Pattern.compile("^\\W*"); //$NON-NLS-1$
+	public static final Pattern REGEX_PUNCTUATION = Pattern.compile("\\p{P}"); //$NON-NLS-1$
+	public static final Pattern REGEX_NONALPHANUMERIC = Pattern.compile("[^a-zA-Z0-9-']"); //$NON-NLS-1$
 
 	public static CharSequence scrubToken(final String token, final boolean caseSensitive) {
 		//		Matcher puncMatch = REGEX_PUNCTUATION.matcher(token);
 		//		String result = puncMatch.replaceAll("");
 		Matcher pMatch = REGEX_PREFIX_TRIM.matcher(token);
-		String result = pMatch.replaceAll("");
+		String result = pMatch.replaceAll(""); //$NON-NLS-1$
 		Matcher sMatch = REGEX_SUFFIX_TRIM.matcher(result);
-		result = sMatch.replaceAll("");
+		result = sMatch.replaceAll(""); //$NON-NLS-1$
 
 		result = result.trim();
 		if (DominoUtils.isHex(result)) {
@@ -408,11 +408,11 @@ public class DocumentScanner extends Observable {
 
 	public String getNonTextSummary() {
 		StringBuilder nt = new StringBuilder();
-		nt.append("[");
+		nt.append("["); //$NON-NLS-1$
 		for (Integer i : getNonText()) {
-			nt.append(i + ":");
+			nt.append(i + ":"); //$NON-NLS-1$
 		}
-		nt.append("]");
+		nt.append("]"); //$NON-NLS-1$
 		return nt.toString();
 	}
 
@@ -514,12 +514,12 @@ public class DocumentScanner extends Observable {
 				Map<CharSequence, Item.Type> typeMap = getFieldTypeMap();
 				Vector<Item> items = doc.getItems();
 				boolean hasReaders = doc.hasReaders();
-				String address = doc.getUniversalID() + (hasReaders ? "1" : "0") + doc.getFormName();
+				String address = doc.getUniversalID() + (hasReaders ? "1" : "0") + doc.getFormName(); //$NON-NLS-1$ //$NON-NLS-2$
 				//			System.out.println("TEMP DEBUG processing document " + doc.getMetaversalID() + " with " + items.size() + " items.");
 				for (Item item : items) {
 					if (item != null) {
 						CaseInsensitiveString name = new CaseInsensitiveString(item.getName());
-						if (!(name.startsWith("$") && getIgnoreDollar())) {
+						if (!(name.startsWith("$") && getIgnoreDollar())) { //$NON-NLS-1$
 							//						if ("Body".equalsIgnoreCase(name.toString())) {
 							//							System.out.println("TEMP DEBUG Processing a Body item");
 							//						}

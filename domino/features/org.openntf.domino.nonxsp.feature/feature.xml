@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright © 2013-2020 The OpenNTF Domino API Team
+    Copyright © 2013-2021 The OpenNTF Domino API Team
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 <feature
       id="org.openntf.domino.nonxsp.feature"
       label="OpenNTF Domino API Non-XSP"
-      version="11.0.0.qualifier"
+      version="11.0.1.qualifier"
       provider-name="OpenNTF">
 
    <description url="http://www.example.com/description">
@@ -60,18 +60,7 @@
       <import plugin="com.ibm.icu.base" version="3.8.1" match="greaterOrEqual"/>
    </requires>
 
-   <plugin
-         id="org.openntf.domino"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openntf.formula"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin id="org.openntf.domino" version="0.0.0"/>
+   <plugin id="org.openntf.formula" version="0.0.0"/>
 
 </feature>

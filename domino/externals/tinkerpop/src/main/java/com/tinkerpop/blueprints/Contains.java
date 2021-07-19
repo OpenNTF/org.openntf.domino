@@ -13,6 +13,7 @@ import java.util.Collection;
  * @author Pierre De Wilde
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public enum Contains implements Predicate {
 
     IN, NOT_IN;
@@ -21,7 +22,7 @@ public enum Contains implements Predicate {
         if (second instanceof Collection) {
             return this.equals(IN) ? ((Collection) second).contains(first) : !((Collection) second).contains(first);
         } else {
-            throw new IllegalArgumentException("The second argument must be a collection");
+            throw new IllegalArgumentException("The second argument must be a collection"); //$NON-NLS-1$
         }
     }
 
