@@ -1084,7 +1084,7 @@ public enum Strings {
 			if (Strings.isBlankString(formula)) {
 				throw new IllegalArgumentException("Parameter is blank or null");
 			}
-			final String unicodeReplacement = "�";
+			final String unicodeReplacement = "(c)";
 			evalformula = formula.replaceAll(unicodeReplacement, "\"").replaceAll(unicodeReplacement, "\"");
 			if (Strings.checkFormulaSyntax(session, evalformula)) {
 				return (null == context) ? session.evaluate(evalformula) : session.evaluate(evalformula, context);

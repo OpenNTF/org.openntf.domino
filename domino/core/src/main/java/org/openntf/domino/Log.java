@@ -236,7 +236,7 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, org.openn
 	public void openMailLog(final Vector recipients, final String subject);
 
 	/**
-	 * Opens a specified Domino� database for logging.
+	 * Opens a specified Domino(c) database for logging.
 	 * <p>
 	 * The StdR4AgentLog template (ALOG4.NTF) is designed to display the action and error documents that Log creates. If the database you
 	 * specify inherits its design from this template, you can use the database main view to see each of the items previously listed.
