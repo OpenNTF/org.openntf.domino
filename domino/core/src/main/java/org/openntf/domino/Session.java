@@ -90,7 +90,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 *
 	 * @param server
 	 *            The name of the server containing the Administration Requests database (ADMIN4.NSF). An empty string means the local
-	 *            computer. The server must contain a replica of the Certification Log. You must have access privileges to the Domino���
+	 *            computer. The server must contain a replica of the Certification Log. You must have access privileges to the Domino(c)(c)(c)
 	 *            Directory on the server for Administration Process requests that use it.
 	 *
 	 * @return The newly created {@link AdministrationProcess} object.
@@ -704,7 +704,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * <li>AIX/64
 	 * <li>Linux/64
 	 * <li>Macintosh
-	 * <li>OS/400���
+	 * <li>OS/400(c)(c)(c)
 	 * <li>UNIX
 	 * <li>Windows/32
 	 * <li>Windows/64
@@ -766,7 +766,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	public String getSessionToken(final String serverName);
 
 	/**
-	 * Gets the Domino��� URL for the session.
+	 * Gets the Domino(c)(c)(c) URL for the session.
 	 * <p>
 	 * Effectively this method returns an empty string. Use {@link Database#getURL} to get the URL for a database. See {@link #resolve} for
 	 * URL hints.
@@ -795,7 +795,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * </p>
 	 *
 	 * <p>
-	 * The groups include those to which the user name belongs in the Domino��� Directory or Personal Address Book where the program is
+	 * The groups include those to which the user name belongs in the Domino(c)(c)(c) Directory or Personal Address Book where the program is
 	 * running.
 	 * </p>
 	 *
@@ -952,7 +952,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	public boolean isRestricted();
 
 	/**
-	 * Indicates whether milliseconds are used in Java��� dates.
+	 * Indicates whether milliseconds are used in Java(c)(c)(c) dates.
 	 * <p>
 	 * By default milliseconds are not tracked. You must set this property to true if you want milliseconds to appear in Java dates
 	 *

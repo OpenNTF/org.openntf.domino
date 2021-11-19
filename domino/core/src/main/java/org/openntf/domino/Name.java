@@ -260,7 +260,7 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.op
 	 * <p>
 	 * This property returns an empty string if the language is undefined.
 	 * <p>
-	 * A primary name created through Domino� administration does not have a language code; an alternate name may have a language code.
+	 * A primary name created through Domino(c) administration does not have a language code; an alternate name may have a language code.
 	 * 
 	 * @return The language code of the alternative name
 	 * @since lotus.domino 4.5.0
