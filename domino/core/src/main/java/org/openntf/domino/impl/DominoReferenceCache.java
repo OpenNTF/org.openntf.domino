@@ -15,8 +15,12 @@
  */
 package org.openntf.domino.impl;
 
+import static java.text.MessageFormat.format;
+
 import java.lang.ref.ReferenceQueue;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,12 +31,7 @@ import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.Factory;
 
-import com.google.common.collect.ConcurrentHashMultiset;
-import com.google.common.collect.Multiset;
-
 import lotus.domino.Base;
-
-import static java.text.MessageFormat.format;
 
 /**
  * Class to cache OpenNTF-Domino-wrapper objects. The wrapper and its delegate is stored in a phantomReference. This reference is queued if
@@ -52,7 +51,7 @@ public class DominoReferenceCache {
 
 	/** The delegate map contains the value wrapped in phantomReferences) **/
 	private Map<lotus.domino.Base, DominoReference> map = new IdentityHashMap<lotus.domino.Base, DominoReference>(2048);
-	private Multiset<Long> cppMap = ConcurrentHashMultiset.create();
+	private Map<Long, AtomicInteger> cppMap = Collections.synchronizedMap(new HashMap<>());
 
 	/** This is the queue with unreachable refs **/
 	private ReferenceQueue<Object> queue = new ReferenceQueue<Object>();
@@ -132,7 +131,7 @@ public class DominoReferenceCache {
 		if (value instanceof SessionDescendant
 				&& ((SessionDescendant) value).getAncestorSession().isFixEnabled(Fixes.PEDANTIC_GC_TRACKING)) {
 			cppId = org.openntf.domino.impl.Base.GetCppObj(delegate);
-			cppMap.add(cppId);
+			cppMap.computeIfAbsent(cppId, k -> new AtomicInteger(0)).incrementAndGet();
 		}
 
 		// create and enqueue a reference that tracks lifetime of value
@@ -208,7 +207,7 @@ public class DominoReferenceCache {
 				// Then it must have had tracking enabled
 				synchronized (cppMap) {
 					cppMap.remove(cppId);
-					if (cppMap.count(cppId) < 1) {
+					if (cppMap.computeIfAbsent(cppId, k -> new AtomicInteger(0)).get() < 1) {
 						// Then this must have been the last ref for that CPP ID
 						recycle = true;
 					}

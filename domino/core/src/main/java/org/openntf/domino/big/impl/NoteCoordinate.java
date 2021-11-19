@@ -36,8 +36,7 @@ import org.openntf.domino.design.impl.DesignFactory;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
-
-import com.google.common.primitives.Longs;
+import org.openntf.domino.utils.TypeUtils;
 
 import javolution.util.FastMap;
 
@@ -76,9 +75,9 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 
 	public NoteCoordinate(final byte[] bytes) {
 		if (bytes.length >= 24) {
-			this.db = Longs.fromBytes(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
-			this.x = Longs.fromBytes(bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]);
-			this.y = Longs.fromBytes(bytes[16], bytes[17], bytes[18], bytes[19], bytes[20], bytes[21], bytes[22], bytes[23]);
+			this.db = TypeUtils.bytesToLong(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
+			this.x = TypeUtils.bytesToLong(bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]);
+			this.y = TypeUtils.bytesToLong(bytes[16], bytes[17], bytes[18], bytes[19], bytes[20], bytes[21], bytes[22], bytes[23]);
 		} else {
 			throw new IllegalArgumentException("Can't construct new NoteCoordinate from byte length of " + bytes.length);
 		}
@@ -234,9 +233,9 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 	public void readExternal(final ObjectInput arg0) throws IOException, ClassNotFoundException {
 		byte[] bytes = extreadbuffer_.get();
 		arg0.read(bytes);
-		this.db = Longs.fromBytes(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
-		this.x = Longs.fromBytes(bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]);
-		this.y = Longs.fromBytes(bytes[16], bytes[17], bytes[18], bytes[19], bytes[20], bytes[21], bytes[22], bytes[23]);
+		this.db = TypeUtils.bytesToLong(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
+		this.x = TypeUtils.bytesToLong(bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]);
+		this.y = TypeUtils.bytesToLong(bytes[16], bytes[17], bytes[18], bytes[19], bytes[20], bytes[21], bytes[22], bytes[23]);
 	}
 
 	@Override

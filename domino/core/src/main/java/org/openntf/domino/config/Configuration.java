@@ -22,15 +22,13 @@ import java.util.concurrent.TimeUnit;
 import javolution.util.FastMap;
 import javolution.util.FastSet;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
-
-import com.google.common.base.Charsets;
-import com.google.common.hash.Hashing;
 
 /**
  * This is the interface to the ODA-Database
@@ -167,11 +165,10 @@ public enum Configuration {
 	 *            The string to hash
 	 * @return The MD5 sum of the string
 	 */
-	@SuppressWarnings("deprecation")
 	public static String MD5(final String input) {
 		String ret = md5Cache_.get(input);
 		if (ret == null) {
-			ret = Hashing.md5().newHasher().putString(input, Charsets.UTF_8).hash().toString();
+			ret = DigestUtils.md2Hex(input);
 			md5Cache_.put(input, ret);
 		}
 		return ret;
