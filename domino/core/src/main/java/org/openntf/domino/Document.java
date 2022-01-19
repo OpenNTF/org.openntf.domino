@@ -2696,21 +2696,52 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 	@Override
 	public void encrypt(String filePath, String password);
 
-	/*
+	/**
 	 * Whether send method should be aborted
 	 *
-	 * @result cancel sending
-	 * @since Domino V10
+	 * @return cancel sending
+	 * @since 10.0.0
 	 */
 	@Override
 	public boolean isCancelSendOnMissingKey();
 
-	/*
+	/**
 	 * Whether or not send method should be aborted
 	 * @param cancelSend to cancel sending
-	 * @since Domino V10
+	 * @since 10.0.0
 	 */
 	@Override
 	public void setCancelSendOnMissingKey(final boolean cancelSend);
 
+	/**
+	 * Retrieves the name of the document, if it is a named document.
+	 * 
+	 * @return the name of the document, or an empty value if it is
+	 *         not named
+	 * @since 12.0.1
+	 */
+	@Override
+	String getNameOfDoc();
+	
+	/**
+	 * Retrieves the user name of the document, if it is a named document
+	 * with an associated user name.
+	 * 
+	 * @return the user name of the document, or an empty value if it is
+	 *         not named or does not have an associated user name
+	 * @since 12.0.1
+	 */
+	@Override
+	String getUserNameOfDoc();
+	
+	/**
+	 * Determines whether the document is a named document. This differs from
+	 * the profile-document mechanism.
+	 * 
+	 * @return {@code true} if the document is a named document; {@code false}
+	 *         otherwise
+	 * @since 12.0.1
+	 */
+	@Override
+	boolean isNamedDoc();
 }

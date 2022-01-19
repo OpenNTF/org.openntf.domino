@@ -16,6 +16,7 @@
 package org.openntf.domino.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -46,6 +47,28 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 	public DocumentCollection execute(final String query) {
 		try {
 			lotus.domino.DocumentCollection lotus = getDelegate().execute(query);
+			return fromLotus(lotus, org.openntf.domino.DocumentCollection.SCHEMA, parent);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+	
+	@Override
+	public DocumentCollection execute(String query, String resultName) {
+		try {
+			lotus.domino.DocumentCollection lotus = getDelegate().execute(query, resultName);
+			return fromLotus(lotus, org.openntf.domino.DocumentCollection.SCHEMA, parent);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+	
+	@Override
+	public DocumentCollection execute(String query, String resultName, boolean replace, int expireHours) {
+		try {
+			lotus.domino.DocumentCollection lotus = getDelegate().execute(query, resultName, replace, expireHours);
 			return fromLotus(lotus, org.openntf.domino.DocumentCollection.SCHEMA, parent);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -250,7 +273,7 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 	}
 
 	@Override
-	public void createIndex(String name, String field) throws NotesException {
+	public void createIndex(String name, String field) {
 		try {
 			getDelegate().createIndex(name, field);
 		} catch (NotesException e) {
@@ -259,16 +282,25 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 	}
 
 	@Override
-	public void createIndex(String name, @SuppressWarnings("rawtypes") Vector fields) throws NotesException {
+	public void createIndex(String name, @SuppressWarnings("rawtypes") Vector fields) {
 		try {
 			getDelegate().createIndex(name, fields);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
+	
+	@Override
+	public void createIndex(String indexName, List<String> itemNames) {
+		try {
+			getDelegate().createIndex(indexName, new Vector<>(itemNames));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
 
 	@Override
-	public void createIndex(String name, String field, boolean isVisible, boolean noBuild) throws NotesException {
+	public void createIndex(String name, String field, boolean isVisible, boolean noBuild) {
 		try {
 			getDelegate().createIndex(name, field, isVisible, noBuild);
 		} catch (NotesException e) {
@@ -277,16 +309,25 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 	}
 
 	@Override
-	public void createIndex(String name, @SuppressWarnings("rawtypes") Vector fields, boolean isVisible, boolean noBuild) throws NotesException {
+	public void createIndex(String name, @SuppressWarnings("rawtypes") Vector fields, boolean isVisible, boolean noBuild) {
 		try {
 			getDelegate().createIndex(name, fields, isVisible, noBuild);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
+	
+	@Override
+	public void createIndex(String indexName, List<String> itemNames, boolean visible, boolean nobuild) {
+		try {
+			getDelegate().createIndex(indexName, new Vector<>(itemNames), visible, nobuild);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
 
 	@Override
-	public String listIndexes() throws NotesException {
+	public String listIndexes() {
 		try {
 			return getDelegate().listIndexes();
 		} catch (NotesException e) {
@@ -296,9 +337,18 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 	}
 
 	@Override
-	public void removeIndex(String name) throws NotesException {
+	public void removeIndex(String name) {
 		try {
 			getDelegate().removeIndex(name);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+	
+	@Override
+	public void removeNamedResult(String resultName) {
+		try {
+			getDelegate().removeNamedResult(resultName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

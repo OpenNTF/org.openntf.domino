@@ -27,6 +27,8 @@ import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.enums.DominoEnumUtil;
 import org.openntf.domino.utils.enums.INumberEnum;
 
+import lotus.domino.QueryResultsProcessor;
+
 /**
  * Represents a Notes database.
  * <h3>Notable enhancements and changes</h3>
@@ -2891,5 +2893,85 @@ Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 	 */
 	@Override
 	public DominoQuery createDominoQuery();
+
+	@Override
+	QueryResultsProcessor createQueryResultsProcessor();
+
+	/**
+	 * Retrieves a named document. This is as distinct from document IDs
+	 * and profile document names.
+	 * 
+	 * @param name the name of the document
+	 * @param userName the user name associated with the document
+	 * @return the named document
+	 * @since 12.0.1
+	 */
+	@Override
+	Document getNamedDocument(String name, String userName);
+
+	/**
+	 * Retrieves a named document. This is as distinct from document IDs
+	 * and profile document names.
+	 * 
+	 * @param name the name of the document
+	 * @return the named document
+	 * @since 12.0.1
+	 */
+	@Override
+	Document getNamedDocument(String name);
+
+	/**
+	 * Retrieves the collection of all named documents in the database.
+	 * 
+	 * @return the named-document collection
+	 * @since 12.0.1
+	 * @see #getNamedDocument
+	 */
+	@Override
+	DocumentCollection getNamedDocumentCollection();
+
+	/**
+	 * Retrieves the collection of all named documents in the database
+	 * matching the given name.
+	 * 
+	 * @param name the name of the documents to retrieve
+	 * @return the named-document collection
+	 * @since 12.0.1
+	 * @see #getNamedDocument
+	 */
+	@Override
+	DocumentCollection getNamedDocumentCollection(String name);
+
+	/**
+	 * Removes all stored results saved in the database by {@link DominoQuery}.
+	 * 
+	 * @since 12.0.1
+	 */
+	@Override
+	void removeAllQueryNamedResults();
+
+	/**
+	 * Begins a database transaction.
+	 * 
+	 * @since 12.0.0
+	 */
+	@Override
+	void transactionBegin();
+
+	/**
+	 * Commits an active transaction to disk.
+	 * 
+	 * @since 12.0.0
+	 */
+	@Override
+	void transactionCommit();
+
+	/**
+	 * Rolls back an active transaction.
+	 * 
+	 * @since 12.0.0
+	 */
+	@Override
+	void transactionRollback();
 
 }

@@ -42,6 +42,7 @@ import java.util.regex.Pattern;
 
 import lotus.domino.NotesError;
 import lotus.domino.NotesException;
+import lotus.domino.QueryResultsProcessor;
 
 import org.openntf.domino.ACL;
 import org.openntf.domino.ACL.Level;
@@ -3987,6 +3988,89 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			DominoUtils.handleException(e);
 			return null;
 		}
+	}
+
+	@Override
+	public QueryResultsProcessor createQueryResultsProcessor() {
+		try {
+			lotus.domino.QueryResultsProcessor lotus = getDelegate().createQueryResultsProcessor();
+			// TODO add wrapper
+			return lotus;
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public Document getNamedDocument(String name, String userName) {
+		try {
+			lotus.domino.Document lotus = getDelegate().getNamedDocument(name, userName);
+			return fromLotus(lotus, Document.SCHEMA, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public Document getNamedDocument(String name) {
+		try {
+			lotus.domino.Document lotus = getDelegate().getNamedDocument(name);
+			return fromLotus(lotus, Document.SCHEMA, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public DocumentCollection getNamedDocumentCollection() {
+		try {
+			lotus.domino.DocumentCollection lotus = getDelegate().getNamedDocumentCollection();
+			return fromLotus(lotus, DocumentCollection.SCHEMA, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public DocumentCollection getNamedDocumentCollection(String name) {
+		try {
+			lotus.domino.DocumentCollection lotus = getDelegate().getNamedDocumentCollection(name);
+			return fromLotus(lotus, DocumentCollection.SCHEMA, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public void removeAllQueryNamedResults() {
+		try {
+			getDelegate().removeAllQueryNamedResults();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void transactionBegin() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void transactionCommit() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void transactionRollback() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
