@@ -19,7 +19,7 @@
 <feature
       id="org.openntf.domino.graph.feature"
       label="OpenNTF Domino API Graph REST Services"
-      version="12.0.0.qualifier"
+      version="12.0.1.qualifier"
       provider-name="OpenNTF">
 
    <description url="http://www.example.com/description">
