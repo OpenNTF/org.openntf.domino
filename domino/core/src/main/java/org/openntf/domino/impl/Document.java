@@ -2057,9 +2057,6 @@ implements org.openntf.domino.Document {
 		//		if (checkMimeOpen()) {
 		//			System.out.println("DEBUG: MimeEntity found open while checking for item name " + name);
 		//		}
-		if (keySet() != null) {
-			return keySet().contains(name);
-		}
 		lotus.domino.Document delegate = getDelegate();//NTF outside the try/catch so the exception will bubble
 		try {
 			if (name == null || delegate == null) {
