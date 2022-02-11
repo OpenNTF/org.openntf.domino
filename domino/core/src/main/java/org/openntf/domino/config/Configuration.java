@@ -15,14 +15,17 @@
  */
 package org.openntf.domino.config;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.bind.DatatypeConverter;
+
 import javolution.util.FastMap;
 import javolution.util.FastSet;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.DominoExecutor;
@@ -166,12 +169,17 @@ public enum Configuration {
 	 * @return The MD5 sum of the string
 	 */
 	public static String MD5(final String input) {
-		String ret = md5Cache_.get(input);
-		if (ret == null) {
-			ret = DigestUtils.md2Hex(input);
-			md5Cache_.put(input, ret);
-		}
-		return ret;
+		return md5Cache_.computeIfAbsent(input, key -> {
+			MessageDigest md;
+			try {
+				md = MessageDigest.getInstance("MD5");
+				md.update(input == null ? new byte[0] : input.getBytes());
+				byte[] digest = md.digest();
+				return DatatypeConverter.printHexBinary(digest).toUpperCase();
+			} catch (NoSuchAlgorithmException e) {
+				throw new RuntimeException(e);
+			}
+		});
 	}
 
 	public static String computeUNID(final String input, final Database db) {
