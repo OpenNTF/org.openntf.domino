@@ -61,7 +61,7 @@ For Windows it would be e.g.:
 
 You will also need to amend your Target Platform in Eclipse to add the directory location from the repository "dependencies\Misc". That folder includes junit, which it's looking for. By telling the Target Platform where to find that, the project will no longer throw an error.
 
-###Building a Release Versions
+### Building a Release Versions
 
 In `domino` folder run:
 
