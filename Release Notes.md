@@ -1,6 +1,6 @@
-##Release Notes
+## Release Notes
 
-###10.0.1
+### 10.0.1
 - 10.0.1 support
 - Fixes for name DC part (#166)
 - `getVersion()` method wrapped in AccessController block (#167)
@@ -11,7 +11,7 @@
 - OpenLog fixes, see https://stackoverflow.com/questions/53480994/xpages-openlog-logger-errordoc
 - Fixes for `toGMTDate()` non-US date format
 
-###10.0.0 (First Domino V10 release)
+### 10.0.0 (First Domino V10 release)
 - Fix for XOTS running as current user when triggered from REST service plugin
 - Additional Xsp Property, "snap", which forces all calls on `getDocumentByKey` etc to exact match (second parameter set to `true`)
 - Fix for case where s_recycle tried to recycle non-Base objects
@@ -28,16 +28,15 @@
 	- RichTextItem.getHTMLReferences
 	- Session.applicationShouldQuit
 	- View.FTSearchSorted methods overloaded with final boolean webQuerySyntax parameter
-	- 
 
-###4.4.0 (First 9.0.1 FP10 release)
+### 4.4.0 (First 9.0.1 FP10 release)
 - Overloaded Database.getUserID() method
 - Support for getting List and Set from items
 - Logic bug fixed in TypeUtils.toPrimitive
 - DOTS license file added
 - pom and version number cleanup in source code
 
-###4.3.0 (Last planned 9.0.1 FP9 release)
+### 4.3.0 (Last planned 9.0.1 FP9 release)
 - Getting OnRefreshType of Views and Folders in design API
 - Callback interfaces and helper methods for doing boilerplating for extracting HttpRequest and HttpResponse, processing, and properly terminating the response from an XAgent. One is specifically designed to allow population of a JSON object which will get passed back to the REST request
 
@@ -60,21 +59,21 @@
 - OpenLog fix for full logging of XPages SSJS uncaught exceptions.
 - Fix for IconNote creation
 
-###4.2.1
+### 4.2.1
 - Setters for expiry on images, javascript, css and files
 - setDasMode extended onto DatabaseDesign class
 - Form / subform creation added to Design API
 - Fixes and streamlining of methods for creating a blank database. Use a single filepath instead of folder / filename. Ability added to create on remote server.
 
-###4.2.0 (First 9.0.1 FP9 Zircon release)
+### 4.2.0 (First 9.0.1 FP9 Zircon release)
 
 - Additional method required for FP9 (Zircon) - EmbeddedObject.getFileEncoding()
 
-###4.1.1
+### 4.1.1
 - OpenLog fix for full logging of XPages SSJS uncaught exceptions.
 - Fix for IconNote creation
 
-###4.1.0 (Second 9.0.1 FP8 Release)  
+### 4.1.0 (Second 9.0.1 FP8 Release)  
 
 - Additional Javadoc documentation added
 - Fix for Document.containsValue()
