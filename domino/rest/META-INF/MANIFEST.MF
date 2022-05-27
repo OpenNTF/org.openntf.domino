@@ -28,8 +28,9 @@ Require-Bundle: com.ibm.domino.services;bundle-version="9.0.1",
  com.ibm.commons;bundle-version="9.0.1",
  com.ibm.notes.java.api;resolution:=optional,
  com.tinkerpop,
+ com.ibm.domino.das;bundle-version="9.0.1",
  org.openntf.domino,
- com.ibm.domino.das;bundle-version="9.0.1"
+ org.openntf.domino.graph;bundle-version="12.0.1"
 Export-Package: org.openntf.domino.rest,
  org.openntf.domino.rest.json,
  org.openntf.domino.rest.resources,
