@@ -78,6 +78,20 @@
 				<includeDependencies>false</includeDependencies>
 			</binaries>
 		</moduleSet>
+	
+		<!-- The final update site (non-XSP version) -->
+		<moduleSet>
+			<useAllReactorProjects>true</useAllReactorProjects>
+			<includes>
+				<include>org.openntf.domino:org.openntf.domino.nonxsp.updatesite</include>
+			</includes>
+			
+			<binaries>
+				<outputDirectory>UpdateSite-NonXSP</outputDirectory>
+				<unpack>true</unpack>
+				<includeDependencies>false</includeDependencies>
+			</binaries>
+		</moduleSet>
 		
 		
 	</moduleSets>

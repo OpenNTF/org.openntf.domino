@@ -98,20 +98,6 @@
 							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>
 					</execution>
-					<execution>
-						<id>make-nonxsp</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>src/main/assembly/nonxsp.xml</descriptor>
-							</descriptors>
-							<finalName>OpenNTF-Domino-API-NonXSP-${project.version}</finalName>
-							<appendAssemblyId>false</appendAssemblyId>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 		</plugins>
