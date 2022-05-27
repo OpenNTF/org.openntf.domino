@@ -20,14 +20,10 @@ Require-Bundle: com.tinkerpop;bundle-version="2.6.1";visibility:=reexport,
  javassist;bundle-version="3.18.2",
  org.openntf.domino;bundle-version="12.0.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: com.google.common.base;resolution:=optional,
- com.google.common.cache;resolution:=optional,
- com.google.common.collect;resolution:=optional,
- com.google.common.hash;resolution:=optional,
- com.google.common.primitives;resolution:=optional,
- com.google.common.util.concurrent;resolution:=optional,
- com.ibm.commons.util,
+Import-Package: com.ibm.commons.util,
  javolution.text,
  javolution.util,
  javolution.util.function,
  lotus.domino
+Bundle-ClassPath: lib/com.google.guava_30.0.0.jre.jar,
+ .
