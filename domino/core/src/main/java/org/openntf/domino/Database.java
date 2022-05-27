@@ -2894,6 +2894,13 @@ Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 	@Override
 	public DominoQuery createDominoQuery();
 
+	/**
+	 * Creates a new {@link QueryResultsProcessor} object that uses the current database
+	 * for storage.
+	 * 
+	 * @return a newly-created {@link QueryResultsProcessor}
+	 * @since 12.0.1
+	 */
 	@Override
 	QueryResultsProcessor createQueryResultsProcessor();
 

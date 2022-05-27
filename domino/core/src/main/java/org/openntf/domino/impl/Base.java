@@ -123,6 +123,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	public static final int NOTES_IDVAULT = 99;
 	public static final int NOTES_USERID = 100;
 	public static final int NOTES_DOMINOQUERY = 101;
+	public static final int NOTES_QUERYRESULTSPROCESSOR = 102;
 
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Base.class.getName());
