@@ -39,7 +39,7 @@
 		<!-- Used for JUnit4XPages -->
 		<repository>
 			<id>junit4xpages</id>
-            <url>http://p2.openntf.org/repository/junit4xpages/</url>
+            <url>https://p2.openntf.org/repository/junit4xpages/</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
