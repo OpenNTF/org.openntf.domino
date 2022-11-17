@@ -195,6 +195,14 @@
 								<id>com.ibm.notes.java.api.win32.linux</id>
 								<versionRange>0.0.0</versionRange>
 							</requirement>
+							
+							<!-- from generate-domino-update-site 4.2.0 and above -->
+							<!-- https://github.com/OpenNTF/generate-domino-update-site/issues/13 -->
+							<requirement>
+								<type>eclipse-plugin</type>
+								<id>com.ibm.domino.napi.impl</id>
+								<versionRange>0.0.0</versionRange>
+							</requirement>
 						</extraRequirements>
 					</dependency-resolution>
 					<resolver>p2</resolver>
