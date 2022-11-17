@@ -27,8 +27,6 @@ import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.enums.DominoEnumUtil;
 import org.openntf.domino.utils.enums.INumberEnum;
 
-import lotus.domino.QueryResultsProcessor;
-
 /**
  * Represents a Notes database.
  * <h3>Notable enhancements and changes</h3>
@@ -690,6 +688,32 @@ Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 		private final int value_;
 
 		private DBPrivilege(final int value) {
+			value_ = value;
+		}
+
+		@Override
+		public Integer getValue() {
+			return value_;
+		}
+
+		public static DBPrivilege valueOf(final int value) {
+			return DominoEnumUtil.valueOf(DBPrivilege.class, value);
+		}
+	}
+	
+	/**
+	 * Strength values for database encryption.
+	 * 
+	 * @since 12.0.2
+	 */
+	enum EncryptionStrength implements INumberEnum<Integer> {
+		NONE(DBENCRYPT_STRENGTH_NONE), SIMPLE(DBENCRYPT_STRENGTH_SIMPLE),
+		MEDIUM(DBENCRYPT_STRENGTH_MEDIUM), STRONG(DBENCRYPT_STRENGTH_STRONG),
+		AES128(DBENCRYPT_STRENGTH_AES128), AES256(DBENCRYPT_STRENGTH_AES256);
+
+		private final int value_;
+
+		private EncryptionStrength(final int value) {
 			value_ = value;
 		}
 
@@ -2980,5 +3004,77 @@ Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 	 */
 	@Override
 	void transactionRollback();
+	
+	/**
+	 * Decrypts the database.
+	 * 
+	 * @since 12.0.2
+	 */
+	@Override
+	void decrypt();
+	
+	/**
+	 * Decrypts the database, optionally deferring decryption to the next time the
+	 * database is opened.
+	 * 
+	 * @param defer {@code true} to defer decryption to the next time the database
+	 *              is opened; {@code false} to decrypt immediately
+	 * @since 12.0.2
+	 */
+	@Override
+	void decrypt(boolean defer);
+	
+	/**
+	 * Encrypts the database with the default encryption level, currently
+	 * {@link Database.EncryptionStrength#AES128}.
+	 * 
+	 * @since 12.0.2
+	 */
+	@Override
+	void encrypt();
+	
+	/**
+	 * Encrypts the database with the provided encryption strength.
+	 * 
+	 * @param encryptionStrenth the strength value of the encryption. See
+	 *        the values of the {@link Database.EncryptionStrength}
+	 *        constants
+	 * @since 12.0.2
+	 */
+	@Override
+	void encrypt(int encryptionStrength);
+	
+	/**
+	 * Encrypts the database with the provided encryption strength.
+	 * 
+	 * @param encryptionStrenth the strength value of the encryption. See
+	 *        the values of the {@link Database.EncryptionStrength}
+	 *        constants
+	 * @param {@code true} to defer encryption to the next time the database
+	 *        is opened; {@code false} to encrypt immediately
+	 * @since 12.0.2
+	 */
+	@Override
+	void encrypt(int encryptionStrength, boolean defer);
+	
+	/**
+	 * Retrieves the encryption strength value of the database.
+	 * 
+	 * @return the encryption strength of the database. See
+	 *         the values of the {@link Database.EncryptionStrength}
+	 *         constants
+	 * @since 12.0.2
+	 */
+	@Override
+	int getEncryptionStrength();
 
+	/**
+	 * Determines whether the database is encrypted on disk.
+	 * 
+	 * @return {@code true} if the database is encrypted; {@code false}
+	 *         otherwise
+	 * @since 12.0.2
+	 */
+	@Override
+	boolean isLocallyEncrypted();
 }

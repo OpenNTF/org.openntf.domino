@@ -3,6 +3,7 @@ package org.openntf.domino;
 import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 import lotus.domino.Base;
 import lotus.domino.DominoQuery;
@@ -15,6 +16,25 @@ import lotus.domino.DominoQuery;
  */
 public interface QueryResultsProcessor extends org.openntf.domino.Base<lotus.domino.QueryResultsProcessor>,
 	lotus.domino.QueryResultsProcessor, DatabaseDescendant {
+	
+	public static class Schema extends FactorySchema<QueryResultsProcessor, lotus.domino.QueryResultsProcessor, Database> {
+		@Override
+		public Class<QueryResultsProcessor> typeClass() {
+			return QueryResultsProcessor.class;
+		}
+
+		@Override
+		public Class<lotus.domino.QueryResultsProcessor> delegateClass() {
+			return lotus.domino.QueryResultsProcessor.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/**
 	 * Adds a pre-created DocumentCollection or ViewEntryCollection of documents

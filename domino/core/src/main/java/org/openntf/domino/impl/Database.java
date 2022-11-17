@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -42,7 +43,6 @@ import java.util.regex.Pattern;
 
 import lotus.domino.NotesError;
 import lotus.domino.NotesException;
-import lotus.domino.QueryResultsProcessor;
 
 import org.openntf.domino.ACL;
 import org.openntf.domino.ACL.Level;
@@ -58,6 +58,7 @@ import org.openntf.domino.Form;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.Outline;
+import org.openntf.domino.QueryResultsProcessor;
 import org.openntf.domino.Replication;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
@@ -3994,8 +3995,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	public QueryResultsProcessor createQueryResultsProcessor() {
 		try {
 			lotus.domino.QueryResultsProcessor lotus = getDelegate().createQueryResultsProcessor();
-			// TODO add wrapper
-			return lotus;
+			return fromLotus(lotus, QueryResultsProcessor.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -4057,20 +4057,111 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	@Override
 	public void transactionBegin() {
-		// TODO Auto-generated method stub
-		
+		try {
+			getDelegate().transactionBegin();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
 	public void transactionCommit() {
-		// TODO Auto-generated method stub
-		
+		try {
+			getDelegate().transactionCommit();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
 	public void transactionRollback() {
-		// TODO Auto-generated method stub
-		
+		try {
+			getDelegate().transactionRollback();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+	
+	@Override
+	public void decrypt() {
+		try {
+			getDelegate().decrypt();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+	
+	@Override
+	public void decrypt(boolean defer) {
+		try {
+			getDelegate().decrypt(defer);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+	
+	@Override
+	public void encrypt() {
+		try {
+			getDelegate().encrypt();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+	
+	@Override
+	public void encrypt(int encryptionStrength) {
+		try {
+			getDelegate().encrypt(encryptionStrength);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+	
+	@Override
+	public void encrypt(EncryptionStrength encryptionStrength) {
+		Objects.requireNonNull(encryptionStrength, "encryptionStrength cannot be null");
+		encrypt(encryptionStrength.getValue());
+	}
+	
+	@Override
+	public void encrypt(int encryptionStrength, boolean defer) {
+		try {
+			getDelegate().encrypt(encryptionStrength, defer);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+	
+	@Override
+	public void encrypt(EncryptionStrength encryptionStrength, boolean defer) {
+		Objects.requireNonNull(encryptionStrength, "encryptionStrength cannot be null");
+		encrypt(encryptionStrength.getValue(), defer);
+	}
+	
+	@Override
+	public int getEncryptionStrength() {
+		try {
+			return getDelegate().getEncryptionStrength();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return 0;
+		}
+	}
+	
+	@Override
+	public EncryptionStrength getEncryptionStrengthExt() {
+		return DominoEnumUtil.valueOf(EncryptionStrength.class, getEncryptionStrength());
+	}
+	
+	@Override
+	public boolean isLocallyEncrypted() {
+		try {
+			return getDelegate().isLocallyEncrypted();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 }

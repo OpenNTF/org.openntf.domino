@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.openntf.domino.ACL;
 import org.openntf.domino.AutoMime;
+import org.openntf.domino.Database.EncryptionStrength;
 import org.openntf.domino.Database.CompactOption;
 import org.openntf.domino.Database.DBOption;
 import org.openntf.domino.Database.DBPrivilege;
@@ -919,4 +920,29 @@ public interface Database extends Base {
 	 */
 	public EnumSet<ACL.Privilege> getCurrentPrivileges();
 
+	/**
+	 * Encrypts the database with the provided encryption strength.
+	 * 
+	 * @param encryptionStrenth the strength value of the encryption
+	 * @since 12.0.2
+	 */
+	void encrypt(EncryptionStrength encryptionStrength);
+	
+	/**
+	 * Encrypts the database with the provided encryption strength.
+	 * 
+	 * @param encryptionStrenth the strength value of the encryption
+	 * @param {@code true} to defer encryption to the next time the database
+	 *        is opened; {@code false} to encrypt immediately
+	 * @since 12.0.2
+	 */
+	void encrypt(EncryptionStrength encryptionStrength, boolean defer);
+	
+	/**
+	 * Retrieves the encryption strength of the database.
+	 * 
+	 * @return the encryption strength of the database.
+	 * @since 12.0.2
+	 */
+	EncryptionStrength getEncryptionStrengthExt();
 }
