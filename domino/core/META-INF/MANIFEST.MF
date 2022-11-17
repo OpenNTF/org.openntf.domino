@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF Domino API Core
 Bundle-SymbolicName: org.openntf.domino;singleton:=true
 Automatic-Module-Name: org.openntf.domino
-Bundle-Version: 12.0.1.qualifier
+Bundle-Version: 12.0.2.qualifier
 Bundle-Vendor: OpenNTF
 Export-Package: org.openntf.arpa,
  org.openntf.calendars,
