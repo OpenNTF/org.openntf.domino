@@ -137,7 +137,7 @@ public enum Configuration {
 				}
 				Database db = sess.getDatabase(ODA_NSF);
 				if (db == null) {
-					Factory.println("WARNING", "cannot find " + ODA_NSF + " as user " + sess.getEffectiveUserName() //$NON-NLS-1$
+					Factory.println("INFO", "cannot find " + ODA_NSF + " as user " + sess.getEffectiveUserName() //$NON-NLS-1$
 							+ ". - using default values.");
 				} else if (!db.isOpen()) {
 					Factory.println("ERROR", "cannot open " + ODA_NSF + " as user " + sess.getEffectiveUserName() //$NON-NLS-1$
