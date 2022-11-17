@@ -684,6 +684,42 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		}
 		return null;
 	}
+	
+	/**
+	 * This method is neccessary to get some Backend-functions working.<br>
+	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
+	 * the backendbridge calls the n-th. method in this class. (didn't figure out, how n was computed. Method is at
+	 * lotus.domino.local.View.class.getDeclaredMethods()[68], but 68 has no correlation to thisClass.getDeclaredMethods )<br/>
+	 *
+	 * To find the correct position, trace a call of<br>
+	 * <code>DominoUtils.getViewEntryByKeyWithOptions(view, "key", 2243)</code><br>
+	 * and hit "step into" until you are in one of the methods of this file. Move <b>this</b> method to the position you found with the
+	 * debugger.
+	 *
+	 * @param paramVector
+	 * @param paramBoolean
+	 * @param paramInt
+	 * @return
+	 * @throws NotesException
+	 */
+	protected ViewEntry iGetEntryByKey(final Vector<?> paramVector, final boolean paramBoolean, final int paramInt) {
+		if (paramVector == null && paramInt == 42) {
+			throw new BackendBridgeSanityCheckException("It seems that the backend bridge has called the correct method :)");
+		}
+		try {
+			lotus.domino.ViewEntry lotus = (lotus.domino.ViewEntry) iGetEntryByKeyMethod.invoke(getDelegate(), paramVector, paramBoolean,
+					paramInt);
+			return fromLotus(lotus, ViewEntry.SCHEMA, this);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -1088,42 +1124,6 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(final Object key) {
 		return getAllEntriesByKey(key, false);
-	}
-
-	/**
-	 * This method is neccessary to get some Backend-functions working.<br>
-	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
-	 * the backendbridge calls the n-th. method in this class. (didn't figure out, how n was computed. Method is at
-	 * lotus.domino.local.View.class.getDeclaredMethods()[68], but 68 has no correlation to thisClass.getDeclaredMethods )<br/>
-	 *
-	 * To find the correct position, trace a call of<br>
-	 * <code>DominoUtils.getViewEntryByKeyWithOptions(view, "key", 2243)</code><br>
-	 * and hit "step into" until you are in one of the methods of this file. Move <b>this</b> method to the position you found with the
-	 * debugger.
-	 *
-	 * @param paramVector
-	 * @param paramBoolean
-	 * @param paramInt
-	 * @return
-	 * @throws NotesException
-	 */
-	protected ViewEntry iGetEntryByKey(final Vector<?> paramVector, final boolean paramBoolean, final int paramInt) {
-		if (paramVector == null && paramInt == 42) {
-			throw new BackendBridgeSanityCheckException("It seems that the backend bridge has called the correct method :)");
-		}
-		try {
-			lotus.domino.ViewEntry lotus = (lotus.domino.ViewEntry) iGetEntryByKeyMethod.invoke(getDelegate(), paramVector, paramBoolean,
-					paramInt);
-			return fromLotus(lotus, ViewEntry.SCHEMA, this);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return null;
-
 	}
 
 	/*
