@@ -15,9 +15,13 @@
  */
 package org.openntf.domino.config;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import javax.xml.bind.DatatypeConverter;
 
 import javolution.util.FastMap;
 import javolution.util.FastSet;
@@ -28,9 +32,6 @@ import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
-
-import com.google.common.base.Charsets;
-import com.google.common.hash.Hashing;
 
 /**
  * This is the interface to the ODA-Database
@@ -136,7 +137,7 @@ public enum Configuration {
 				}
 				Database db = sess.getDatabase(ODA_NSF);
 				if (db == null) {
-					Factory.println("WARNING", "cannot find " + ODA_NSF + " as user " + sess.getEffectiveUserName() //$NON-NLS-1$
+					Factory.println("INFO", "cannot find " + ODA_NSF + " as user " + sess.getEffectiveUserName() //$NON-NLS-1$
 							+ ". - using default values.");
 				} else if (!db.isOpen()) {
 					Factory.println("ERROR", "cannot open " + ODA_NSF + " as user " + sess.getEffectiveUserName() //$NON-NLS-1$
@@ -167,14 +168,18 @@ public enum Configuration {
 	 *            The string to hash
 	 * @return The MD5 sum of the string
 	 */
-	@SuppressWarnings("deprecation")
 	public static String MD5(final String input) {
-		String ret = md5Cache_.get(input);
-		if (ret == null) {
-			ret = Hashing.md5().newHasher().putString(input, Charsets.UTF_8).hash().toString();
-			md5Cache_.put(input, ret);
-		}
-		return ret;
+		return md5Cache_.computeIfAbsent(input, key -> {
+			MessageDigest md;
+			try {
+				md = MessageDigest.getInstance("MD5");
+				md.update(input == null ? new byte[0] : input.getBytes());
+				byte[] digest = md.digest();
+				return DatatypeConverter.printHexBinary(digest).toUpperCase();
+			} catch (NoSuchAlgorithmException e) {
+				throw new RuntimeException(e);
+			}
+		});
 	}
 
 	public static String computeUNID(final String input, final Database db) {

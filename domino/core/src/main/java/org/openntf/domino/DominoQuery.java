@@ -16,6 +16,8 @@
 package org.openntf.domino;
 
 
+import java.util.Vector;
+
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.FactorySchema;
 
@@ -24,7 +26,9 @@ import org.openntf.domino.types.FactorySchema;
  *
  * @since Domino 10.0.1
  */
-public interface DominoQuery extends lotus.domino.DominoQuery, Base<lotus.domino.DominoQuery>, DatabaseDescendant {
+public interface DominoQuery extends lotus.domino.DominoQuery, Base<lotus.domino.DominoQuery>, DatabaseDescendant,
+	org.openntf.domino.ext.DominoQuery {
+	
 	public static class Schema extends FactorySchema<DominoQuery, lotus.domino.DominoQuery, Database> {
 
 		@Override
@@ -58,6 +62,32 @@ public interface DominoQuery extends lotus.domino.DominoQuery, Base<lotus.domino
 	 */
 	@Override
 	DocumentCollection execute(String query);
+
+	/**
+	 * Executes a query string passed in according to set parameters and returns a
+	 * {@link DocumentCollection}.
+	 *
+	 * @param query the DQL query to execute
+	 * @param resultName the name to use to store the result in the database for suture use
+	 * @param replace whether to overwrite an existing named index if it exists
+	 * @param expireHours a duration in hours before the result should expire
+	 * @return a {@link DocumentCollection} of matching documents from the database
+	 * @since 12.0.1
+	 */
+	@Override
+	DocumentCollection execute(String query, String resultName, boolean replace, int expireHours);
+
+	/**
+	 * Executes a query string passed in according to set parameters and returns a
+	 * {@link DocumentCollection}.
+	 *
+	 * @param query the DQL query to execute
+	 * @param resultName the name to use to store the result in the database for suture use
+	 * @return a {@link DocumentCollection} of matching documents from the database
+	 * @since 12.0.1
+	 */
+	@Override
+	DocumentCollection execute(String query, String resultName);
 
 	/**
 	 * Executes a query string passed in according to set parameters and returns an "explain" string to
@@ -177,9 +207,10 @@ public interface DominoQuery extends lotus.domino.DominoQuery, Base<lotus.domino
 	 * using Explain or Execute.
 	 * 
 	 * @return boolean
-	 * @since V11
+	 * @since 11.0.0
 	 */
-	public boolean isRebuildDesignCatalog();
+	@Override
+	boolean isRebuildDesignCatalog();
 	
 	/**
 	 * Specifies to DQL processing to completely rebuild the Design Catalog before processing a query 
@@ -188,19 +219,21 @@ public interface DominoQuery extends lotus.domino.DominoQuery, Base<lotus.domino
 	 * While use of this property can be costly and contentious, it forces a 
 	 * complete rebuild of the Design Catalog prior to running a query.
 	 * 
-	 * @param boolean, whetgher or not to rebuild design catalog
-	 * @since V11
+	 * @param rebuildCatalog whether to rebuild design catalog
+	 * @since 11.0.0
 	 */
-	public void setRebuildDesignCatalog(boolean rebuildCatalog);
+	@Override
+	void setRebuildDesignCatalog(boolean rebuildCatalog);
 	
 	/**
 	 * Specifies to DQL processing to refresh the Design Catalog before processing a query using Explain 
 	 * or Execute.
 	 * 
 	 * @return boolean
-	 * @since V11
+	 * @since 11.0.0
 	 */
-	public boolean isRefreshDesignCatalog();
+	@Override
+	boolean isRefreshDesignCatalog();
 	
 	/**
 	 * Specifies to DQL processing to refresh the Design Catalog before processing a query using Explain 
@@ -211,18 +244,20 @@ public interface DominoQuery extends lotus.domino.DominoQuery, Base<lotus.domino
 	 * in the Design Catalog documents for the current database.
 	 * 
 	 * @param boolean
-	 * @since V11
+	 * @since 11.0.0
 	 */
-	public void setRefreshDesignCatalog(boolean refreshCatalog);
+	@Override
+	void setRefreshDesignCatalog(boolean refreshCatalog);
 	
 	/**
 	 * Specifies to DQL processing to refresh the full text index for a database prior to query processing 
 	 * using Explain or Execute.
 	 * 
 	 * @return boolean
-	 * @since V11
+	 * @since 11.0.0
 	 */
-	public boolean isRefreshFullText();
+	@Override
+	boolean isRefreshFullText();
 	
 	/**
 	 * Specifies to DQL processing to refresh the full text index for a database prior to query processing 
@@ -231,9 +266,85 @@ public interface DominoQuery extends lotus.domino.DominoQuery, Base<lotus.domino
 	 * While use of this property is not free in resource usage or time, it is only slightly contentious 
 	 * and guarantees the latest updates are full text indexed prior to query processing.
 	 * 
-	 * @param boolean
-	 * @since V11
+	 * @param refresh whether to refresh the full-text index before execution
+	 * @since 11.0.0
 	 */
-	public void setRefreshFullText(boolean refresh);
+	@Override
+	void setRefreshFullText(boolean refresh);
+
+	/**
+	 * Creates an index view optimized for DQL query terms.
+	 * 
+	 * @param indexName the name of the index to create
+	 * @param itemName the name of the item to index
+	 * @param visible whether the view should be visible in the Notes client (e.g. created
+	 *                without parentheses in the name)
+	 * @param nobuild whether to skip building the view immediately
+	 * @since 12.0.0
+	 */
+	@Override
+	void createIndex(String indexName, String itemName, boolean visible, boolean nobuild);
+
+	/**
+	 * Creates an index view optimized for DQL query terms.
+	 * 
+	 * @param indexName the name of the index to create
+	 * @param itemName the name of the item to index
+	 * @since 12.0.0
+	 */
+	@Override
+	void createIndex(String indexName, String itemName);
+	
+	/**
+	 * Creates an index view optimized for DQL query terms.
+	 * 
+	 * @param indexName the name of the index to create
+	 * @param itemNames the names of the items to index
+	 * @param visible whether the view should be visible in the Notes client (e.g. created
+	 *                without parentheses in the name)
+	 * @param nobuild whether to skip building the view immediately
+	 * @since 12.0.0
+	 */
+	@Override
+	@SuppressWarnings("rawtypes")
+	void createIndex(String indexName, Vector itemNames, boolean visible, boolean nobuild);
+
+	/**
+	 * Creates an index view optimized for DQL query terms.
+	 * 
+	 * @param indexName the name of the index to create
+	 * @param itemName the names of the items to index
+	 * @since 12.0.0
+	 */
+	@Override
+	@SuppressWarnings("rawtypes")
+	void createIndex(String indexName, Vector itemNames);
+
+	/**
+	 * Lists the DQL-optimized indexes in the database
+	 * 
+	 * @return a string containing a JSON object describing the indexes
+	 * @since 12.0.0
+	 */
+	@Override
+	String listIndexes();
+
+	/**
+	 * Removes the specified named index.
+	 * 
+	 * @param indexName the name of the index to remove
+	 * @since 12.0.0
+	 */
+	@Override
+	void removeIndex(String indexName);
+
+	/**
+	 * Removes the specified named result.
+	 * 
+	 * @param resultName the name of the stored result to remove
+	 * @since 12.0.0
+	 */
+	@Override
+	void removeNamedResult(String resultName);
 
 }

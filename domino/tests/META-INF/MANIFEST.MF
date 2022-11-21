@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: ODA Compile-Time Tests
 Bundle-SymbolicName: org.openntf.domino.tests
 Automatic-Module-Name: org.openntf.domino.tests
-Bundle-Version: 10.0.1.qualifier
+Bundle-Version: 12.0.1.qualifier
 Fragment-Host: org.openntf.domino
 Require-Bundle: org.eclipse.core.runtime,
  org.junit;bundle-version="4.0.0",

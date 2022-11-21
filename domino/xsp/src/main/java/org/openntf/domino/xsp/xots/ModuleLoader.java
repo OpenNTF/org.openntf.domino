@@ -28,7 +28,6 @@ import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 import com.ibm.designer.runtime.domino.adapter.preload.PreloadRequest;
 import com.ibm.designer.runtime.domino.adapter.preload.PreloadResponse;
 import com.ibm.designer.runtime.domino.adapter.preload.PreloadSession;
-import com.ibm.designer.runtime.domino.adapter.util.PageNotFoundException;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NSFService;
 
@@ -86,8 +85,10 @@ public enum ModuleLoader {
 			final PreloadResponse response = new PreloadResponse();
 			try {
 				getNsfService().doService("", path, session, request, response); //$NON-NLS-1$
-			} catch (PageNotFoundException pnfe) {
+			} catch (com.ibm.designer.runtime.domino.adapter.util.PageNotFoundException pnfe) {
 				// Thats ok (unless someone really creates a resource with name dummyrequest/to/trigger/refresh)
+			} catch (com.ibm.xsp.page.PageNotFoundException pnf) {
+				// same as above but on Domino v12 this exception is thrown 
 			} catch (com.ibm.xsp.acl.NoAccessSignal nas) {
 				// Thats ok. (refresh should be done anyway)
 			} catch (IOException e) {

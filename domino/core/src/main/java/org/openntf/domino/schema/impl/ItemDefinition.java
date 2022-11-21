@@ -120,10 +120,6 @@ public class ItemDefinition implements IItemDefinition, Externalizable {
 		return validator_;
 	}
 
-	public void setValidator(final ItemValidation validator) {
-		validator_ = validator;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -260,8 +256,7 @@ public class ItemDefinition implements IItemDefinition, Externalizable {
 	 */
 	@Override
 	public void setValidator(final IItemValidation validator) {
-		// TODO Auto-generated method stub
-
+		this.validator_ = (ItemValidation)validator;
 	}
 
 	/* (non-Javadoc)

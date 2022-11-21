@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,7 +63,6 @@ import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.types.NamesList;
 import org.openntf.domino.types.ReadersList;
 
-import com.google.common.collect.ImmutableList;
 import com.ibm.commons.util.StringUtil;
 
 /**
@@ -130,7 +130,7 @@ public enum TypeUtils {
 	}
 
 	public static List<CustomConverter> getConverterList() {
-		return ImmutableList.copyOf(converterList_);
+		return Collections.unmodifiableList(new ArrayList<>(converterList_));
 	}
 
 	protected static CustomConverter findCustomConverter(final Class<?> fromClass) {
@@ -2373,4 +2373,57 @@ public enum TypeUtils {
 		}
 	}
 
+	/**
+	 * Converts the provided bytes to a {@code long}, treating the bytes as in big-endian order.
+	 * 
+	 * @param b1 byte 1
+	 * @param b2 byte 2
+	 * @param b3 byte 3
+	 * @param b4 byte 4
+	 * @param b5 byte 5
+	 * @param b6 byte 6
+	 * @param b7 byte 7
+	 * @param b8 byte 8
+	 * @return the {@code long} representation of the bytes
+	 * @since 12.0.0
+	 */
+	public static long bytesToLong(byte b1, byte b2, byte b3, byte b4, byte b5, byte b6, byte b7, byte b8) {
+		return (b1 & 0xFFL) << 56
+	        | (b2 & 0xFFL) << 48
+	        | (b3 & 0xFFL) << 40
+	        | (b4 & 0xFFL) << 32
+	        | (b5 & 0xFFL) << 24
+	        | (b6 & 0xFFL) << 16
+	        | (b7 & 0xFFL) << 8
+	        | (b8 & 0xFFL);
+	}
+	
+	/**
+	 * Converts the provided bytes to a {@code long}, treating the bytes as in big-endian order.
+	 * 
+	 * @param bytes the eight-byte array to convert
+	 * @return the {@code long} representation of the bytes
+	 * @since 12.0.0
+	 */
+	public static long bytesToLong(byte... bytes) {
+		return bytesToLong(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7], bytes[8]);
+	}
+	
+	/**
+	 * Converts the provided {@code long} to an eight-byte array in big-endian order.
+	 * 
+	 * @param value the {@code long} to convert
+	 * @return an eight-element byte array
+	 * @since 12.0.0
+	 */
+	public static byte[] longToByteArray(long value) {
+	    // Note that this code needs to stay compatible with GWT, which has known
+	    // bugs when narrowing byte casts of long values occur.
+	    byte[] result = new byte[8];
+	    for (int i = 7; i >= 0; i--) {
+	      result[i] = (byte) (value & 0xffL);
+	      value >>= 8;
+	    }
+	    return result;
+	  }
 }

@@ -19,7 +19,7 @@
 <feature
       id="org.openntf.domino.graph.feature"
       label="OpenNTF Domino API Graph REST Services"
-      version="11.0.1.qualifier"
+      version="12.0.2.qualifier"
       provider-name="OpenNTF">
 
    <description url="http://www.example.com/description">
@@ -55,6 +55,11 @@
          fragment="true"/>
    <plugin
          id="org.openntf.domino.rest"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+   <plugin
+         id="com.tinkerpop"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

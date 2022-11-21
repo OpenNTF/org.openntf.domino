@@ -684,7 +684,7 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		}
 		return null;
 	}
-
+	
 	/**
 	 * This method is neccessary to get some Backend-functions working.<br>
 	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that

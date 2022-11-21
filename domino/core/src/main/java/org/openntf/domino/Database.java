@@ -700,6 +700,32 @@ Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 			return DominoEnumUtil.valueOf(DBPrivilege.class, value);
 		}
 	}
+	
+	/**
+	 * Strength values for database encryption.
+	 * 
+	 * @since 12.0.2
+	 */
+	enum EncryptionStrength implements INumberEnum<Integer> {
+		NONE(DBENCRYPT_STRENGTH_NONE), SIMPLE(DBENCRYPT_STRENGTH_SIMPLE),
+		MEDIUM(DBENCRYPT_STRENGTH_MEDIUM), STRONG(DBENCRYPT_STRENGTH_STRONG),
+		AES128(DBENCRYPT_STRENGTH_AES128), AES256(DBENCRYPT_STRENGTH_AES256);
+
+		private final int value_;
+
+		private EncryptionStrength(final int value) {
+			value_ = value;
+		}
+
+		@Override
+		public Integer getValue() {
+			return value_;
+		}
+
+		public static DBPrivilege valueOf(final int value) {
+			return DominoEnumUtil.valueOf(DBPrivilege.class, value);
+		}
+	}
 
 	/**
 	 * The log from the access control list for a database. The database must be open to use this property.
@@ -2892,4 +2918,163 @@ Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 	@Override
 	public DominoQuery createDominoQuery();
 
+	/**
+	 * Creates a new {@link QueryResultsProcessor} object that uses the current database
+	 * for storage.
+	 * 
+	 * @return a newly-created {@link QueryResultsProcessor}
+	 * @since 12.0.1
+	 */
+	@Override
+	QueryResultsProcessor createQueryResultsProcessor();
+
+	/**
+	 * Retrieves a named document. This is as distinct from document IDs
+	 * and profile document names.
+	 * 
+	 * @param name the name of the document
+	 * @param userName the user name associated with the document
+	 * @return the named document
+	 * @since 12.0.1
+	 */
+	@Override
+	Document getNamedDocument(String name, String userName);
+
+	/**
+	 * Retrieves a named document. This is as distinct from document IDs
+	 * and profile document names.
+	 * 
+	 * @param name the name of the document
+	 * @return the named document
+	 * @since 12.0.1
+	 */
+	@Override
+	Document getNamedDocument(String name);
+
+	/**
+	 * Retrieves the collection of all named documents in the database.
+	 * 
+	 * @return the named-document collection
+	 * @since 12.0.1
+	 * @see #getNamedDocument
+	 */
+	@Override
+	DocumentCollection getNamedDocumentCollection();
+
+	/**
+	 * Retrieves the collection of all named documents in the database
+	 * matching the given name.
+	 * 
+	 * @param name the name of the documents to retrieve
+	 * @return the named-document collection
+	 * @since 12.0.1
+	 * @see #getNamedDocument
+	 */
+	@Override
+	DocumentCollection getNamedDocumentCollection(String name);
+
+	/**
+	 * Removes all stored results saved in the database by {@link DominoQuery}.
+	 * 
+	 * @since 12.0.1
+	 */
+	@Override
+	void removeAllQueryNamedResults();
+
+	/**
+	 * Begins a database transaction.
+	 * 
+	 * @since 12.0.0
+	 */
+	@Override
+	void transactionBegin();
+
+	/**
+	 * Commits an active transaction to disk.
+	 * 
+	 * @since 12.0.0
+	 */
+	@Override
+	void transactionCommit();
+
+	/**
+	 * Rolls back an active transaction.
+	 * 
+	 * @since 12.0.0
+	 */
+	@Override
+	void transactionRollback();
+	
+	/**
+	 * Decrypts the database.
+	 * 
+	 * @since 12.0.2
+	 */
+	@Override
+	void decrypt();
+	
+	/**
+	 * Decrypts the database, optionally deferring decryption to the next time the
+	 * database is opened.
+	 * 
+	 * @param defer {@code true} to defer decryption to the next time the database
+	 *              is opened; {@code false} to decrypt immediately
+	 * @since 12.0.2
+	 */
+	@Override
+	void decrypt(boolean defer);
+	
+	/**
+	 * Encrypts the database with the default encryption level, currently
+	 * {@link Database.EncryptionStrength#AES128}.
+	 * 
+	 * @since 12.0.2
+	 */
+	@Override
+	void encrypt();
+	
+	/**
+	 * Encrypts the database with the provided encryption strength.
+	 * 
+	 * @param encryptionStrenth the strength value of the encryption. See
+	 *        the values of the {@link Database.EncryptionStrength}
+	 *        constants
+	 * @since 12.0.2
+	 */
+	@Override
+	void encrypt(int encryptionStrength);
+	
+	/**
+	 * Encrypts the database with the provided encryption strength.
+	 * 
+	 * @param encryptionStrenth the strength value of the encryption. See
+	 *        the values of the {@link Database.EncryptionStrength}
+	 *        constants
+	 * @param {@code true} to defer encryption to the next time the database
+	 *        is opened; {@code false} to encrypt immediately
+	 * @since 12.0.2
+	 */
+	@Override
+	void encrypt(int encryptionStrength, boolean defer);
+	
+	/**
+	 * Retrieves the encryption strength value of the database.
+	 * 
+	 * @return the encryption strength of the database. See
+	 *         the values of the {@link Database.EncryptionStrength}
+	 *         constants
+	 * @since 12.0.2
+	 */
+	@Override
+	int getEncryptionStrength();
+
+	/**
+	 * Determines whether the database is encrypted on disk.
+	 * 
+	 * @return {@code true} if the database is encrypted; {@code false}
+	 *         otherwise
+	 * @since 12.0.2
+	 */
+	@Override
+	boolean isLocallyEncrypted();
 }

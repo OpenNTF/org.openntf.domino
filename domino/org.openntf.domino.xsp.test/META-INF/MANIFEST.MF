@@ -4,7 +4,7 @@ Bundle-Name: OpenNTF Domino API XPages Environment Test Code
 Bundle-SymbolicName: org.openntf.domino.xsp.test
 Automatic-Module-Name: org.openntf.domino.xsp.test
 Fragment-Host: org.openntf.domino.xsp
-Bundle-Version: 10.0.1.qualifier
+Bundle-Version: 12.0.2.qualifier
 Bundle-Vendor: OpenNTF
 Require-Bundle: com.ibm.commons;bundle-version="9.0.1",
  javolution;bundle-version="6.1.1",

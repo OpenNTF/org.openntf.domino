@@ -24,8 +24,11 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -40,10 +43,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import com.google.common.primitives.Longs;
+import org.openntf.domino.utils.TypeUtils;
 
 import javolution.util.FastSortedTable;
 import javolution.util.function.Equality;
@@ -73,8 +73,8 @@ public class LocalNoteList implements org.openntf.domino.big.LocalNoteList {
 		public LocalNoteCoordinate(final byte[] bytes, final LocalNoteList parentList) {
 			parent_ = parentList;
 			if (bytes.length >= BUFFER_SIZE) {
-				this.x = Longs.fromBytes(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
-				this.y = Longs.fromBytes(bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]);
+				this.x = TypeUtils.bytesToLong(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
+				this.y = TypeUtils.bytesToLong(bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]);
 			} else {
 				throw new IllegalArgumentException("Can't construct new LocalNoteCoordinate from byte length of " + bytes.length);
 			}
@@ -95,8 +95,8 @@ public class LocalNoteList implements org.openntf.domino.big.LocalNoteList {
 		public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 			byte[] bytes = extreadbuffer_.get();
 			in.read(bytes);
-			this.x = Longs.fromBytes(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
-			this.y = Longs.fromBytes(bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]);
+			this.x = TypeUtils.bytesToLong(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
+			this.y = TypeUtils.bytesToLong(bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]);
 		}
 
 		@Override
@@ -578,9 +578,10 @@ public class LocalNoteList implements org.openntf.domino.big.LocalNoteList {
 	public Set<LocalNoteCoordinate> difference(final LocalNoteList otherList) {
 		LocalNoteCoordinate[] myArray = delegate_.toArray(LNC_ARRAY);
 		LocalNoteCoordinate[] otherArray = delegate_.toArray(LNC_ARRAY);
-		ImmutableSet<LocalNoteCoordinate> mySet = ImmutableSet.copyOf(myArray);
-		ImmutableSet<LocalNoteCoordinate> otherSet = ImmutableSet.copyOf(otherArray);
-		return Sets.difference(mySet, otherSet);
+		Set<LocalNoteCoordinate> mySet = new HashSet<>(Arrays.asList(myArray));
+		Set<LocalNoteCoordinate> otherSet = new HashSet<>(Arrays.asList(otherArray));
+		mySet.removeAll(otherSet);
+		return Collections.unmodifiableSet(mySet);
 	}
 
 }

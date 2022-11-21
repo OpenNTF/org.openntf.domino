@@ -20,6 +20,7 @@ import java.io.Externalizable;
 import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.TypeUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.primitives.Bytes;
@@ -36,8 +37,8 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 
 		public static String getUnidFromBytes(final byte[] bytes) {
 			if (bytes.length >= 16) {
-				long first = Longs.fromBytes(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
-				long last = Longs.fromBytes(bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]);
+				long first = TypeUtils.bytesToLong(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
+				long last = TypeUtils.bytesToLong(bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]);
 				return getUnidFromLongs(first, last);
 			} else {
 				//TODO NTF Something here...
@@ -53,7 +54,7 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 
 		public static String getReplidFromBytes(final byte[] bytes) {
 			if (bytes.length >= 8) {
-				long l = Longs.fromByteArray(bytes);
+				long l = TypeUtils.bytesToLong(bytes);
 				return getReplidFromLong(l);
 			} else {
 				//TODO NTF Something here...
@@ -81,10 +82,10 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 			if (DominoUtils.isUnid(unid)) {
 				String first = "0x" + unid.subSequence(0, 16);
 				long flong = UnsignedLongs.decode(first);
-				byte[] fbytes = Longs.toByteArray(flong);
+				byte[] fbytes = TypeUtils.longToByteArray(flong);
 				String last = "0x" + unid.subSequence(16, 32);
 				long llong = UnsignedLongs.decode(last);
-				byte[] lbytes = Longs.toByteArray(llong);
+				byte[] lbytes = TypeUtils.longToByteArray(llong);
 				return Bytes.concat(fbytes, lbytes);
 			} else {
 				throw new IllegalArgumentException("Cannot convert a String of length " + unid.length() + ": " + unid);
@@ -93,7 +94,7 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 
 		public static byte[] getBytesFromReplid(final CharSequence replid) throws IllegalArgumentException {
 			long l = getLongFromReplid(replid);
-			return Longs.toByteArray(l);
+			return TypeUtils.longToByteArray(l);
 		}
 
 		public static long getLongFromReplid(final CharSequence replid) throws IllegalArgumentException {
