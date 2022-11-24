@@ -831,6 +831,21 @@ public interface Database extends Base {
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public void setAutoMime(AutoMime autoMime);
+	
+    /**
+     * Indicates if the 'large summary' flag is set on the database, allowing up to 16 MB of summary data
+     * 
+     * @since org.openntf.domino 12.0.2
+     */
+    public boolean isLargeSummaryEnabled();
+    
+    /**
+     * Indicates if DAOS is enabled on the database.
+     * 
+     * @since org.openntf.domino 12.0.2
+     */
+    public boolean isDaosEnabled();
+
 
 	/**
 	 * Gets the $DefaultLanguage stored in the icon note and converts it to a locale
