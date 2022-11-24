@@ -52,7 +52,7 @@ import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
-import org.openntf.domino.exceptions.DominoNonSummaryLimitException;
+import org.openntf.domino.exceptions.DominoFieldSizeException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.ext.Formula;
@@ -1927,7 +1927,7 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static Item writeToItem(final org.openntf.domino.Document doc, final String itemName, Object value, final Boolean isSummary)
-			throws DominoNonSummaryLimitException {
+			throws DominoFieldSizeException {
 		Class<?> fromClass = value.getClass();
 		CustomConverter converter = findCustomConverter(fromClass);
 		if (converter != null) {
@@ -1973,12 +1973,20 @@ public enum TypeUtils {
 					}
 				}
 			} else if (value.getClass().isArray()) {
+				
+                int maxFieldSize = org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE;
+                if (doc.getAncestorDatabase().isLargeSummaryEnabled()) {
+                    //limit is increased to 64 KB, see 
+                    //https://help.hcltechsw.com/domino/11.0.1/admin/admn_increase_document_summary_data_limit.html
+                    maxFieldSize = 64000;
+                }
+                
 				recycleThis = new ArrayList<lotus.domino.Base>();
 				int lh = Array.getLength(value);
-				if (lh > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {				// Then skip making dominoFriendly if it's a primitive
+                if (lh > maxFieldSize) {                // Then skip making dominoFriendly if it's a primitive
 					String cn = value.getClass().getName();
 					if (cn.length() == 2) {				// It is primitive
-						throw new DominoNonSummaryLimitException();
+                        throw new DominoFieldSizeException(itemName, lh);
 					}
 				}
 				dominoFriendlyVec = new Vector<Object>(lh);
@@ -2058,26 +2066,35 @@ public enum TypeUtils {
 			} else {
 				payload += getLotusPayload(dominoFriendlyObj, firstElementClass);
 			}
-
-			if (payload > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {
+			
+            int maxFieldSize = org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE;
+            int maxSummaryDataSize = org.openntf.domino.Document.MAX_SUMMARY_FIELD_SIZE;
+            if (doc.getAncestorDatabase().isLargeSummaryEnabled()) {
+                //limit is increased to 64 KB, see 
+                //https://help.hcltechsw.com/domino/11.0.1/admin/admn_increase_document_summary_data_limit.html
+                maxFieldSize = 64000;
+                maxSummaryDataSize = 16000000; //16 MB
+            }
+            
+            if (payload > maxFieldSize) {
 				// the datatype is OK, but there's no way to store the data in the Document
-				throw new DominoNonSummaryLimitException();
+                throw new DominoFieldSizeException(itemName, payload);
 			}
 			if (firstElementClass == String.class) { 	// Strings have to be further inspected, because
 				// each sign may demand up to 3 bytes in LMBCS
 				int calc = ((payload - payloadOverhead) * 3) + payloadOverhead;
-				if (calc >= org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {
+                if (calc >= maxFieldSize) {
 					if (dominoFriendlyVec != null) {
 						payload = payloadOverhead + LMBCSUtils.getPayload(dominoFriendlyVec);
 					} else {
 						payload = payloadOverhead + LMBCSUtils.getPayload((String) dominoFriendlyObj);
 					}
-					if (payload > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {
-						throw new DominoNonSummaryLimitException();
+                    if (payload > maxFieldSize) {
+                        throw new DominoFieldSizeException(itemName, payload);
 					}
 				}
 			}
-			if (payload > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {
+            if (payload > maxSummaryDataSize) {
 				isNonSummary = true;
 			}
 

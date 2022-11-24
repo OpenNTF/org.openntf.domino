@@ -115,6 +115,10 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	private AutoMime autoMime_;
 
 	private DatabaseMetaData shadowedMetaData_;
+	
+	private boolean largeSummaryEnabled = false;
+	private boolean daosEnabled = false;
+	private boolean designRead = false;
 
 	// private String ident_;
 
@@ -3758,7 +3762,37 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	public void setAutoMime(final AutoMime autoMime) {
 		autoMime_ = autoMime;
 	}
-
+    
+    public boolean isLargeSummaryEnabled() {
+        readDesignNote();
+        return largeSummaryEnabled;
+    }
+    
+    public boolean isDaosEnabled() {
+        readDesignNote();
+        return daosEnabled;
+    }
+    
+    /*
+     * read database settings from the IconNote.
+     */
+    private void readDesignNote() {
+        
+        if (designRead) {
+            return;
+        }
+        
+        designRead = true;
+        
+        Document doc = getDesign().getIconNote().getDocument();
+        
+        if (doc != null) {
+            daosEnabled = "1".equals(doc.getItemValueString("$Daos") );
+            largeSummaryEnabled = "1".equals(doc.getItemValueString("$LargeSummary") );
+        }
+        
+    }
+	
 	private Locale dbLocale = null;
 	private boolean getLocaleCalled = false;
 
