@@ -94,7 +94,9 @@ import org.openntf.domino.types.Resurrectable;
  */
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, org.openntf.domino.ext.Document, Resurrectable,
 DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
-	public static int MAX_NATIVE_FIELD_SIZE = 64000;
+	//defaults when 'large summary' hasn't been set
+    //see https://help.hcltechsw.com/dom_designer/11.0.1/basic/H_NOTES_AND_DOMINO_KNOWN_LIMITS.html
+    public static int MAX_NATIVE_FIELD_SIZE = 32000;        
 	public static int MAX_SUMMARY_FIELD_SIZE = 64000;
 
 	public static class Schema extends FactorySchema<Document, lotus.domino.Document, Database> {
