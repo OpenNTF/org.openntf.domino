@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF Domino API Tinkerpop Graph API
 Bundle-SymbolicName: org.openntf.domino.graph;singleton:=true
 Automatic-Module-Name: org.openntf.domino.graph
-Bundle-Version: 12.0.3.qualifier
+Bundle-Version: 12.0.2.qualifier
 Bundle-Vendor: OpenNTF
 Export-Package: org.openntf.domino.graph,
  org.openntf.domino.graph2,
