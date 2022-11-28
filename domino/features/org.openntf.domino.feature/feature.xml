@@ -19,7 +19,7 @@
 <feature
       id="org.openntf.domino.feature"
       label="OpenNTF Domino API"
-      version="12.0.2.qualifier"
+      version="12.0.3.qualifier"
       provider-name="OpenNTF">
 
    <description url="http://www.example.com/description">
