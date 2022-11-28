@@ -64,7 +64,7 @@ import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.DocumentWriteAccessException;
-import org.openntf.domino.exceptions.DominoNonSummaryLimitException;
+import org.openntf.domino.exceptions.DominoFieldSizeException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.exceptions.UserAccessException;
@@ -2881,7 +2881,7 @@ implements org.openntf.domino.Document {
 					// AutoMime completely disabled.
 					throw ex2;
 				}
-				if (!boxCompatibleOnly || ex2 instanceof DominoNonSummaryLimitException) {
+				if (!boxCompatibleOnly || ex2 instanceof DominoFieldSizeException) {
 					// if the value exceeds 32k or we are called from put() (means boxCompatibleOnly=false) we try to write the object as MIME
 					result = replaceItemValueCustomData(itemName, "mime-bean", value, returnItem);
 				} else if (this.getAutoMime() == AutoMime.WRAP_ALL) {
@@ -2946,11 +2946,11 @@ implements org.openntf.domino.Document {
 	 *
 	 * It throws a DataNotCompatibleException, if the data is not domino compatible
 	 *
-	 * @throws DominoNonSummaryLimitException
+	 * @throws DominoFieldSizeException
 	 *             if the item does not fit in a field
 	 */
 	public Item replaceItemValueLotus(final String itemName, Object value, final Boolean isSummary, final boolean returnItem)
-			throws DominoNonSummaryLimitException {
+			throws DominoFieldSizeException {
 		checkMimeOpen(itemName);
 		// writing a value of "Null" leads to a remove of the item if configured in SESSION
 		if (value == null || value instanceof Null) {
