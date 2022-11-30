@@ -16,4 +16,4 @@ This distribution contains several components:
 Requirements
 ============
 
-- Domino 9.0.1 F10
+- Domino 12.0.2
