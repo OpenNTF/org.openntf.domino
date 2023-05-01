@@ -14,7 +14,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho-version>1.7.0</tycho-version>
+		<tycho-version>2.7.5</tycho-version>
 		<compiler>1.8</compiler>
 		<manifest-location>META-INF</manifest-location>
 		
@@ -42,6 +42,12 @@
             <url>https://p2.openntf.org/repository/junit4xpages/</url>
 			<layout>p2</layout>
 		</repository>
+		
+		<repository>
+			<id>artifactory.openntf.org</id>
+			<name>artifactory.openntf.org</name>
+			<url>https://artifactory.openntf.org/openntf</url>
+		</repository>
 	</repositories>
 
 	<!-- See also profile-triggered module sets below -->
@@ -65,6 +71,15 @@
 		<module>releng/org.openntf.domino.updatesite</module>
 		<module>releng/org.openntf.domino.nonxsp.updatesite</module>
 	</modules>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>org.openntf.domino.java.api.corba.patch</artifactId>
+			<version>1.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
@@ -195,6 +210,11 @@
 								<id>com.ibm.notes.java.api.win32.linux</id>
 								<versionRange>0.0.0</versionRange>
 							</requirement>
+							<requirement>
+								<type>eclipse-plugin</type>
+								<id>org.openntf.domino.java.api.corba.patch</id>
+								<versionRange>0.0.0</versionRange>
+							</requirement>
 							
 							<!-- from generate-domino-update-site 4.2.0 and above -->
 							<!-- https://github.com/OpenNTF/generate-domino-update-site/issues/13 -->
@@ -237,6 +257,29 @@
 						<copyrightYear>2021</copyrightYear>
 					</properties>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.0.0-M1</version>
+				<executions>
+					<execution>
+						<id>enforce-maven-and-java</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireMavenVersion>
+									<version>3.0.1</version>
+								</requireMavenVersion>
+								<requireJavaVersion>
+									<version>11</version>
+								</requireJavaVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<pluginManagement>

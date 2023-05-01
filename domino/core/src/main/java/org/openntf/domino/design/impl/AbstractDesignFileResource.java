@@ -15,9 +15,6 @@
  */
 package org.openntf.domino.design.impl;
 
-import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
-import static javax.xml.bind.DatatypeConverter.printBase64Binary;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -93,7 +91,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		switch (getDxlFormat(true)) {
 		case DXL:
 			String rawData = getDxl().selectSingleNode("//filedata").getText(); //$NON-NLS-1$
-			return parseBase64Binary(rawData);
+			return Base64.getDecoder().decode(rawData);
 		default:
 			return getFileDataRaw(DEFAULT_FILEDATA_FIELD);
 
@@ -113,7 +111,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 					"//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']/rawitemdata")) { //$NON-NLS-1$ //$NON-NLS-2$
 
 				String rawData = rawitemdata.getText();
-				byte[] thisData = parseBase64Binary(rawData);
+				byte[] thisData = Base64.getDecoder().decode(rawData);
 				byteStream.write(thisData);
 			}
 
@@ -133,7 +131,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 						"//file[@name='" + XMLDocument.escapeXPathValue(itemName) + "']/filedata")) { //$NON-NLS-1$ //$NON-NLS-2$
 
 					String rawData = rawitemdata.getText();
-					byte[] thisData = parseBase64Binary(rawData);
+					byte[] thisData = Base64.getDecoder().decode(rawData);
 					byteStream.write(thisData);
 				}
 				return byteStream.toByteArray();
@@ -153,7 +151,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 			if (filedata == null) {
 				filedata = getDxl().selectSingleNode("/*").addChildElement("filedata"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			filedata.setText(printBase64Binary(data));
+			filedata.setText(Base64.getEncoder().encodeToString(data));
 		default:
 			setFileDataRaw(DEFAULT_FILEDATA_FIELD, data);
 		}
@@ -175,7 +173,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 
 		// Write out the first chunk
 		int firstChunk = reconData.length > 20544 ? 20544 : reconData.length;
-		String firstChunkData = printBase64Binary(Arrays.copyOfRange(reconData, 0, firstChunk));
+		String firstChunkData = Base64.getEncoder().encodeToString(Arrays.copyOfRange(reconData, 0, firstChunk));
 		XMLNode documentNode = getDxl().selectSingleNode("//note"); //$NON-NLS-1$
 		XMLNode fileDataNode = documentNode.addChildElement("item"); //$NON-NLS-1$
 		fileDataNode.setAttribute("name", itemName); //$NON-NLS-1$
@@ -192,7 +190,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		int offset = firstChunk;
 		for (int i = 0; i < chunks; i++) {
 			int chunkSize = remaining > 20516 ? 20516 : remaining;
-			String chunkData = printBase64Binary(Arrays.copyOfRange(reconData, offset, offset + chunkSize));
+			String chunkData = Base64.getEncoder().encodeToString(Arrays.copyOfRange(reconData, offset, offset + chunkSize));
 
 			fileDataNode = documentNode.addChildElement("item"); //$NON-NLS-1$
 			fileDataNode.setAttribute("name", itemName); //$NON-NLS-1$

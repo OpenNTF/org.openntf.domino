@@ -15,7 +15,7 @@
  */
 package org.openntf.domino.nsfdata.impldxl.item;
 
-import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
+import java.util.Base64;
 
 import org.openntf.domino.utils.xml.XMLNode;
 
@@ -31,7 +31,7 @@ public class DXLItemFormula extends AbstractDXLItem {
 		XMLNode dataNode = node.getFirstChildElement();
 		if("true".equals(dataNode.getAttribute("compiled"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			formula_ = null;
-			compiledFormula_ = parseBase64Binary(dataNode.getText());
+			compiledFormula_ = Base64.getDecoder().decode(dataNode.getText());
 		} else {
 			formula_ = dataNode.getText();
 			compiledFormula_ = null;

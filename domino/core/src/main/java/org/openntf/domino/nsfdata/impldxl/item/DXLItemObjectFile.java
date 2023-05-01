@@ -15,8 +15,7 @@
  */
 package org.openntf.domino.nsfdata.impldxl.item;
 
-import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
-
+import java.util.Base64;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.Set;
@@ -90,7 +89,7 @@ public class DXLItemObjectFile extends DXLItemObject {
 			fileModified_ = null;
 		}
 
-		value_ = parseBase64Binary(fileNode.selectSingleNode("./filedata").getText()); //$NON-NLS-1$
+		value_ = Base64.getDecoder().decode(fileNode.selectSingleNode("./filedata").getText()); //$NON-NLS-1$
 	}
 
 	@Override

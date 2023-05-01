@@ -17,11 +17,10 @@ package org.openntf.domino.config;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import javax.xml.bind.DatatypeConverter;
 
 import javolution.util.FastMap;
 import javolution.util.FastSet;
@@ -175,7 +174,7 @@ public enum Configuration {
 				md = MessageDigest.getInstance("MD5");
 				md.update(input == null ? new byte[0] : input.getBytes());
 				byte[] digest = md.digest();
-				return DatatypeConverter.printHexBinary(digest).toUpperCase();
+				return Base64.getEncoder().encodeToString(digest).toUpperCase();
 			} catch (NoSuchAlgorithmException e) {
 				throw new RuntimeException(e);
 			}

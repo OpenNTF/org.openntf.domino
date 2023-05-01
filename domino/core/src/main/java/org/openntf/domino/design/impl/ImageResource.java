@@ -15,11 +15,10 @@
  */
 package org.openntf.domino.design.impl;
 
-import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
-
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
@@ -61,7 +60,7 @@ public final class ImageResource extends AbstractDesignFileResource implements o
 		switch (getDxlFormat(true)) {
 		case DXL:
 			String rawData = getDxl().selectSingleNode("//jpeg|//gif|//png").getText(); //$NON-NLS-1$
-			return parseBase64Binary(rawData);
+			return Base64.getDecoder().decode(rawData);
 		default:
 			return getFileDataRaw("$ImageData"); //$NON-NLS-1$
 

@@ -15,7 +15,7 @@
  */
 package org.openntf.domino.nsfdata.impldxl.item;
 
-import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
+import java.util.Base64;
 
 import org.openntf.domino.utils.xml.XMLNode;
 
@@ -55,7 +55,7 @@ public class DXLItemRaw extends AbstractDXLItem {
 		type_ = Type.valueOf(typeCode);
 
 		String rawData = rawitemdata.getText();
-		data_ = parseBase64Binary(rawData);
+		data_ = Base64.getDecoder().decode(rawData);
 	}
 
 	@Override
