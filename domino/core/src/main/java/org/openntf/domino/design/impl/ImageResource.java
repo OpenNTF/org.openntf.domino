@@ -60,7 +60,7 @@ public final class ImageResource extends AbstractDesignFileResource implements o
 		switch (getDxlFormat(true)) {
 		case DXL:
 			String rawData = getDxl().selectSingleNode("//jpeg|//gif|//png").getText(); //$NON-NLS-1$
-			return Base64.getDecoder().decode(rawData);
+			return Base64.getMimeDecoder().decode(rawData);
 		default:
 			return getFileDataRaw("$ImageData"); //$NON-NLS-1$
 
