@@ -91,7 +91,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		switch (getDxlFormat(true)) {
 		case DXL:
 			String rawData = getDxl().selectSingleNode("//filedata").getText(); //$NON-NLS-1$
-			return Base64.getDecoder().decode(rawData);
+			return Base64.getMimeDecoder().decode(rawData);
 		default:
 			return getFileDataRaw(DEFAULT_FILEDATA_FIELD);
 
@@ -111,7 +111,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 					"//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']/rawitemdata")) { //$NON-NLS-1$ //$NON-NLS-2$
 
 				String rawData = rawitemdata.getText();
-				byte[] thisData = Base64.getDecoder().decode(rawData);
+				byte[] thisData = Base64.getMimeDecoder().decode(rawData);
 				byteStream.write(thisData);
 			}
 
