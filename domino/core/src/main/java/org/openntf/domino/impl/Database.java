@@ -3784,7 +3784,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
         
         designRead = true;
         
-        Document doc = getDesign().getIconNote().getDocument();
+        Document doc = getDocumentByUNID(org.openntf.domino.design.impl.DatabaseDesign.ICON_NOTE);
         
         if (doc != null) {
             daosEnabled = "1".equals(doc.getItemValueString("$Daos") );
