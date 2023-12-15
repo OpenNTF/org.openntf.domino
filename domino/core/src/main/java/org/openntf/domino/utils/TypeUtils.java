@@ -27,7 +27,13 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -82,6 +88,16 @@ public enum TypeUtils {
 	//	protected static final List<Class<?>> converterFromList_ = new ArrayList<Class<?>>();
 
 	private static final ThreadLocal<SimpleDateFormat> DEFAULT_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")); //$NON-NLS-1$
+	
+	private static final DateTimeFormatter TIME_FORMAT = new DateTimeFormatterBuilder()
+            .appendValue(ChronoField.HOUR_OF_DAY, 2)
+            .appendLiteral(':')
+            .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
+            .optionalStart()
+            .appendLiteral(':')
+            .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
+            .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
+            .toFormatter();
 
 	public static SimpleDateFormat getDefaultDateFormat() {
 		return DEFAULT_FORMAT.get();
@@ -2291,12 +2307,11 @@ public enum TypeUtils {
 
 				lotus.domino.DateTime dt = null;
 				if (value instanceof LocalTime) {
-					Date date = new Date(((LocalTime)value).toEpochSecond(LocalDate.now(), ZoneId.systemDefault().getRules().getOffset(Instant.now())));
-					dt = lsess.createDateTime(date);
+					OffsetDateTime odt = OffsetDateTime.of(LocalDate.now(), (LocalTime)value, ZoneId.systemDefault().getRules().getOffset(Instant.now()));
+					dt = lsess.createDateTime(Date.from(odt.toInstant()));
 					dt.setAnyDate();
 				} else if (value instanceof LocalDate) {
-					Date date = new Date(((LocalDate)value).toEpochSecond(LocalTime.now(), ZoneId.systemDefault().getRules().getOffset(Instant.now())));
-					dt = lsess.createDateTime(date);
+					dt = lsess.createDateTime(DateTimeFormatter.ISO_LOCAL_DATE.format((LocalDate)value));
 					dt.setAnyTime();
 				} else if (value instanceof java.util.Date) {
 					dt = lsess.createDateTime((java.util.Date) value);

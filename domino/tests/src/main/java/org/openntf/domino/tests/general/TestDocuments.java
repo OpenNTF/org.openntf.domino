@@ -19,10 +19,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Vector;
 
 import org.junit.Test;
 import org.openntf.domino.Database;
+import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Session;
@@ -86,5 +91,37 @@ public class TestDocuments {
 		assertEquals("Foo should match", "Bar", destDoc.getItemValueString("Foo"));
 		assertNotEquals("Dest Doc parent replica ID should not match source DB", source.getReplicaID(), destDoc.getParentDatabase().getReplicaID());
 		assertEquals("Dest Doc parent replica ID should match expected", dest.getReplicaID(), destDoc.getParentDatabase().getReplicaID());
+	}
+	
+	@Test
+	public void testLocalDate() {
+		Session session = Factory.getSession();
+		Database source = session.getDatabase(AllTests.EMPTY_DB);
+		Document sourceDoc = source.createDocument();
+		LocalDate expected = LocalDate.now();
+		sourceDoc.put("Foo", expected);
+		assertEquals(expected, sourceDoc.getItemValue("Foo", LocalDate.class));
+		
+		DateTime dt = sourceDoc.getItemValue("Foo", DateTime.class);
+		long expectedTenSec = expected.toEpochSecond(LocalTime.now(), ZoneId.systemDefault().getRules().getOffset(Instant.now())) / 100;
+		long dtTenSec = dt.toJavaDate().getTime() / 1000 / 100;
+		assertEquals(expectedTenSec, dtTenSec);
+	}
+	
+	@Test
+	public void testLocalTime() {
+		Session session = Factory.getSession();
+		session.setTrackMillisecInJavaDates(true);
+		Database source = session.getDatabase(AllTests.EMPTY_DB);
+		Document sourceDoc = source.createDocument();
+		// Domino only supports hundredths of a second, so only test for that
+		LocalTime expected = LocalTime.now().withNano(33 * 10 * 1000 * 1000);
+		sourceDoc.put("Foo", expected);
+		assertEquals(expected, sourceDoc.getItemValue("Foo", LocalTime.class));
+		
+		DateTime dt = sourceDoc.getItemValue("Foo", DateTime.class);
+		long expectedTenSec = expected.toEpochSecond(LocalDate.now(), ZoneId.systemDefault().getRules().getOffset(Instant.now())) / 100;
+		long dtTenSec = dt.toJavaDate().getTime() / 1000 / 100;
+		assertEquals(expectedTenSec, dtTenSec);
 	}
 }
