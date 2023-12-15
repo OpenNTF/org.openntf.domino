@@ -16,6 +16,8 @@
 package org.openntf.domino.xsp.tests.paul;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -61,9 +63,9 @@ public class Connect17Documents implements Runnable {
 		String prevDocAsJson = doc.toJson(true);
 		doc.appendItemValue("State", "AZ");
 		doc.replaceItemValue("DateTimeField", new Date());
-		doc.replaceItemValue("DateOnlyField", new java.sql.Date(System.currentTimeMillis()));
+		doc.replaceItemValue("DateOnlyField", LocalDate.now());
 		System.out.println(doc.getFirstItem("DateOnlyField").getValues());
-		doc.replaceItemValue("TimeOnlyField", new java.sql.Time(System.currentTimeMillis()));
+		doc.replaceItemValue("TimeOnlyField", LocalTime.now());
 		System.out.println(doc.getFirstItem("TimeOnlyField").getValues());
 		doc.replaceItemValue("EmptyDate", "");
 		Date blankDate = doc.getItemValue("EmptyDate", Date.class);
@@ -88,9 +90,9 @@ public class Connect17Documents implements Runnable {
 		System.out.println(tmp.size());
 		System.out.println(doc.getMetaversalID());
 		System.out.println(doc.getItemValueString("EnumField"));
-		java.sql.Date sqlDt = doc.getItemValue("DateTimeField", java.sql.Date.class);
+		LocalDate sqlDt = doc.getItemValue("DateTimeField", LocalDate.class);
 		System.out.println(sqlDt);
-		java.sql.Time sqlTime = doc.getItemValue("DateTimeField", java.sql.Time.class);
+		LocalTime sqlTime = doc.getItemValue("DateTimeField", LocalTime.class);
 		System.out.println(sqlTime);
 		System.out.println(doc.getItemValues("BigDecimalField", BigDecimal.class));
 		System.out.println(doc.getFirstItem("MVField").getTypeEx());

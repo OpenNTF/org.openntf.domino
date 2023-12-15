@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.activation.UnsupportedDataTypeException;
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
 
@@ -113,11 +112,7 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 			if (vbVal instanceof Map) {
 				return (Map<String, String>) vbVal;
 			} else {
-				try {
-					throw new UnsupportedDataTypeException("Value is not a map");
-				} catch (UnsupportedDataTypeException e) {
-					e.printStackTrace();
-				}
+				throw new UnsupportedOperationException("Value is not a map");
 			}
 		}
 

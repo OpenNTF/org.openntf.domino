@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.activation.UnsupportedDataTypeException;
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
 
@@ -62,11 +61,7 @@ public class CollectionValuePickerData extends MapValuePickerData {
 			if (vbVal instanceof Collection) {
 				return (Collection<String>) vbVal;
 			} else {
-				try {
-					throw new UnsupportedDataTypeException("Value is not a Collection");
-				} catch (UnsupportedDataTypeException e) {
-					e.printStackTrace();
-				}
+				throw new UnsupportedOperationException("Value is not a Collection");
 			}
 		}
 

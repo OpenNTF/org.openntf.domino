@@ -18,6 +18,10 @@ package org.openntf.domino.nsfdata;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 
 public class NSFDateTime implements Serializable, NSFDateTimeValue {
 	private static final long serialVersionUID = 1L;
@@ -36,8 +40,8 @@ public class NSFDateTime implements Serializable, NSFDateTimeValue {
 	};
 
 	private final java.util.Date dateTime_;
-	private final java.sql.Time timeOnly_;
-	private final java.sql.Date dateOnly_;
+	private final LocalTime timeOnly_;
+	private final LocalDate dateOnly_;
 	private final int utcOffset_;
 	private final boolean dst_;
 
@@ -48,14 +52,14 @@ public class NSFDateTime implements Serializable, NSFDateTimeValue {
 		utcOffset_ = utcOffset;
 		dst_ = dst;
 	}
-	public NSFDateTime(final java.sql.Time timeOnly) {
+	public NSFDateTime(final LocalTime timeOnly) {
 		dateTime_ = null;
 		timeOnly_ = timeOnly;
 		dateOnly_ = null;
 		utcOffset_ = 0;
 		dst_ = false;
 	}
-	public NSFDateTime(final java.sql.Date dateOnly) {
+	public NSFDateTime(final LocalDate dateOnly) {
 		dateTime_ = null;
 		timeOnly_ = null;
 		dateOnly_ = dateOnly;
@@ -68,9 +72,9 @@ public class NSFDateTime implements Serializable, NSFDateTimeValue {
 		if(dateTime_ != null) {
 			time = dateTime_.getTime();
 		} else if(timeOnly_ != null) {
-			time = timeOnly_.getTime();
+			time = timeOnly_.toEpochSecond(LocalDate.now(), ZoneId.systemDefault().getRules().getOffset(Instant.now()));
 		} else if(dateOnly_ != null) {
-			time = dateOnly_.getTime();
+			time = dateOnly_.toEpochSecond(LocalTime.now(), ZoneId.systemDefault().getRules().getOffset(Instant.now()));
 		}
 		return new java.util.Date(time);
 	}
@@ -96,10 +100,10 @@ public class NSFDateTime implements Serializable, NSFDateTimeValue {
 		if(dateTime_ != null) {
 			stringVal = DATE_TIME_FORMAT.get().format(dateTime_);
 		} else if(timeOnly_ != null) {
-			java.util.Date date = new java.util.Date(timeOnly_.getTime());
+			java.util.Date date = toDate();
 			stringVal = TIME_ONLY_FORMAT.get().format(date);
 		} else if(dateOnly_ != null) {
-			java.util.Date date = new java.util.Date(dateOnly_.getTime());
+			java.util.Date date = toDate();
 			stringVal = DATE_ONLY_FORMAT.get().format(date);
 		}
 		return "[" + getClass().getSimpleName() + ": " + stringVal + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

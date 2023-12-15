@@ -69,7 +69,7 @@
 		<module>xsp</module>
         <module>org.openntf.domino.xsp.test</module>
 		<module>rest</module>
-<!-- 		<module>tests</module> -->
+ 		<module>tests</module> 
 		
 		<module>features/org.openntf.domino.dependencies.feature</module>
 		<module>features/org.openntf.domino.feature</module>
@@ -407,7 +407,23 @@
 			</build>
 		</profile>
 		
+		<profile>
+			<id>run-tests</id>
+			
 
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-surefire-plugin</artifactId>
+				
+						<configuration>
+							<skip>false</skip>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<!-- These profiles add support for specific platforms for tests -->
 		<profile>
 			<id>tests-windows</id>
@@ -428,8 +444,6 @@
 						<version>${tycho-version}</version>
 				
 						<configuration>
-							<skip>false</skip>
-					
 							<argLine>-Dfile.encoding=UTF-8 -Djava.library.path="${notes-program}"</argLine>
 							<environmentVariables>
 								<PATH>${notes-program}${path.separator}${env.PATH}</PATH>
@@ -459,8 +473,6 @@
 						<version>${tycho-version}</version>
 				
 						<configuration>
-							<skip>false</skip>
-					
 							<argLine>-Dfile.encoding=UTF-8 -Djava.library.path="${notes-program}"</argLine>
 							<environmentVariables>
 								<PATH>${notes-program}${path.separator}${env.PATH}</PATH>
@@ -488,8 +500,6 @@
 						<artifactId>tycho-surefire-plugin</artifactId>
 				
 						<configuration>
-							<skip>false</skip>
-					
 							<argLine>-Dfile.encoding=UTF-8 -Djava.library.path="${notes-program}"</argLine>
 							<environmentVariables>
 								<PATH>${notes-program}${path.separator}${env.PATH}</PATH>
@@ -522,8 +532,6 @@
 						<version>${tycho-version}</version>
 				
 						<configuration>
-							<skip>false</skip>
-					
 							<argLine>-Dfile.encoding=UTF-8 -Djava.library.path="${notes-program}"</argLine>
 							<environmentVariables>
 								<!-- The res/C path entry is important for loading formula language properly -->

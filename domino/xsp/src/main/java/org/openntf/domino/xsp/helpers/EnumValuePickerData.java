@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
-import javax.activation.UnsupportedDataTypeException;
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
 
@@ -147,7 +146,7 @@ public class EnumValuePickerData extends MapValuePickerData {
 					opts.put(e.name(), enumClass.getName() + " " + e.name()); //$NON-NLS-1$
 				}
 			} else {
-				throw new UnsupportedDataTypeException("Value is not an Enum");
+				throw new UnsupportedOperationException("Value is not an Enum");
 			}
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
