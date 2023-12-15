@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Vector;
 
@@ -124,4 +125,23 @@ public class TestDocuments {
 		long dtTenSec = dt.toJavaDate().getTime() / 1000 / 100;
 		assertEquals(expectedTenSec, dtTenSec);
 	}
+
+	
+	@Test
+	public void testOffsetDateTime() {
+		Session session = Factory.getSession();
+		session.setTrackMillisecInJavaDates(true);
+		Database source = session.getDatabase(AllTests.EMPTY_DB);
+		Document sourceDoc = source.createDocument();
+		// Domino only supports hundredths of a second, so only test for that
+		OffsetDateTime expected = OffsetDateTime.now().withNano(33 * 10 * 1000 * 1000);
+		sourceDoc.put("Foo", expected);
+		assertEquals(expected, sourceDoc.getItemValue("Foo", OffsetDateTime.class));
+		
+		DateTime dt = sourceDoc.getItemValue("Foo", DateTime.class);
+		long expectedTenSec = expected.toEpochSecond() / 100;
+		long dtTenSec = dt.toJavaDate().getTime() / 1000 / 100;
+		assertEquals(expectedTenSec, dtTenSec);
+	}
+	
 }

@@ -29,11 +29,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.ResolverStyle;
-import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -50,10 +46,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
-import lotus.domino.DateTime;
-import lotus.domino.Name;
-import lotus.domino.NotesException;
 
 import org.openntf.domino.DateRange;
 import org.openntf.domino.Document;
@@ -75,6 +67,10 @@ import org.openntf.domino.types.ReadersList;
 
 import com.ibm.commons.util.StringUtil;
 
+import lotus.domino.DateTime;
+import lotus.domino.Name;
+import lotus.domino.NotesException;
+
 /**
  * @author nfreeman
  *
@@ -88,16 +84,6 @@ public enum TypeUtils {
 	//	protected static final List<Class<?>> converterFromList_ = new ArrayList<Class<?>>();
 
 	private static final ThreadLocal<SimpleDateFormat> DEFAULT_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")); //$NON-NLS-1$
-	
-	private static final DateTimeFormatter TIME_FORMAT = new DateTimeFormatterBuilder()
-            .appendValue(ChronoField.HOUR_OF_DAY, 2)
-            .appendLiteral(':')
-            .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
-            .optionalStart()
-            .appendLiteral(':')
-            .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
-            .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
-            .toFormatter();
 
 	public static SimpleDateFormat getDefaultDateFormat() {
 		return DEFAULT_FORMAT.get();
@@ -264,6 +250,10 @@ public enum TypeUtils {
 				if (LocalTime.class.isAssignableFrom(type) && result instanceof Date) {
 					Date dt = (Date) result;
 					return (T) LocalTime.ofInstant(dt.toInstant(), ZoneId.systemDefault());
+				}
+				if(OffsetDateTime.class.isAssignableFrom(type) && result instanceof Date) {
+					Date dt = (Date) result;
+					return (T)OffsetDateTime.ofInstant(dt.toInstant(), ZoneId.systemDefault());
 				}
 				log_.log(Level.WARNING, "Auto-boxing requested a " + type.getName() + " but is returning a " + result.getClass().getName()
 						+ " in item " + itemName + " for document id " + noteid);
@@ -705,12 +695,19 @@ public enum TypeUtils {
 				} else {
 					result = LocalDate.ofInstant(tmpDate.toInstant(), ZoneId.systemDefault());
 				}
-			}else if(LocalTime.class.isAssignableFrom(type)) {
+			} else if(LocalTime.class.isAssignableFrom(type)) {
 				Date tmpDate = toDate(v);
 				if(null == tmpDate) {
 					result = null;
 				} else {
 					result = LocalTime.ofInstant(tmpDate.toInstant(), ZoneId.systemDefault());
+				}
+			} else if(OffsetDateTime.class.isAssignableFrom(type)) {
+				Date tmpDate = toDate(v);
+				if(null == tmpDate) {
+					result = null;
+				} else {
+					result = OffsetDateTime.ofInstant(tmpDate.toInstant(), ZoneId.systemDefault());
 				}
 			} else if (Date.class.isAssignableFrom(type)) {
 				result = toDate(v);
@@ -2295,12 +2292,10 @@ public enum TypeUtils {
 		}
 		// Now for the illegal-but-convertible types
 		if (value instanceof Number) {
-			// TODO Check if this is greater than what Domino can handle and serialize if so
-			// CHECKME: Is "doubleValue" really needed. (according to help.nsf only Integer and Double is supported, so keep it)
 			return ((Number) value).doubleValue();
 
-		} else if (value instanceof java.util.Date || value instanceof LocalDate || value instanceof LocalTime || value instanceof java.util.Calendar
-				|| value instanceof org.openntf.formula.DateTime) {
+		} else if (value instanceof java.util.Date || value instanceof LocalDate || value instanceof LocalTime || value instanceof OffsetDateTime ||
+				value instanceof java.util.Calendar || value instanceof org.openntf.formula.DateTime) {
 
 			lotus.domino.Session lsess = toLotus(session);
 			try {
@@ -2313,6 +2308,8 @@ public enum TypeUtils {
 				} else if (value instanceof LocalDate) {
 					dt = lsess.createDateTime(DateTimeFormatter.ISO_LOCAL_DATE.format((LocalDate)value));
 					dt.setAnyTime();
+				} else if(value instanceof OffsetDateTime) {
+					dt = lsess.createDateTime(Date.from(((OffsetDateTime)value).toInstant()));
 				} else if (value instanceof java.util.Date) {
 					dt = lsess.createDateTime((java.util.Date) value);
 				} else if (value instanceof org.openntf.formula.DateTime) {
