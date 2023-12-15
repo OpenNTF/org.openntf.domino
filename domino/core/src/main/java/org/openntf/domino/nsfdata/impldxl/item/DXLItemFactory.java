@@ -15,6 +15,9 @@
  */
 package org.openntf.domino.nsfdata.impldxl.item;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -108,7 +111,7 @@ public enum DXLItemFactory {
 			Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(0);
 			cal.set(year, month, day);
-			java.sql.Date date = new java.sql.Date(cal.getTimeInMillis());
+			LocalDate date = LocalDate.ofInstant(cal.toInstant(), ZoneId.systemDefault());
 			return new NSFDateTime(date);
 		}
 		matcher = TIME_ONLY.matcher(text);
@@ -124,7 +127,7 @@ public enum DXLItemFactory {
 			cal.set(Calendar.MINUTE, minutes);
 			cal.set(Calendar.SECOND, seconds);
 			cal.set(Calendar.MILLISECOND, millis);
-			java.sql.Time time = new java.sql.Time(cal.getTimeInMillis());
+			LocalTime time = LocalTime.ofInstant(cal.toInstant(), ZoneId.systemDefault());
 			return new NSFDateTime(time);
 		}
 		throw new IllegalArgumentException("Unable to parse datetime: " + text);

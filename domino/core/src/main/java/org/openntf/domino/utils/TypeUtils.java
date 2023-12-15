@@ -24,6 +24,10 @@ import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -174,7 +178,7 @@ public enum TypeUtils {
 			return (T) "";
 		}
 		try {
-			return type.newInstance();
+			return type.getConstructor().newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -237,13 +241,13 @@ public enum TypeUtils {
 					return (T) result;
 				}
 			} else {
-				if (java.sql.Date.class.equals(type) && result instanceof Date) {
+				if (LocalDate.class.isAssignableFrom(type) && result instanceof Date) {
 					Date dt = (Date) result;
-					return (T) new java.sql.Date(dt.getTime());
+					return (T) LocalDate.ofInstant(dt.toInstant(), ZoneId.systemDefault());
 				}
-				if (java.sql.Time.class.equals(type) && result instanceof Date) {
+				if (LocalTime.class.isAssignableFrom(type) && result instanceof Date) {
 					Date dt = (Date) result;
-					return (T) new java.sql.Time(dt.getTime());
+					return (T) LocalTime.ofInstant(dt.toInstant(), ZoneId.systemDefault());
 				}
 				log_.log(Level.WARNING, "Auto-boxing requested a " + type.getName() + " but is returning a " + result.getClass().getName()
 						+ " in item " + itemName + " for document id " + noteid);
@@ -678,16 +682,19 @@ public enum TypeUtils {
 				} catch (InstantiationException e) {
 					DominoUtils.handleException(e);
 				}
-			} else if (java.sql.Date.class.isAssignableFrom(type) || java.sql.Time.class.isAssignableFrom(type)) {
+			} else if(LocalDate.class.isAssignableFrom(type)) {
 				Date tmpDate = toDate(v);
-				if (null == tmpDate) {
+				if(null == tmpDate) {
 					result = null;
 				} else {
-					if (java.sql.Date.class.isAssignableFrom(type)) {
-						result = new java.sql.Date(tmpDate.getTime());
-					} else {
-						result = new java.sql.Time(tmpDate.getTime());
-					}
+					result = LocalDate.ofInstant(tmpDate.toInstant(), ZoneId.systemDefault());
+				}
+			}else if(LocalTime.class.isAssignableFrom(type)) {
+				Date tmpDate = toDate(v);
+				if(null == tmpDate) {
+					result = null;
+				} else {
+					result = LocalTime.ofInstant(tmpDate.toInstant(), ZoneId.systemDefault());
 				}
 			} else if (Date.class.isAssignableFrom(type)) {
 				result = toDate(v);
@@ -2276,18 +2283,20 @@ public enum TypeUtils {
 			// CHECKME: Is "doubleValue" really needed. (according to help.nsf only Integer and Double is supported, so keep it)
 			return ((Number) value).doubleValue();
 
-		} else if (value instanceof java.util.Date || value instanceof java.sql.Date || value instanceof java.util.Calendar
+		} else if (value instanceof java.util.Date || value instanceof LocalDate || value instanceof LocalTime || value instanceof java.util.Calendar
 				|| value instanceof org.openntf.formula.DateTime) {
 
 			lotus.domino.Session lsess = toLotus(session);
 			try {
 
 				lotus.domino.DateTime dt = null;
-				if (value instanceof java.sql.Time) {
-					dt = lsess.createDateTime((java.sql.Time) value);
+				if (value instanceof LocalTime) {
+					Date date = new Date(((LocalTime)value).toEpochSecond(LocalDate.now(), ZoneId.systemDefault().getRules().getOffset(Instant.now())));
+					dt = lsess.createDateTime(date);
 					dt.setAnyDate();
-				} else if (value instanceof java.sql.Date) {
-					dt = lsess.createDateTime((java.sql.Date) value);
+				} else if (value instanceof LocalDate) {
+					Date date = new Date(((LocalDate)value).toEpochSecond(LocalTime.now(), ZoneId.systemDefault().getRules().getOffset(Instant.now())));
+					dt = lsess.createDateTime(date);
 					dt.setAnyTime();
 				} else if (value instanceof java.util.Date) {
 					dt = lsess.createDateTime((java.util.Date) value);
