@@ -20,7 +20,7 @@
 			<plugin>
 				<groupId>org.darwino</groupId>
 				<artifactId>p2sitexml-maven-plugin</artifactId>
-				<version>1.1.0</version>
+				<version>1.2.0</version>
 				<executions>
 					<execution>
 						<id>generate-sitexml</id>

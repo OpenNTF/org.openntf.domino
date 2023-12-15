@@ -49,6 +49,14 @@
 			<url>https://artifactory.openntf.org/openntf</url>
 		</repository>
 	</repositories>
+	
+	<pluginRepositories>
+		<pluginRepository>
+			<id>artifactory.openntf.org</id>
+			<name>artifactory.openntf.org</name>
+			<url>https://artifactory.openntf.org/openntf</url>
+		</pluginRepository>
+    </pluginRepositories>
 
 	<!-- See also profile-triggered module sets below -->
 	<modules>
