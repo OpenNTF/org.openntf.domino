@@ -47,12 +47,12 @@
       <import feature="org.openntf.domino.feature"/>
    </requires>
 
+   <plugin id="com.tinkerpop" version="0.0.0"/>
    <plugin
          id="org.openntf.domino.graph"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         fragment="true"/>
+         version="0.0.0"/>
    <plugin
          id="org.openntf.domino.rest"
          download-size="0"

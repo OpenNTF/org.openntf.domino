@@ -48,7 +48,6 @@
       <import plugin="org.eclipse.osgi.services"/>
       <import plugin="com.ibm.commons" version="9.0.0" match="greaterOrEqual"/>
       <import plugin="com.ibm.notes.java.api"/>
-      <import plugin="com.tinkerpop" version="2.6.0" match="greaterOrEqual"/>
       <import plugin="org.openntf.domino" version="1.5.0" match="greaterOrEqual"/>
       <import plugin="org.openntf.formula" version="1.5.0" match="greaterOrEqual"/>
       <import plugin="com.ibm.designer.runtime" version="9.0.1" match="greaterOrEqual"/>

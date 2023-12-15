@@ -77,6 +77,7 @@
 		
 		<module>releng/org.openntf.domino.updatesite</module>
 		<module>releng/org.openntf.domino.nonxsp.updatesite</module>
+		<module>releng/org.openntf.domino.graph.updatesite</module>
 		<module>releng/oda-dist</module>
 	</modules>
 	
