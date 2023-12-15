@@ -49,6 +49,8 @@ To develop in Eclipse, your Target Platform will need to include this directory,
 
 ### Running Automated Tests
 
+Native compile-time tests can be run by manually activating the `run-tests` profile during a Maven execution, such as via `-Prun-tests`.
+
 Running the compile-time tests requires either Notes or Domino installed locally with a bitness that matches the Java runtime used to execute the Maven build. Additionally, that installation should either have an ID with no password or should be configured in User Security to allow external Notes-based applications to run without a password prompt. In the latter case, Notes must be open during the test.
 
 Maven-run tests are configured by the presence of a `notes-program` property in your effective Maven settings pointing to the program directory of the Notes or Domino installation. For example, a minimal `.m2/settings.xml` file to run tests via the Mac Notes client in its normal installation location would be:
