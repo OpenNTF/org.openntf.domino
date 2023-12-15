@@ -69,7 +69,6 @@
 		<module>xsp</module>
         <module>org.openntf.domino.xsp.test</module>
 		<module>rest</module>
- 		<module>tests</module> 
 		
 		<module>features/org.openntf.domino.dependencies.feature</module>
 		<module>features/org.openntf.domino.feature</module>
@@ -410,6 +409,9 @@
 		<profile>
 			<id>run-tests</id>
 			
+			<modules>
+				<module>tests</module>
+			</modules>
 
 			<build>
 				<plugins>
