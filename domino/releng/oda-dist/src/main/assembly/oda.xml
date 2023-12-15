@@ -93,6 +93,20 @@
 			</binaries>
 		</moduleSet>
 		
+	
+		<!-- The final Graph update site -->
+		<moduleSet>
+			<useAllReactorProjects>true</useAllReactorProjects>
+			<includes>
+				<include>org.openntf.domino:org.openntf.domino.graph.updatesite</include>
+			</includes>
+			
+			<binaries>
+				<outputDirectory>UpdateSite-Graph</outputDirectory>
+				<unpack>true</unpack>
+				<includeDependencies>false</includeDependencies>
+			</binaries>
+		</moduleSet>
 		
 	</moduleSets>
 </assembly>

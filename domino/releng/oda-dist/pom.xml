@@ -75,6 +75,12 @@
 			<version>${project.version}</version>
 			<type>eclipse-repository</type>
 		</dependency>
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>org.openntf.domino.graph.updatesite</artifactId>
+			<version>${project.version}</version>
+			<type>eclipse-repository</type>
+		</dependency>
 	</dependencies>
 	
 	<build>

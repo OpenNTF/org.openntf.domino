@@ -17,20 +17,14 @@
 
 -->
 <site>
-   <description name="OpenNTF Domino API">
-      OpenNTF Domino API
+   <description name="OpenNTF Domino API Graph">
+      OpenNTF Domino API Graph
    </description>
-   <feature id="org.openntf.domino.feature">
-      <category name="OpenNTF Domino API"/>
+   <feature id="org.openntf.domino.graph.feature">
+      <category name="OpenNTF Domino API Graph"/>
    </feature>
-   <feature id="org.openntf.domino.feature.source">
-      <category name="OpenNTF Domino API"/>
+   <feature id="org.openntf.domino.graph.feature.source">
+      <category name="OpenNTF Domino API Graph"/>
    </feature>
-   <feature id="org.openntf.domino.dependencies.feature">
-      <category name="OpenNTF Domino API"/>
-   </feature>
-   <feature id="org.openntf.domino.dependencies.feature.source">
-      <category name="OpenNTF Domino API"/>
-   </feature>
-   <category-def name="OpenNTF Domino API" label="OpenNTF Domino API"/>
+   <category-def name="OpenNTF Domino API Graph" label="OpenNTF Domino API Graph"/>
 </site>

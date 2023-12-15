@@ -43,7 +43,6 @@
  * permissions and limitations under the License.
    </license>
 
-   <plugin id="com.tinkerpop" version="0.0.0"/>
    <plugin id="javassist" version="0.0.0"/>
    <plugin id="javolution" version="0.0.0"/>
 
