@@ -262,7 +262,7 @@
 					</excludes>
 					<properties>
 						<owner>The OpenNTF Domino API Team</owner>
-						<copyrightYear>2021</copyrightYear>
+						<copyrightYear>2023</copyrightYear>
 					</properties>
 				</configuration>
 			</plugin>
