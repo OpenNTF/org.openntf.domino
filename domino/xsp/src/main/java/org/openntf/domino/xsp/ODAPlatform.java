@@ -47,6 +47,8 @@ public enum ODAPlatform {
 	public static final boolean debugAll = false;
 	public static boolean isStarted_ = false;
 	private static int xotsStopDelay;
+	
+	public static final String ENV_XOTSENABLED = "XOTSEnable";
 
 	public synchronized static boolean isStarted() {
 		return isStarted_;
@@ -77,35 +79,39 @@ public enum ODAPlatform {
 				// Setup the named factories 4 XPages
 				Factory.setNamedFactories4XPages(new XPageNamedSessionFactory(false), new XPageNamedSessionFactory(true));
 				verifyIGetEntryByKey();
-				ServerConfiguration cfg = Configuration.getServerConfiguration();
-				int xotsTasks = cfg.getXotsTasks();
-				// We must read the value here, because in the ShutDown, it is not possible to navigate through views and the code will fail.
-				xotsStopDelay = cfg.getXotsStopDelay();
-				if (xotsTasks > 0) {
-					//					System.out.println("Starting XOTS with " + xotsTasks + " threads");
-					DominoExecutor executor = new XotsDominoExecutor(xotsTasks);
-					try {
-						Xots.start(executor);
-					} catch (Throwable e) {
-						e.printStackTrace();
-					}
-					List<?> tasklets = ExtensionManager.findServices(null, ODAPlatform.class, "org.openntf.domino.xots.tasklet"); //$NON-NLS-1$
-
-					for (Object tasklet : tasklets) {
-						if (tasklet instanceof Callable<?> || tasklet instanceof Runnable) {
-							@SuppressWarnings("unused")
-							ClassLoader cl = tasklet.getClass().getClassLoader();
-
-							Factory.println("XOTS", "Registering tasklet " + tasklet); //$NON-NLS-1$
-
-							if (tasklet instanceof Callable<?>) {
-								Xots.submit((Callable<?>) tasklet);
-							} else {
-								Xots.submit((Runnable) tasklet);
+				
+				if(isXotsEnabled()) {
+					ServerConfiguration cfg = Configuration.getServerConfiguration();
+					int xotsTasks = cfg.getXotsTasks();
+					// We must read the value here, because in the ShutDown, it is not possible to navigate through views and the code will fail.
+					xotsStopDelay = cfg.getXotsStopDelay();
+					if (xotsTasks > 0) {
+						//					System.out.println("Starting XOTS with " + xotsTasks + " threads");
+						DominoExecutor executor = new XotsDominoExecutor(xotsTasks);
+						try {
+							Xots.start(executor);
+						} catch (Throwable e) {
+							e.printStackTrace();
+						}
+						List<?> tasklets = ExtensionManager.findServices(null, ODAPlatform.class, "org.openntf.domino.xots.tasklet"); //$NON-NLS-1$
+	
+						for (Object tasklet : tasklets) {
+							if (tasklet instanceof Callable<?> || tasklet instanceof Runnable) {
+								@SuppressWarnings("unused")
+								ClassLoader cl = tasklet.getClass().getClassLoader();
+	
+								Factory.println("XOTS", "Registering tasklet " + tasklet); //$NON-NLS-1$
+	
+								if (tasklet instanceof Callable<?>) {
+									Xots.submit((Callable<?>) tasklet);
+								} else {
+									Xots.submit((Runnable) tasklet);
+								}
 							}
 						}
 					}
 				}
+				
 				System.out.println("OpenNTF Domino API is fully operational.");
 			}
 		} catch (Throwable t) {
@@ -362,6 +368,11 @@ public enum ODAPlatform {
 			app.putObject(IS_API_ENABLED, retVal_);
 		}
 		return retVal_.booleanValue();
+	}
+	
+	public static boolean isXotsEnabled() {
+		String xotsEnabled = getEnvironmentString(ENV_XOTSENABLED);
+		return !"0".equals(xotsEnabled);
 	}
 
 	/**
