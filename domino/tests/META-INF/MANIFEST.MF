@@ -6,16 +6,17 @@ Automatic-Module-Name: org.openntf.domino.tests
 Bundle-Version: 12.0.3.qualifier
 Require-Bundle: org.eclipse.core.runtime,
  org.junit;bundle-version="4.0.0",
- org.openntf.domino,
- org.openntf.domino.junit;bundle-version="10.0.0"
+ org.openntf.domino
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.openntf.domino.tests
+Export-Package: org.openntf.domino.junit,
+ org.openntf.domino.tests
 Import-Package: com.ibm.commons.util,
  com.ibm.commons.util.io,
  com.tinkerpop.blueprints,
  com.tinkerpop.frames,
  com.tinkerpop.frames.modules.javahandler,
  com.tinkerpop.frames.modules.typedgraph,
+ javolution,
  lotus.domino,
  org.openntf.domino.graph2.annotations,
  org.openntf.domino.graph2.builtin

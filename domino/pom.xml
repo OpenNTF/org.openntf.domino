@@ -64,10 +64,7 @@
 		<module>formula</module>
 		<module>core</module>
 		<module>org.openntf.domino.graph</module>
-		<module>org.openntf.domino.junit</module>
-		<module>org.openntf.domino.samples</module>
 		<module>xsp</module>
-        <module>org.openntf.domino.xsp.test</module>
 		<module>rest</module>
 		
 		<module>features/org.openntf.domino.dependencies.feature</module>
