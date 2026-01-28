@@ -26,7 +26,7 @@
 		<repository>
 			<id>notes</id>
 			<layout>p2</layout>
-			<url>${notes-platform}</url>
+			<url>${notes-platform145}</url>
 		</repository>
 		
 		<!-- Used for JUnit -->

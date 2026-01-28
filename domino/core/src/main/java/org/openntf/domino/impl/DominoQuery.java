@@ -354,5 +354,24 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 		}
 	}
 
+	@Override
+	public boolean isDesignDocumentsOnly() {
+		try {
+			return getDelegate().isDesignDocumentsOnly();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
+	}
+
+	@Override
+	public void setDesignDocumentsOnly(boolean arg0) {
+		try {
+			getDelegate().setDesignDocumentsOnly(arg0);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
 	
 }
