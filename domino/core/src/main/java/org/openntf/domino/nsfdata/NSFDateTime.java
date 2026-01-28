@@ -18,10 +18,10 @@ package org.openntf.domino.nsfdata;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class NSFDateTime implements Serializable, NSFDateTimeValue {
 	private static final long serialVersionUID = 1L;
@@ -72,9 +72,9 @@ public class NSFDateTime implements Serializable, NSFDateTimeValue {
 		if(dateTime_ != null) {
 			time = dateTime_.getTime();
 		} else if(timeOnly_ != null) {
-			time = timeOnly_.toEpochSecond(LocalDate.now(), ZoneId.systemDefault().getRules().getOffset(Instant.now()));
+			time = ZonedDateTime.of(LocalDate.now(), timeOnly_, ZoneId.systemDefault()).toEpochSecond();
 		} else if(dateOnly_ != null) {
-			time = dateOnly_.toEpochSecond(LocalTime.now(), ZoneId.systemDefault().getRules().getOffset(Instant.now()));
+			time = ZonedDateTime.of(dateOnly_, LocalTime.now(), ZoneId.systemDefault()).toEpochSecond();
 		}
 		return new java.util.Date(time);
 	}

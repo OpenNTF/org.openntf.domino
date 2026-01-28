@@ -16,6 +16,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-version>2.7.5</tycho-version>
 		<compiler>1.8</compiler>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.release>8</maven.compiler.release>
 		<manifest-location>META-INF</manifest-location>
 		
 		<!-- This will be re-computed per-project, hence the extra two layers -->

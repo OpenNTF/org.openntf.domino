@@ -187,4 +187,15 @@ public class QueryResultsProcessor extends BaseThreadSafe<org.openntf.domino.Que
 		return parent.getAncestorSession().getFactory();
 	}
 
+	@Override
+	public View executeToView(String arg0, int arg1, Vector arg2, lotus.domino.Database arg3, String arg4) {
+		try {
+			lotus.domino.View result = getDelegate().executeToView(arg0, arg1, arg2, toLotus(arg3), arg4);
+			return fromLotus(result, View.SCHEMA, parent);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
 }

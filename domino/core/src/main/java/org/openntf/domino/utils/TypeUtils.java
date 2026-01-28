@@ -29,6 +29,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -245,11 +246,11 @@ public enum TypeUtils {
 			} else {
 				if (LocalDate.class.isAssignableFrom(type) && result instanceof Date) {
 					Date dt = (Date) result;
-					return (T) LocalDate.ofInstant(dt.toInstant(), ZoneId.systemDefault());
+					return (T) ZonedDateTime.ofInstant(dt.toInstant(), ZoneId.systemDefault()).toLocalDate();
 				}
 				if (LocalTime.class.isAssignableFrom(type) && result instanceof Date) {
 					Date dt = (Date) result;
-					return (T) LocalTime.ofInstant(dt.toInstant(), ZoneId.systemDefault());
+					return (T) ZonedDateTime.ofInstant(dt.toInstant(), ZoneId.systemDefault()).toLocalTime();
 				}
 				if(OffsetDateTime.class.isAssignableFrom(type) && result instanceof Date) {
 					Date dt = (Date) result;
@@ -693,14 +694,14 @@ public enum TypeUtils {
 				if(null == tmpDate) {
 					result = null;
 				} else {
-					result = LocalDate.ofInstant(tmpDate.toInstant(), ZoneId.systemDefault());
+					result = ZonedDateTime.ofInstant(tmpDate.toInstant(), ZoneId.systemDefault()).toLocalDate();
 				}
 			} else if(LocalTime.class.isAssignableFrom(type)) {
 				Date tmpDate = toDate(v);
 				if(null == tmpDate) {
 					result = null;
 				} else {
-					result = LocalTime.ofInstant(tmpDate.toInstant(), ZoneId.systemDefault());
+					result = ZonedDateTime.ofInstant(tmpDate.toInstant(), ZoneId.systemDefault()).toLocalTime();
 				}
 			} else if(OffsetDateTime.class.isAssignableFrom(type)) {
 				Date tmpDate = toDate(v);
