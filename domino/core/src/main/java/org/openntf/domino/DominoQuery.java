@@ -347,8 +347,8 @@ public interface DominoQuery extends lotus.domino.DominoQuery, Base<lotus.domino
 	@Override
 	void removeNamedResult(String resultName);
 	
-	boolean isDesignDocumentsOnly();
-	
-	void setDesignDocumentsOnly(boolean designDocumentsOnly);
+	// boolean isDesignDocumentsOnly();
+	//
+	// void setDesignDocumentsOnly(boolean designDocumentsOnly);
 
 }

@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed Sep 23 16:26:25 EDT 2026
+javolution-6.1.1.eclipse-plugin>=
+javolution-6.1.1.pom>=

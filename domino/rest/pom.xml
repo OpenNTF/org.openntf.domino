@@ -17,11 +17,6 @@
 			<layout>p2</layout>
 			<url>${notes-platform}</url>
 		</repository>
-        <repository>
-            <id>extlib</id>
-            <layout>p2</layout>
-            <url>${project.baseUri}/../../dependencies/ExtLib-9.0.1_17</url>
-        </repository>
 	</repositories>
 	
 	<build>

@@ -24,7 +24,7 @@ import org.openntf.domino.session.NativeSessionFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
-import com.ibm.designer.runtime.domino.bootstrap.util.StringUtil;
+import com.ibm.commons.util.StringUtil;
 import com.ibm.domino.napi.c.xsp.XSPNative;
 import com.ibm.domino.osgi.core.context.ContextInfo;
 
